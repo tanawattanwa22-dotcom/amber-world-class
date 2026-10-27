@@ -1,0 +1,71 @@
+{
+  "version": "0.5-art-foundation",
+  "frame": 48,
+  "hero_sprite": {
+    "cols": 4,
+    "rows": 8,
+    "size": [
+      192,
+      384
+    ]
+  },
+  "boss_sprite": {
+    "cols": 4,
+    "rows": 8,
+    "size": [
+      192,
+      384
+    ]
+  },
+  "wings": {
+    "cols": 4,
+    "rows": 8,
+    "size": [
+      192,
+      384
+    ]
+  },
+  "skill_effect": {
+    "cols": 4,
+    "rows": 4,
+    "frame": 96,
+    "size": [
+      384,
+      384
+    ]
+  },
+  "ui_atlas": {
+    "cols": 6,
+    "rows": 4,
+    "frame": 64,
+    "size": [
+      384,
+      256
+    ]
+  },
+  "maps": [
+    "map-01.png",
+    "map-02.png",
+    "map-03.png",
+    "map-04.png",
+    "map-05.png",
+    "map-06.png",
+    "map-07.png",
+    "map-08.png",
+    "map-09.png",
+    "map-10.png"
+  ],
+  "bosses": [
+    "boss-00.png",
+    "boss-01.png",
+    "boss-02.png",
+    "boss-03.png",
+    "boss-04.png",
+    "boss-05.png",
+    "boss-06.png",
+    "boss-07.png",
+    "boss-08.png",
+    "boss-09.png"
+  ],
+  "note": "Source-made layered procedurally pixel-rendered game assets, not crops of reference collages. Art remains an intermediate style iteration."
+}
