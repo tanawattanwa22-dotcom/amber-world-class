@@ -91,7 +91,7 @@ function openPanel(id){if(id==='maps')return showMaps();const s=(v)=>`<div class
  case 'inventory':showModal('กระเป๋า · Inventory',`<div class="item-card"><div><b>🧪 ยาฟื้นฟู HP</b><br><small>ใช้ฟื้นฟู HP ระหว่างต่อสู้</small></div><b>x ${player.potions}</b></div><div class="item-card"><div><b>🪙 Gold</b><br><small>ได้จากการกำจัดมอนสเตอร์</small></div><b>${player.gold}</b></div><div class="item-card"><div><b>💎 Gems</b><br><small>สกุลเงินทดสอบ</small></div><b>${player.gems}</b></div><p>ช่องอุปกรณ์ การ์ด หินตีบวก และของบอสจะเพิ่มในเฟสถัดไป</p>`);break;
  case 'party':showModal('ปาร์ตี้ · Party',`<h3>🛡️ ระบบปาร์ตี้</h3><p>พัฒนาต่อใน Phase 5: เชิญเพื่อน สถานะออนไลน์ และแชร์ EXP โดยเซิร์ฟเวอร์</p><p>โหมดเดโมเป็นการเล่นคนเดียว จึงยังไม่สามารถสร้างปาร์ตี้ออนไลน์ได้</p>`);break;
  case 'ranking':showModal('อันดับผู้เล่น · Ranking',`<h3>🏆 Leaderboard</h3><p>ข้อมูลอันดับ 1–3 ต้องอ่านจากฐานข้อมูลที่เชื่อถือได้เมื่อเปิดเซิร์ฟเวอร์จริง</p><div class="item-card">🥇 <b>ยังไม่มีข้อมูลผู้เล่นออนไลน์</b></div>`);break;
- case 'menu':showModal('เมนู · System',`<div class="item-card"><div><b>🗺️ เลือกแผนที่</b><small> · 10 ฉาก</small></div><button class="secondary" id="btn-map">เปิด</button></div><div class="item-card"><div><b>🎮 โหมดเล่น</b><br><small id="mode-detail">${online?'ออนไลน์ เซิร์ฟเวอร์ควบคุม':'ออฟไลน์ ข้อมูลอยู่ในเครื่อง (แก้ไขได้)'}</small></div></div><div class="item-card"><div><b>🔐 Google Login</b><br><small>${onlineConfigured?'พร้อมตั้งค่าเชื่อมต่อ':'ต้องตั้งค่า Supabase + Game Server ใหม่ก่อน'}</small></div><button class="primary" id="btn-login" ${onlineConfigured?'':'disabled'}>${online?'ออนไลน์':'เข้าสู่ระบบ'}</button></div><div class="item-card"><div><b>📦 Version</b><br><small>Amber World Class V0.1 · Original Assets</small></div></div><p>GitHub และ Supabase ของ 55 AMBERLANDS เดิมไม่ได้ถูกเชื่อมกับโปรเจกต์นี้</p>`);$('btn-map').onclick=showMaps;$('btn-login').onclick=loginOnline;break;
+ case 'menu':showModal('เมนู · System',`<div class="item-card"><div><b>🗺️ เลือกแผนที่</b><small> · 10 ฉาก</small></div><button class="secondary" id="btn-map">เปิด</button></div><div class="item-card"><div><b>🎮 โหมดเล่น</b><br><small id="mode-detail">${online?'ออนไลน์ เซิร์ฟเวอร์ควบคุม':'ออฟไลน์ ข้อมูลอยู่ในเครื่อง (แก้ไขได้)'}</small></div></div><div class="item-card"><div><b>🔐 Google Login</b><br><small>${onlineConfigured?'พร้อมตั้งค่าเชื่อมต่อ':'ต้องตั้งค่า Supabase + Game Server ใหม่ก่อน'}</small></div><button class="primary" id="btn-login" ${onlineConfigured?'':'disabled'}>${online?'ออนไลน์':'เข้าสู่ระบบ'}</button></div><div class="item-card"><div style="width:100%"><b>✉️ เข้าสู่ระบบด้วยอีเมล</b><input id="awc-email" class="awc-auth-input" placeholder="อีเมล" autocomplete="email" type="email"><input id="awc-password" class="awc-auth-input" placeholder="รหัสผ่าน 8 ตัวขึ้นไป" autocomplete="current-password" type="password"><div style="display:flex;gap:8px;margin-top:8px"><button class="primary" id="btn-email-login">เข้าสู่ระบบ</button><button class="secondary" id="btn-email-register">สมัครบัญชี</button><button class="secondary" id="btn-logout">ออกระบบ</button></div></div></div><div class="item-card"><div><b>📦 Version</b><br><small>Amber World Class V0.1 · Original Assets</small></div></div><p>GitHub และ Supabase ของ 55 AMBERLANDS เดิมไม่ได้ถูกเชื่อมกับโปรเจกต์นี้</p>`);$('btn-map').onclick=showMaps;$('btn-login').onclick=loginOnline;$('btn-email-login').onclick=()=>passwordAuth(false);$('btn-email-register').onclick=()=>passwordAuth(true);$('btn-logout').onclick=logoutOnline;break;
  }}
 document.querySelectorAll('[data-panel]').forEach(el=>el.addEventListener('click',()=>openPanel(el.dataset.panel)));
 // Tap-to-move / joystick / keyboard
@@ -139,7 +139,7 @@ function draw(){ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,screenW,screen
  ctx.restore();}
 function loop(now){const dt=clamp(now-last,0,45);last=now;if(ready){update(dt);draw();}requestAnimationFrame(loop);}
 
-let edgePending=false,edgePoll=null,lastEdgeError=0,edgeReady=false;
+let edgePending=false,edgePoll=null,lastEdgeError=0,edgeReady=false,edgeQueue=[];
 function applyEdgeState(packet){
  if(!packet?.ok)return;
  const oldMap=player.mapId,oldLevel=player.level;
@@ -156,7 +156,8 @@ function applyEdgeState(packet){
  updateHUD();
 }
 async function edgeAction(action,quiet=false){
- if(!onlineConfigured||edgePending||!authClient)return;
+ if(!onlineConfigured||!authClient)return;
+ if(edgePending){if(!quiet&&edgeQueue.length<5)edgeQueue.push(action);return;}
  edgePending=true;
  try{
   const {data:{session},error:sessionError}=await authClient.auth.getSession();
@@ -172,7 +173,7 @@ async function edgeAction(action,quiet=false){
   applyEdgeState(data);
  }catch(e){
   if(!quiet&&Date.now()-lastEdgeError>1600){toast(String(e.message||e));lastEdgeError=Date.now();}
- }finally{edgePending=false;}
+ }finally{edgePending=false;const next=edgeQueue.shift();if(next)edgeAction(next);}
 }
 function connectEdge(jwt){
  if(!jwt)return;
@@ -182,8 +183,36 @@ function connectEdge(jwt){
  },900);
 }
 
+
+async function ensureAuth(){
+ if(!authClient){
+  const mod=await import('https://esm.sh/@supabase/supabase-js@2.57.0');
+  authClient=mod.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey);
+ }
+ return authClient;
+}
+async function passwordAuth(signup){
+ const email=document.getElementById('awc-email')?.value?.trim();
+ const password=document.getElementById('awc-password')?.value||'';
+ if(!email||!email.includes('@')||password.length<8){toast('ระบุอีเมลและรหัสผ่านอย่างน้อย 8 ตัว');return;}
+ try{
+  const client=await ensureAuth();
+  const {data,error}=signup?await client.auth.signUp({email,password}):
+   await client.auth.signInWithPassword({email,password});
+  if(error)throw error;
+  if(data?.session?.access_token){closeModal();connectEdge(data.session.access_token);}
+  else toast('สร้างบัญชีแล้ว ตรวจอีเมลเพื่อยืนยันก่อนเข้าสู่ระบบ');
+ }catch(e){toast(e?.message||'เข้าสู่ระบบไม่สำเร็จ');}
+}
+async function logoutOnline(){
+ try{if(authClient)await authClient.auth.signOut();}catch(e){console.warn('Sign-out',e);}
+ online=false;edgeReady=false;edgeQueue=[];otherPlayers=[];auto=false;
+ if(edgePoll){clearInterval(edgePoll);edgePoll=null;}if(socket){socket.close();socket=null;}
+ player=defaultHero();setMap(0,true);toast('ออกจากระบบแล้ว');
+}
+
 async function loginOnline(){if(!onlineConfigured){toast('ยังไม่ได้ตั้งค่าเซิร์ฟเวอร์ใหม่');return;}
- try{if(!authClient){const mod=await import('https://esm.sh/@supabase/supabase-js@2.57.0');authClient=mod.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey);}
+ try{await ensureAuth();
  const {data:{session}}=await authClient.auth.getSession();if(!session){await authClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});return;}if(edgeMode)connectEdge(session.access_token);else connectServer(session.access_token);
  }catch(e){toast('เข้าสู่ระบบไม่สำเร็จ');text('Login: '+e.message);}}
 function connectServer(jwt){if(socket&&socket.readyState===WebSocket.OPEN)return;const ws=new WebSocket(cfg.gameServerWebSocketUrl);socket=ws;ws.onopen=()=>{ws.send(JSON.stringify({type:'auth',accessToken:jwt}));};
