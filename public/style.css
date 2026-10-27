@@ -23,3 +23,12 @@
 .awc-rank-person b{overflow:hidden;text-overflow:ellipsis;max-width:72px}
 .awc-rank-person small{color:#b5c4dc;font-size:8px}
 @media(max-width:365px){.awc-ranking-peek{width:108px}.awc-rank-avatar{width:16px;height:17px;background-size:64px 128px}.awc-rank-person b{max-width:45px}}
+
+
+/* 0.4 original animated pixel portraits */
+.pixel-portrait{background-repeat:no-repeat!important;background-position:0 0!important;
+ background-size:160px 320px!important;image-rendering:pixelated!important;
+ border:1px solid #d5af6e!important;box-shadow:0 0 14px rgba(223,169,85,.18)}
+.job-sprite-icon{display:block;width:48px;height:48px;margin:0 auto 5px;
+ background-repeat:no-repeat;background-position:0 0;background-size:192px 384px;
+ image-rendering:pixelated;filter:drop-shadow(0 2px 1px #101424)}
