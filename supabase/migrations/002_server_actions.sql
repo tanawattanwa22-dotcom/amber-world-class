@@ -1,4 +1,6 @@
--- AMBER WORLD CLASS new project, created after initial schema.
+-- AMBER WORLD CLASS server-authoritative action API (new project only).
+-- Requires 001_initial.sql and 001b_world.sql.
+ALTER TABLE public.awc_action_timing ADD COLUMN IF NOT EXISTS last_hurt timestamptz NOT NULL DEFAULT 'epoch'::timestamptz;
 CREATE OR REPLACE FUNCTION public.awc_server_action(p_user uuid, p_action text, p_payload jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -9,7 +11,7 @@ DECLARE
  h public.awc_characters%ROWTYPE; t public.awc_action_timing%ROWTYPE;m public.awc_world_mobs%ROWTYPE;
  now_ts timestamptz:=clock_timestamp();delay_s double precision;dx double precision;dy double precision;n double precision;
  dst int;required_level int;is_skill boolean;attack_range int;dmg int;gain_exp int;gain_gold int;
- out_mobs jsonb;out_peers jsonb;out_hero jsonb;notice_text text:='';levelled boolean:=false;
+ out_mobs jsonb;out_peers jsonb;out_hero jsonb;out_rank jsonb;notice_text text:='';levelled boolean:=false;near_level int;hit_amount int;
 BEGIN
  IF p_user IS NULL OR p_action NOT IN ('login','state','move','attack','skill','potion','travel','chooseClass')
     OR jsonb_typeof(p_payload) IS DISTINCT FROM 'object' THEN
@@ -100,6 +102,21 @@ BEGIN
    INSERT INTO public.awc_combat_audit(character_id,mob_code,map_id,damage,exp_awarded,gold_awarded)
        VALUES(h.id,m.mob_code,h.map_id,dmg,gain_exp,gain_gold);
  END IF;
+ IF p_action='state' AND now_ts-h.updated_at>interval '15 seconds' THEN
+   UPDATE public.awc_characters SET updated_at=now_ts WHERE id=h.id;
+ END IF;
+ IF p_action IN ('state','move') AND extract(epoch FROM now_ts-t.last_hurt)>=1.2 THEN
+   SELECT level INTO near_level FROM public.awc_world_mobs WHERE map_id=h.map_id AND hp>0 AND respawn_at IS NULL
+    AND (x-h.x)^2+(y-h.y)^2<85*85 ORDER BY (x-h.x)^2+(y-h.y)^2 LIMIT 1;
+   IF near_level IS NOT NULL THEN
+     hit_amount=greatest(1,floor((near_level+7)*0.25-h.defense*0.12)::int);
+     UPDATE public.awc_characters SET hp=CASE WHEN hp<=hit_amount THEN max_hp ELSE hp-hit_amount END,
+      x=CASE WHEN hp<=hit_amount THEN 560 ELSE x END,
+      y=CASE WHEN hp<=hit_amount THEN 640 ELSE y END,updated_at=now_ts WHERE id=h.id;
+     UPDATE public.awc_action_timing SET last_hurt=now_ts WHERE user_id=p_user;
+     IF h.hp<=hit_amount THEN notice_text='พ่ายแพ้! กลับจุดเกิด';END IF;
+   END IF;
+ END IF;
  UPDATE public.awc_world_mobs SET hp=max_hp,respawn_at=NULL
    WHERE map_id=h.map_id AND respawn_at IS NOT NULL AND respawn_at<=now_ts;
  SELECT * INTO h FROM public.awc_characters WHERE id=h.id;
@@ -111,13 +128,15 @@ BEGIN
  INTO out_peers FROM
  (SELECT id,name,level,x,y,class_id FROM public.awc_characters WHERE map_id=h.map_id AND id<>h.id
      AND updated_at>now_ts-interval '90 seconds' ORDER BY updated_at DESC LIMIT 30) peers;
+ SELECT coalesce(jsonb_agg(jsonb_build_object('name',name,'level',level,'kills',mob_kills,'classId',class_id)
+   ORDER BY mob_kills DESC,level DESC),'[]'::jsonb) INTO out_rank FROM
+   (SELECT name,level,mob_kills,class_id FROM public.awc_characters ORDER BY mob_kills DESC,level DESC,id LIMIT 3) rankers;
  out_hero=jsonb_build_object('id',h.id,'name',h.name,'level',h.level,'exp',h.exp,
  'mapId',h.map_id,'x',h.x,'y',h.y,'classId',h.class_id,'statPoints',h.stat_points,'atk',h.attack,
  'def',h.defense,'hp',h.hp,'maxHp',h.max_hp,'mp',h.mp,'maxMp',h.max_mp,'gold',h.gold,
  'gems',h.gems,'potions',h.potions,'mobKills',h.mob_kills,'questKills',h.quest_kills);
  RETURN jsonb_build_object('ok',true,'type','state','character',out_hero,'mobs',out_mobs,
-  'players',out_peers,'notice',notice_text,'levelUp',levelled);
-END $function$
-
+  'players',out_peers,'leaders',out_rank,'notice',notice_text,'levelUp',levelled);
+END $function$;
 REVOKE ALL ON FUNCTION public.awc_server_action(uuid,text,jsonb) FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.awc_server_action(uuid,text,jsonb) TO service_role;
