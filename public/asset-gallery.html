@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111827">
-<title>AMBER WORLD CLASS | Asset Lab V0.4</title>
+<title>AMBER WORLD CLASS | Asset Lab V0.5</title>
 <style>
 :root{--bg:#0b1524;--box:#15263a;--edge:#9b6c3d;--gold:#f1ce89;--text:#ffeed0}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#15283a,var(--bg) 45%,#080c18);color:var(--text);font-family:system-ui,-apple-system,"Noto Sans Thai",sans-serif}
@@ -33,15 +33,15 @@ a{color:#ffe1a5}p{line-height:1.5}footer{text-align:center;padding:15px;font-siz
 </head>
 <body>
 <header>
-<h1>⚔ AMBER WORLD CLASS <span style="color:#a5e4ef">· ASSET LAB V0.4</span></h1>
+<h1>⚔ AMBER WORLD CLASS <span style="color:#a5e4ef">· ASSET LAB V0.5</span></h1>
 <div class="note">ทดลองภาพจริงจากเกม · ไม่ใช้รูปตัวอย่างมาตัดแปะ · Sprite Sheet 8 ทิศ / เอฟเฟกต์ 16 เฟรม</div>
-<a class="control" href="./index.html?v=04">← กลับเข้าเกม</a>
+<a class="control" href="./index.html?v=05">← กลับเข้าเกม</a>
 </header>
 <main>
 <section class="panel">
 <h2>🗺️ แผนที่โลก 10 แห่ง</h2>
 <div class="stamp" id="mapLabel">01 · หมู่บ้านอำพัน</div>
-<div class="frame"><img id="mapView" src="./assets/maps/map-01.png?v=04" alt="Amber Village map art"></div>
+<div class="frame"><img id="mapView" src="./assets/maps/map-01.png?v=05" alt="Amber Village map art"></div>
 <div class="controls thumbnail-grid" id="mapButtons"></div>
 <p class="note">แต่ละแมพเป็น PNG ขนาด 1152×1152 และวาดแยกฉากจริง ไม่ใช่การเปลี่ยนสีพื้นหลังอย่างเดียว</p>
 </section>
@@ -60,14 +60,18 @@ a{color:#ffe1a5}p{line-height:1.5}footer{text-align:center;padding:15px;font-siz
 </div>
 </div>
 <div class="controls" id="mobButtons"></div>
+<h2 style="margin-top:15px">👑 บอสประจำแผนที่ 10 ตัว · 8 ทิศทาง</h2>
+<div class="controls" id="bossButtons"></div>
+<div class="labRow"><div><div class="visual"><canvas id="bossCanvas" width="172" height="172" aria-label="animated unique world boss asset"></canvas></div><div class="legend" id="bossLabel">Royal Slime · 4×8</div></div>
+<div><div class="visual"><canvas id="wingCanvas" width="172" height="172" aria-label="animated class wing layer"></canvas></div><div class="legend">ปีกแยกเลเยอร์ · เคลื่อนไหวพร้อมตัวละคร</div></div></div>
 <h2 style="margin-top:15px">✨ เอฟเฟกต์สกิล 16 เฟรม</h2>
 <div class="controls" id="effectButtons"></div>
 <div class="visual" style="height:205px"><canvas id="effectCanvas" width="192" height="192" aria-label="original transparent animated skill spritesheet"></canvas></div>
 <p class="note" id="effectLabel">Sword · 16 frames at 96×96 / frame</p>
 <div class="panel" style="margin-top:10px;padding:10px">
 <b>ข้อมูล Asset Pack</b>
-<p class="note">4 ตัวละคร × 8 ทิศ × 4 เฟรม · 10 ชุดมอนสเตอร์ × 8 ทิศ × 4 เฟรม · 4 สกิล × 16 เฟรม · 10 ฉาก</p>
-<p class="note">เป็นชุดต้นแบบ V0.4 ที่ใช้บนเว็บไซต์จริง ยังไม่ใช่งานภาพเก็บรายละเอียดขั้นสุดท้ายและยังไม่ครบ 120 สกิล</p>
+<p class="note">4 ตัวละคร + ปีก 4 ชุด × 8 ทิศ × 4 เฟรม · มอนสเตอร์ 10 แบบ · บอส 10 แบบ × 8 ทิศ × 4 เฟรม · 4 สกิล × 16 เฟรม · แผนที่ 10 ฉาก</p>
+<p class="note">เป็นชุดต้นแบบ V0.5 ที่ใช้บนเว็บไซต์จริง ยังไม่ใช่งานภาพเก็บรายละเอียดขั้นสุดท้ายและยังไม่ครบ 120 สกิล</p>
 </div>
 </section>
 </main>
@@ -76,11 +80,13 @@ a{color:#ffe1a5}p{line-height:1.5}footer{text-align:center;padding:15px;font-siz
 'use strict';
 const maps=['หมู่บ้านอำพัน','ป่ามรกต','ทุ่งสายลม','นครหินผา','ทะเลทรายเพลิง','ภูเขาหิมะ','หุบเขามังกร','นครรัตติกาล','ดินแดนสวรรค์','ป้อมจอมมาร'];
 const jobs=['Sword','Archer','Mage','Fighter'],directions=['ลง','ลงซ้าย','ซ้าย','ขึ้นซ้าย','ขึ้น','ขึ้นขวา','ขวา','ลงขวา'];
-const img=(name)=>{const obj=new Image();obj.src='./assets/'+name+'.png?v=04';return obj};
+const img=(name)=>{const obj=new Image();obj.src='./assets/'+name+'.png?v=05';return obj};
 const heroes=jobs.map((_,i)=>img('sprites/hero-'+i));
 const monsters=Array.from({length:10},(_,i)=>img('sprites/mob-'+i));
+const bosses=Array.from({length:10},(_,i)=>img('sprites/boss-'+String(i).padStart(2,'0')));
+const wings=jobs.map((_,i)=>img('sprites/wing-'+i));
 const effects=jobs.map((_,i)=>img('effects/skill-'+i));
-let job=0,dir=0,mob=0,effect=0,frame=0,fxFrame=0;
+let job=0,dir=0,mob=0,boss=0,effect=0,frame=0,fxFrame=0;
 const el=(id)=>document.getElementById(id);
 function options(id,names,choose,active){const root=el(id);root.innerHTML='';
  names.forEach((name,i)=>{const b=document.createElement('button');b.type='button';b.textContent=name;b.classList.toggle('active',i===active);b.addEventListener('click',()=>choose(i));root.appendChild(b)})}
@@ -89,15 +95,17 @@ function refresh(){
  options('dirs',directions,i=>{dir=i;refresh()},dir);
  options('mobButtons',Array.from({length:10},(_,i)=>'มอน '+(i+1)),i=>{mob=i;refresh()},mob);
  options('effectButtons',jobs,i=>{effect=i;refresh()},effect);
+ options('bossButtons',maps.map((_,i)=>'บอส '+(i+1)),i=>{boss=i;refresh()},boss);
+ el('bossLabel').textContent='BOSS '+(boss+1)+' · '+maps[boss];
  el('charLabel').textContent=jobs[job]+' / '+directions[dir];
  el('mobLabel').textContent='มอนสเตอร์ #'+(mob+1);
  el('effectLabel').textContent=jobs[effect]+' · RGBA 16 เฟรม (96×96 ต่อเฟรม)';
 }
 maps.forEach((name,i)=>{
- const button=document.createElement('button');button.className='thumb';button.innerHTML='<img loading="lazy" src="./assets/maps/map-'+String(i+1).padStart(2,'0')+'.png?v=04" alt=""><b>'+(i+1)+'</b>';
+ const button=document.createElement('button');button.className='thumb';button.innerHTML='<img loading="lazy" src="./assets/maps/map-'+String(i+1).padStart(2,'0')+'.png?v=05" alt=""><b>'+(i+1)+'</b>';
  button.title=name;
  button.addEventListener('click',()=>{
-  el('mapView').src='./assets/maps/map-'+String(i+1).padStart(2,'0')+'.png?v=04';
+  el('mapView').src='./assets/maps/map-'+String(i+1).padStart(2,'0')+'.png?v=05';
   el('mapLabel').textContent=String(i+1).padStart(2,'0')+' · '+name;
   Array.from(el('mapButtons').children).forEach((b,j)=>b.classList.toggle('active',i===j));
  });
@@ -107,9 +115,14 @@ el('mapButtons').firstChild.classList.add('active');refresh();
 function render(now){
  const walk=Math.floor(now/180)%4;const skill=Math.floor(now/45)%16;
  const ch=el('charCanvas').getContext('2d');ch.clearRect(0,0,172,172);ch.imageSmoothingEnabled=false;
+ if(wings[job].complete&&wings[job].naturalWidth)ch.drawImage(wings[job],walk*48,dir*48,48,48,17,12,140,140);
  if(heroes[job].complete&&heroes[job].naturalWidth)ch.drawImage(heroes[job],walk*48,dir*48,48,48,17,12,140,140);
  const mo=el('mobCanvas').getContext('2d');mo.clearRect(0,0,172,172);mo.imageSmoothingEnabled=false;
  if(monsters[mob].complete&&monsters[mob].naturalWidth)mo.drawImage(monsters[mob],walk*48,dir*48,48,48,17,12,140,140);
+ const bw=el('bossCanvas').getContext('2d');bw.clearRect(0,0,172,172);bw.imageSmoothingEnabled=false;
+ if(bosses[boss].complete&&bosses[boss].naturalWidth)bw.drawImage(bosses[boss],walk*48,dir*48,48,48,17,12,140,140);
+ const wg=el('wingCanvas').getContext('2d');wg.clearRect(0,0,172,172);wg.imageSmoothingEnabled=false;
+ if(wings[job].complete&&wings[job].naturalWidth)wg.drawImage(wings[job],walk*48,dir*48,48,48,17,12,140,140);
  const eff=el('effectCanvas').getContext('2d');eff.clearRect(0,0,192,192);eff.imageSmoothingEnabled=false;
  if(effects[effect].complete&&effects[effect].naturalWidth)eff.drawImage(effects[effect],(skill%4)*96,Math.floor(skill/4)*96,96,96,0,0,192,192);
  requestAnimationFrame(render);
