@@ -21,7 +21,7 @@ const classDesc=['นักดาบระยะประชิด ป้อง�
 const expMax=lvl=>120+lvl*45;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
-const asset=(s)=>`./assets/${s}`;
+const asset=(s)=>`./assets/${s}?v=04`;
 const loadImage=(path)=>new Promise((resolve)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>resolve(null);im.src=path;});
 const cfg=window.AWC_CONFIG||{};
 const edgeMode=Boolean(cfg.edgeFunctionUrl);
@@ -54,7 +54,7 @@ function updateHUD(){const hp=clamp(player.hp/player.maxHp,0,1)*100;const mp=cla
  $('player-name').textContent=player.name;$('player-level').textContent=`Lv.${player.level}`;$('coins').textContent=Number(player.gold).toLocaleString();$('gems').textContent=player.gems;$('potions-count').textContent=player.potions;
  const portrait=$('portrait'),portraitClass=Math.max(0,Math.min(3,player.classId||0));
  portrait.textContent='';portrait.classList.add('pixel-portrait');
- portrait.style.backgroundImage=`url("./assets/sprites/hero-${portraitClass}.png")`;$('skill-cd').textContent=skillTimer>0?Math.ceil(skillTimer/1000):'';
+ portrait.style.backgroundImage=`url("./assets/sprites/hero-${portraitClass}.png?v=04")`;$('skill-cd').textContent=skillTimer>0?Math.ceil(skillTimer/1000):'';
  $('mode-state').textContent=online?'● ONLINE · SERVER':'● DEMO OFFLINE';$('mode-state').style.color=online?'#9fffa5':'#f1d38e';
  $('quest-title').textContent=`กำจัดมอนสเตอร์ ${Math.min(5,player.questKills)}/5`;
 }
@@ -97,7 +97,7 @@ function allocateStat(code){
  else if(code==='INT'){player.maxMp+=8;player.mp+=8;}
  saveOffline();openPanel('character');
 }
-function showClasses(){if(online){toast('เลือกอาชีพจะบันทึกที่เซิร์ฟเวอร์');}showModal('เลือกอาชีพหลัก · Level 10',`<p>เลือกหนึ่งใน 4 อาชีพ เมื่อเลือกแล้วจะเข้าสู่สายพัฒนา POW / DEX / INT ในอนาคต</p><div class="class-grid">${CLASSES.map((name,k)=>`<button class="class-choice" data-class="${k}"><span class="job-sprite-icon" style="background-image:url('./assets/sprites/hero-${k}.png')"></span><b>${name}</b><small>${classDesc[k]}</small></button>`).join('')}</div>`);
+function showClasses(){if(online){toast('เลือกอาชีพจะบันทึกที่เซิร์ฟเวอร์');}showModal('เลือกอาชีพหลัก · Level 10',`<p>เลือกหนึ่งใน 4 อาชีพ เมื่อเลือกแล้วจะเข้าสู่สายพัฒนา POW / DEX / INT ในอนาคต</p><div class="class-grid">${CLASSES.map((name,k)=>`<button class="class-choice" data-class="${k}"><span class="job-sprite-icon" style="background-image:url('./assets/sprites/hero-${k}.png?v=04')"></span><b>${name}</b><small>${classDesc[k]}</small></button>`).join('')}</div>`);
  document.querySelectorAll('[data-class]').forEach(b=>b.onclick=()=>{const kind=Number(b.dataset.class);if(online){if(edgeMode)edgeAction({type:'chooseClass',classId:kind});else socket?.send(JSON.stringify({type:'chooseClass',classId:kind}));closeModal();return;}player.classId=kind;player.atk+=8;toast('เปลี่ยนอาชีพเป็น '+CLASSES[kind]);saveOffline();closeModal();});}
 function showMaps(){showModal('แผนที่โลก · World Map',`<p>ภาพแผนที่ 10 ฉากที่วาดใหม่ แผนที่ทั้งหมดเปิดให้สำรวจได้ในโหมดเดโม</p><div class="map-grid">${MAPS.map((m,i)=>`<button class="map-option" data-map="${i}"><img src="${asset(`maps/map-${String(i+1).padStart(2,'0')}.png`)}" alt="${m[0]}"><span>${i+1}. ${m[0]}<small>Lv.${m[1]}–${m[2]} · ${m[3]}</small></span></button>`).join('')}</div>`);document.querySelectorAll('[data-map]').forEach(el=>el.onclick=()=>setMap(Number(el.dataset.map)));}
 $('open-maps').onclick=showMaps;
@@ -174,7 +174,7 @@ function topThreeHtml(){
  return leaders.slice(0,3).map((p,i)=>{
   const job=Math.max(0,Math.min(3,Number(p.classId)||0));
   const name=htmlSafe(p.name);const lv=Math.max(1,Math.min(100,Number(p.level)||1));
-  return '<div class="awc-rank-entry"><span>'+['🥇','🥈','🥉'][i]+'</span><span class="awc-rank-avatar" style="background-image:url(./assets/sprites/hero-'+job+'.png)"></span><span class="awc-rank-person"><b>'+name+'</b><small>Lv.'+lv+' · '+Number(p.kills||0)+' kills</small></span></div>';
+  return '<div class="awc-rank-entry"><span>'+['🥇','🥈','🥉'][i]+'</span><span class="awc-rank-avatar" style="background-image:url(./assets/sprites/hero-'+job+'.png?v=04)"></span><span class="awc-rank-person"><b>'+name+'</b><small>Lv.'+lv+' · '+Number(p.kills||0)+' kills</small></span></div>';
  }).join('');
 }
 function renderLeaderPeek(){
