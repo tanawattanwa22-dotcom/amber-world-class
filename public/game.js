@@ -21,13 +21,13 @@ const classDesc=['นักดาบระยะประชิด ป้อง�
 const expMax=lvl=>120+lvl*45;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
-const asset=(s)=>`./assets/${s}?v=04`;
+const asset=(s)=>`./assets/${s}?v=05`;
 const loadImage=(path)=>new Promise((resolve)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>resolve(null);im.src=path;});
 const cfg=window.AWC_CONFIG||{};
 const edgeMode=Boolean(cfg.edgeFunctionUrl);
 const onlineConfigured=Boolean(cfg.supabaseUrl&&cfg.supabasePublishableKey&&(cfg.gameServerWebSocketUrl||cfg.edgeFunctionUrl));
 let authClient=null, socket=null, online=false, currentUid=null;
-let loggedIn=false, ready=false, mapImgs=[], heroImgs=[],mobImgs=[];
+let loggedIn=false, ready=false, mapImgs=[], heroImgs=[],mobImgs=[],bossImgs=[],wingImgs=[];
 const sprites={};
 const spawnPoints=[[336,610],[760,490],[300,830],[842,760],[540,330],[936,400],[250,390],[800,900]];
 const defaultHero=()=>({id:'local',name:'Hero',level:1,exp:0,mapId:0,x:570,y:656,classId:-1,statPoints:0,STR:0,DEX:0,INT:0,POW:0,VIT:0,atk:24,def:7,hp:110,maxHp:110,mp:70,maxMp:70,gold:250,gems:10,potions:10,mobKills:0,questKills:0,cardCount:0});
@@ -146,9 +146,9 @@ function draw(){ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,screenW,screen
  if(img)ctx.drawImage(img,-camX,-camY,WORLD,WORLD);
  const entities=mobs.filter(m=>m.alive).map(m=>({...m,isPlayer:false}));entities.push({...player,isPlayer:true});for(const peer of otherPlayers)entities.push({...peer,isPlayer:true,isPeer:true});entities.sort((a,b)=>a.y-b.y);
  for(const ent of entities){let ex=Math.round(ent.x-camX),ey=Math.round(ent.y-camY);if(ex< -80||ey< -80||ex>screenW+80||ey>screenH+80)continue;
-   if(ent.isPlayer){const w=59,h=59;const im=heroImgs[Math.max(ent.classId,0)];const frame=!ent.isPeer&&moving?Math.floor(animTick/130)%4:0;drawSprite(im,ex,ey,ent.isPeer?(ent.facing||0):facing,frame,w,h);
+   if(ent.isPlayer){const w=59,h=59;const role=clamp(Number(ent.classId)||0,0,3);const im=heroImgs[role];const frame=!ent.isPeer&&moving?Math.floor(animTick/130)%4:0;const facingNow=ent.isPeer?(ent.facing||0):facing;drawSprite(wingImgs[role],ex,ey,facingNow,frame,w,h);drawSprite(im,ex,ey,facingNow,frame,w,h);
      ctx.fillStyle='#ffeab2';ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.shadowColor='#000';ctx.shadowBlur=4;ctx.fillText(ent.name,ex,ey-51);ctx.shadowBlur=0;
-   }else {let boss=ent.boss;const scale=boss?2:1;const sheet=mobImgs[ent.type];const walkFrame=Math.floor((animTick+ent.phase*100)/320)%4;drawSprite(sheet,ex,ey,0,walkFrame,52*scale,52*scale);
+   }else {let boss=ent.boss;const scale=boss?2:1;const sheet=(boss?bossImgs[player.mapId]:null)||mobImgs[ent.type];const walkFrame=Math.floor((animTick+ent.phase*100)/320)%4;drawSprite(sheet,ex,ey,boss?0:0,walkFrame,52*scale,52*scale);
        if(ent.hp<ent.maxHp||boss){const bw=boss?96:44;ctx.fillStyle='#111726';ctx.fillRect(ex-bw/2,ey-(boss?91:45),bw,6);ctx.fillStyle=boss?'#ef7b43':'#cf4954';ctx.fillRect(ex-bw/2,ey-(boss?91:45),bw*clamp(ent.hp/ent.maxHp,0,1),6);ctx.strokeStyle='#f2cb77';ctx.lineWidth=1;ctx.strokeRect(ex-bw/2,ey-(boss?91:45),bw,6);}
        if(boss){ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.fillStyle='#ffd68e';ctx.strokeStyle='#181016';ctx.lineWidth=3;ctx.strokeText('★ '+MAPS[player.mapId][3],ex,ey-97);ctx.fillText('★ '+MAPS[player.mapId][3],ex,ey-97);}
    }
@@ -174,7 +174,7 @@ function topThreeHtml(){
  return leaders.slice(0,3).map((p,i)=>{
   const job=Math.max(0,Math.min(3,Number(p.classId)||0));
   const name=htmlSafe(p.name);const lv=Math.max(1,Math.min(100,Number(p.level)||1));
-  return '<div class="awc-rank-entry"><span>'+['🥇','🥈','🥉'][i]+'</span><span class="awc-rank-avatar" style="background-image:url(./assets/sprites/hero-'+job+'.png?v=04)"></span><span class="awc-rank-person"><b>'+name+'</b><small>Lv.'+lv+' · '+Number(p.kills||0)+' kills</small></span></div>';
+  return '<div class="awc-rank-entry"><span>'+['🥇','🥈','🥉'][i]+'</span><span class="awc-rank-avatar" style="background-image:url(./assets/sprites/hero-'+job+'.png?v=05)"></span><span class="awc-rank-person"><b>'+name+'</b><small>Lv.'+lv+' · '+Number(p.kills||0)+' kills</small></span></div>';
  }).join('');
 }
 function renderLeaderPeek(){
@@ -272,8 +272,8 @@ async function init(){resize();window.addEventListener('resize',resize);const pr
  for(let i=1;i<=10;i++)promises.push(loadImage(asset(`maps/map-${String(i).padStart(2,'0')}.png`)));
  for(let i=0;i<4;i++)promises.push(loadImage(asset(`sprites/hero-${i}.png`)));
  for(let i=0;i<10;i++)promises.push(loadImage(asset(`sprites/mob-${i}.png`)));
- for(let i=0;i<4;i++)promises.push(loadImage(asset(`effects/skill-${i}.png`)));
- const images=await Promise.all(promises);mapImgs=images.slice(0,10);heroImgs=images.slice(10,14);mobImgs=images.slice(14,24);skillImgs=images.slice(24,28);ready=true;setMap(player.mapId);if(player.level===10&&player.classId<0)toast('เลเวล 10 แล้ว! ไปที่เมนูตัวละครเพื่อเลือกอาชีพ');
+ for(let i=0;i<4;i++)promises.push(loadImage(asset(`effects/skill-${i}.png`)));for(let i=0;i<10;i++)promises.push(loadImage(asset(`sprites/boss-${String(i).padStart(2,'0')}.png`)));for(let i=0;i<4;i++)promises.push(loadImage(asset(`sprites/wing-${i}.png`)));
+ const images=await Promise.all(promises);mapImgs=images.slice(0,10);heroImgs=images.slice(10,14);mobImgs=images.slice(14,24);skillImgs=images.slice(24,28);bossImgs=images.slice(28,38);wingImgs=images.slice(38,42);ready=true;setMap(player.mapId);if(player.level===10&&player.classId<0)toast('เลเวล 10 แล้ว! ไปที่เมนูตัวละครเพื่อเลือกอาชีพ');
  if(!images.every(Boolean))toast('มี Asset บางไฟล์โหลดไม่สำเร็จ');requestAnimationFrame(loop);
  if(onlineConfigured){const q=new URLSearchParams(location.search);if(q.has('code')){try{await loginOnline()}catch{}}}
 }
