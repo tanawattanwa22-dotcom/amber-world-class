@@ -30,7 +30,7 @@ let authClient=null, socket=null, online=false, currentUid=null;
 let loggedIn=false, ready=false, mapImgs=[], heroImgs=[],mobImgs=[];
 const sprites={};
 const spawnPoints=[[336,610],[760,490],[300,830],[842,760],[540,330],[936,400],[250,390],[800,900]];
-const defaultHero=()=>({id:'local',name:'Hero',level:1,exp:0,mapId:0,x:570,y:656,classId:-1,statPoints:0,atk:24,def:7,hp:110,maxHp:110,mp:70,maxMp:70,gold:250,gems:10,potions:10,mobKills:0,questKills:0,cardCount:0});
+const defaultHero=()=>({id:'local',name:'Hero',level:1,exp:0,mapId:0,x:570,y:656,classId:-1,statPoints:0,STR:0,DEX:0,INT:0,POW:0,VIT:0,atk:24,def:7,hp:110,maxHp:110,mp:70,maxMp:70,gold:250,gems:10,potions:10,mobKills:0,questKills:0,cardCount:0});
 let player=defaultHero();
 try{const v=JSON.parse(localStorage.getItem('awc-demo-hero-v1')||'null');if(v&&typeof v.level==='number')player={...player,...v,id:'local'};}catch{}
 let mobs=[], otherPlayers=[], effects=[],input={jx:0,jy:0,keys:new Set(),target:null},auto=false,modal=null,modalCb=null,collapsed=false;
@@ -79,6 +79,18 @@ function attack(skill=false){if(online){if(edgeMode){if(skill&&skillTimer>0||!sk
 function potion(){if(online){if(edgeMode)edgeAction({type:'potion'});else socket?.send(JSON.stringify({type:'potion'}));return;}if(player.potions<=0){toast('ยาหมดแล้ว');return;}if(player.hp>=player.maxHp){toast('HP เต็มแล้ว');return;}player.potions--;player.hp=Math.min(player.maxHp,player.hp+80+player.level*6);toast('ใช้ยาฟื้นฟู HP');saveOffline();}
 $('do-attack').onclick=()=>attack(false);$('do-skill').onclick=()=>attack(true);$('use-potion').onclick=potion;
 $('toggle-auto').onclick=()=>{auto=!auto;$('toggle-auto').classList.toggle('active',auto);$('toggle-auto').textContent=auto?'⚔ AUTO : ON':'⚔ AUTO : OFF';toast(auto?'เริ่มโจมตีอัตโนมัติ':'หยุด AUTO');};
+function allocateStat(code){
+ if(!['STR','DEX','INT','POW','VIT'].includes(code)||player.statPoints<=0)return;
+ if(online){edgeAction({type:'allocateStat',stat:code});return;}
+ player.statPoints--;
+ player[code]=(player[code]||0)+1;
+ if(code==='STR')player.atk+=2;
+ else if(code==='DEX')player.atk+=1;
+ else if(code==='POW')player.atk+=3;
+ else if(code==='VIT'){player.def+=2;player.maxHp+=12;player.hp+=12;}
+ else if(code==='INT'){player.maxMp+=8;player.mp+=8;}
+ saveOffline();openPanel('character');
+}
 function showClasses(){if(online){toast('เลือกอาชีพจะบันทึกที่เซิร์ฟเวอร์');}showModal('เลือกอาชีพหลัก · Level 10',`<p>เลือกหนึ่งใน 4 อาชีพ เมื่อเลือกแล้วจะเข้าสู่สายพัฒนา POW / DEX / INT ในอนาคต</p><div class="class-grid">${CLASSES.map((name,k)=>`<button class="class-choice" data-class="${k}"><span style="font-size:31px">${['⚔️','🏹','🔮','🥊'][k]}</span><b>${name}</b><small>${classDesc[k]}</small></button>`).join('')}</div>`);
  document.querySelectorAll('[data-class]').forEach(b=>b.onclick=()=>{const kind=Number(b.dataset.class);if(online){if(edgeMode)edgeAction({type:'chooseClass',classId:kind});else socket?.send(JSON.stringify({type:'chooseClass',classId:kind}));closeModal();return;}player.classId=kind;player.atk+=8;toast('เปลี่ยนอาชีพเป็น '+CLASSES[kind]);saveOffline();closeModal();});}
 function showMaps(){showModal('แผนที่โลก · World Map',`<p>ภาพแผนที่ 10 ฉากที่วาดใหม่ แผนที่ทั้งหมดเปิดให้สำรวจได้ในโหมดเดโม</p><div class="map-grid">${MAPS.map((m,i)=>`<button class="map-option" data-map="${i}"><img src="${asset(`maps/map-${String(i+1).padStart(2,'0')}.png`)}" alt="${m[0]}"><span>${i+1}. ${m[0]}<small>Lv.${m[1]}–${m[2]} · ${m[3]}</small></span></button>`).join('')}</div>`);document.querySelectorAll('[data-map]').forEach(el=>el.onclick=()=>setMap(Number(el.dataset.map)));}
@@ -86,7 +98,7 @@ $('open-maps').onclick=showMaps;
 $('open-menu').onclick=()=>openPanel('menu');
 $('quest-collapse').onclick=()=>{collapsed=!collapsed;$('quest-content').style.display=collapsed?'none':'block';$('quest-collapse').textContent=collapsed?'+':'−';};
 function openPanel(id){if(id==='maps')return showMaps();const s=(v)=>`<div class="stat-line"><b>${v[0]}</b><span>${v[1]}</span></div>`;switch(id){
- case 'character': showModal('ตัวละครและค่าสเตตัส',`<h3>🧑 ${player.name} · Lv.${player.level} ${CLASSES[player.classId]||'Novice'}</h3>${[['HP',`${player.hp}/${player.maxHp}`],['MP',`${player.mp}/${player.maxMp}`],['ATK',player.atk],['DEF',player.def],['แต้มสถานะ',player.statPoints],['มอนสเตอร์ที่กำจัด',player.mobKills]].map(s).join('')}<p>เลเวล 10 สามารถเลือกอาชีพได้ เมื่อถึงเลเวล 100 จะเป็นเลเวลสูงสุด</p>${player.level>=10&&player.classId<0?'<button class="primary" id="choose-job">เลือกอาชีพ</button>':''}<hr><p>เฉพาะเดโมออฟไลน์: ใช้ปุ่มด้านล่างทดสอบระบบเลเวล 10</p><button class="secondary" id="demo-lv10" ${online?'disabled':''}>ทดสอบ Level 10</button>`);$('choose-job')?.addEventListener('click',showClasses);$('demo-lv10').onclick=()=>{if(online)return;player.level=10;player.exp=0;player.maxHp=380;player.maxMp=160;player.hp=380;player.mp=160;player.statPoints+=45;player.atk+=25;saveOffline();showClasses();};break;
+ case 'character': showModal('ตัวละครและค่าสเตตัส',`<h3>🧑 ${player.name} · Lv.${player.level} ${CLASSES[player.classId]||'Novice'}</h3>${[['HP',`${player.hp}/${player.maxHp}`],['MP',`${player.mp}/${player.maxMp}`],['ATK',player.atk],['DEF',player.def],['แต้มสถานะ',player.statPoints],['มอนสเตอร์ที่กำจัด',player.mobKills]].map(s).join('')}<h3>เพิ่มค่าสเตตัส (มี ${player.statPoints} แต้ม)</h3>${['STR','DEX','INT','POW','VIT'].map(code=>`<div class="stat-line"><b>${code} · ${Number(player[code]||0)}</b><button class="secondary" data-stat="${code}" ${player.statPoints<=0?'disabled':''}>+ 1</button></div>`).join('')}<p>เลเวล 10 สามารถเลือกอาชีพได้ เมื่อถึงเลเวล 100 จะเป็นเลเวลสูงสุด</p>${player.level>=10&&player.classId<0?'<button class="primary" id="choose-job">เลือกอาชีพ</button>':''}<hr><p>เฉพาะเดโมออฟไลน์: ใช้ปุ่มด้านล่างทดสอบระบบเลเวล 10</p><button class="secondary" id="demo-lv10" ${online?'disabled':''}>ทดสอบ Level 10</button>`);document.querySelectorAll('[data-stat]').forEach(b=>b.onclick=()=>allocateStat(b.dataset.stat));$('choose-job')?.addEventListener('click',showClasses);$('demo-lv10').onclick=()=>{if(online)return;player.level=10;player.exp=0;player.maxHp=380;player.maxMp=160;player.hp=380;player.mp=160;player.statPoints+=45;player.atk+=25;saveOffline();showClasses();};break;
  case 'skills':showModal('ทักษะ · Skills',`<h3>✨ ${CLASSES[player.classId]||'Novice'}</h3><div class="item-card"><div><b>โจมตีปกติ</b><br><small>ดาเมจคำนวณจาก ATK / เลเวล</small></div><span>⚔️</span></div><div class="item-card"><div><b>Arc Burst</b><br><small>สร้างดาเมจ 235% · ใช้ MP 15 · CD 3.5 วินาที</small></div><span>✦</span></div><p>โครงสร้างสกิล 120 ท่าจะเพิ่มเป็น Sprite Sheet แบบเฟรมจริงใน Phase 4</p>`);break;
  case 'inventory':showModal('กระเป๋า · Inventory',`<div class="item-card"><div><b>🧪 ยาฟื้นฟู HP</b><br><small>ใช้ฟื้นฟู HP ระหว่างต่อสู้</small></div><b>x ${player.potions}</b></div><div class="item-card"><div><b>🪙 Gold</b><br><small>ได้จากการกำจัดมอนสเตอร์</small></div><b>${player.gold}</b></div><div class="item-card"><div><b>💎 Gems</b><br><small>สกุลเงินทดสอบ</small></div><b>${player.gems}</b></div><p>ช่องอุปกรณ์ การ์ด หินตีบวก และของบอสจะเพิ่มในเฟสถัดไป</p>`);break;
  case 'party':showModal('ปาร์ตี้ · Party',`<h3>🛡️ ระบบปาร์ตี้</h3><p>พัฒนาต่อใน Phase 5: เชิญเพื่อน สถานะออนไลน์ และแชร์ EXP โดยเซิร์ฟเวอร์</p><p>โหมดเดโมเป็นการเล่นคนเดียว จึงยังไม่สามารถสร้างปาร์ตี้ออนไลน์ได้</p>`);break;
@@ -168,7 +180,7 @@ function applyEdgeState(packet){
   $('zone-lv').textContent='Lv.'+MAPS[player.mapId]?.[1]+'–'+MAPS[player.mapId]?.[2];
   closeModal();
  }
- if(packet.notice)text(packet.notice);
+ if(packet.notice){text(packet.notice);if(packet.notice.startsWith('เพิ่มค่าสเตตัส')&&modal==='ตัวละครและค่าสเตตัส')openPanel('character');}
  if(packet.levelUp){toast('LEVEL UP! LV.'+player.level);if(player.level>=10&&player.classId<0)showClasses();}
  updateHUD();
 }
