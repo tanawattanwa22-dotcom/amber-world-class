@@ -1,5 +1,10 @@
--- AMBER WORLD CLASS server-authoritative action API (new project only).
--- Requires 001_initial.sql and 001b_world.sql.
+-- AMBER WORLD CLASS: migrate only the separate NEW project.
+-- Apply 001_initial.sql, 001b_world.sql then this file.
+ALTER TABLE public.awc_characters ADD COLUMN IF NOT EXISTS stat_str integer NOT NULL DEFAULT 0 CHECK(stat_str BETWEEN 0 AND 1000);
+ALTER TABLE public.awc_characters ADD COLUMN IF NOT EXISTS stat_dex integer NOT NULL DEFAULT 0 CHECK(stat_dex BETWEEN 0 AND 1000);
+ALTER TABLE public.awc_characters ADD COLUMN IF NOT EXISTS stat_int integer NOT NULL DEFAULT 0 CHECK(stat_int BETWEEN 0 AND 1000);
+ALTER TABLE public.awc_characters ADD COLUMN IF NOT EXISTS stat_pow integer NOT NULL DEFAULT 0 CHECK(stat_pow BETWEEN 0 AND 1000);
+ALTER TABLE public.awc_characters ADD COLUMN IF NOT EXISTS stat_vit integer NOT NULL DEFAULT 0 CHECK(stat_vit BETWEEN 0 AND 1000);
 ALTER TABLE public.awc_action_timing ADD COLUMN IF NOT EXISTS last_hurt timestamptz NOT NULL DEFAULT 'epoch'::timestamptz;
 CREATE OR REPLACE FUNCTION public.awc_server_action(p_user uuid, p_action text, p_payload jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
@@ -13,7 +18,7 @@ DECLARE
  dst int;required_level int;is_skill boolean;attack_range int;dmg int;gain_exp int;gain_gold int;
  out_mobs jsonb;out_peers jsonb;out_hero jsonb;out_rank jsonb;notice_text text:='';levelled boolean:=false;near_level int;hit_amount int;
 BEGIN
- IF p_user IS NULL OR p_action NOT IN ('login','state','move','attack','skill','potion','travel','chooseClass')
+ IF p_user IS NULL OR p_action NOT IN ('login','state','move','attack','skill','potion','travel','chooseClass','allocateStat')
     OR jsonb_typeof(p_payload) IS DISTINCT FROM 'object' THEN
    RETURN jsonb_build_object('ok',false,'error','Invalid request');
  END IF;
@@ -52,6 +57,25 @@ BEGIN
      RETURN jsonb_build_object('ok',false,'error','Class change not allowed');END IF;
    UPDATE public.awc_characters SET class_id=dst,attack=attack+8,updated_at=now_ts WHERE id=h.id;
    notice_text='เปลี่ยนอาชีพสำเร็จ';
+ ELSIF p_action='allocateStat' THEN
+   IF h.stat_points<=0 OR coalesce(p_payload->>'stat','') NOT IN ('STR','DEX','INT','POW','VIT') THEN
+     RETURN jsonb_build_object('ok',false,'error','No stat points or invalid stat');
+   END IF;
+   UPDATE public.awc_characters SET
+     stat_points=stat_points-1,
+     stat_str=stat_str+(CASE WHEN p_payload->>'stat'='STR' THEN 1 ELSE 0 END),
+     stat_dex=stat_dex+(CASE WHEN p_payload->>'stat'='DEX' THEN 1 ELSE 0 END),
+     stat_int=stat_int+(CASE WHEN p_payload->>'stat'='INT' THEN 1 ELSE 0 END),
+     stat_pow=stat_pow+(CASE WHEN p_payload->>'stat'='POW' THEN 1 ELSE 0 END),
+     stat_vit=stat_vit+(CASE WHEN p_payload->>'stat'='VIT' THEN 1 ELSE 0 END),
+     attack=attack+(CASE p_payload->>'stat' WHEN 'STR' THEN 2 WHEN 'DEX' THEN 1 WHEN 'POW' THEN 3 ELSE 0 END),
+     defense=defense+(CASE WHEN p_payload->>'stat'='VIT' THEN 2 ELSE 0 END),
+     max_hp=max_hp+(CASE WHEN p_payload->>'stat'='VIT' THEN 12 ELSE 0 END),
+     hp=hp+(CASE WHEN p_payload->>'stat'='VIT' THEN 12 ELSE 0 END),
+     max_mp=max_mp+(CASE WHEN p_payload->>'stat'='INT' THEN 8 ELSE 0 END),
+     mp=mp+(CASE WHEN p_payload->>'stat'='INT' THEN 8 ELSE 0 END),
+     updated_at=now_ts WHERE id=h.id;
+   notice_text='เพิ่มค่าสเตตัส '||(p_payload->>'stat');
  ELSIF p_action='potion' THEN
    IF extract(epoch FROM now_ts-t.last_potion)<0.85 OR h.potions<=0 OR h.hp>=h.max_hp THEN
      RETURN jsonb_build_object('ok',false,'error','Potion unavailable');END IF;
@@ -132,7 +156,7 @@ BEGIN
    ORDER BY mob_kills DESC,level DESC),'[]'::jsonb) INTO out_rank FROM
    (SELECT name,level,mob_kills,class_id FROM public.awc_characters ORDER BY mob_kills DESC,level DESC,id LIMIT 3) rankers;
  out_hero=jsonb_build_object('id',h.id,'name',h.name,'level',h.level,'exp',h.exp,
- 'mapId',h.map_id,'x',h.x,'y',h.y,'classId',h.class_id,'statPoints',h.stat_points,'atk',h.attack,
+ 'mapId',h.map_id,'x',h.x,'y',h.y,'classId',h.class_id,'statPoints',h.stat_points,'STR',h.stat_str,'DEX',h.stat_dex,'INT',h.stat_int,'POW',h.stat_pow,'VIT',h.stat_vit,'atk',h.attack,
  'def',h.defense,'hp',h.hp,'maxHp',h.max_hp,'mp',h.mp,'maxMp',h.max_mp,'gold',h.gold,
  'gems',h.gems,'potions',h.potions,'mobKills',h.mob_kills,'questKills',h.quest_kills);
  RETURN jsonb_build_object('ok',true,'type','state','character',out_hero,'mobs',out_mobs,
