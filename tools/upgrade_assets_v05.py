@@ -1,7 +1,13 @@
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
 from pathlib import Path
-import math,random,json
-R=Path(__file__).resolve().parents[1]/'assets'
+import math,random,json,subprocess,sys
+# Rebuild deterministic V0.4 baseline before layering the V0.5 artwork.
+# This prevents repeated executions from double-overpainting the maps.
+repo=Path(__file__).resolve().parents[1]
+source=repo/'tools'/'generate_assets_v04.py'
+if not source.exists(): raise FileNotFoundError('Required V0.4 source missing: '+str(source))
+subprocess.run([sys.executable,str(source)],check=True,cwd=repo)
+R=repo/'public'/'assets'
 M=R/'maps';S=R/'sprites';F=R/'effects';U=R/'ui'
 for p in [M,S,F,U]:p.mkdir(exist_ok=True,parents=True)
 PALETTES=[('#e9ad61','#975c49','#629f63','#57bada'),('#9bdca9','#487b59','#80d9b9','#5be6bc'),('#eacc94','#da9149','#bfbc6b','#92d4f5'),('#aac5ed','#7f91c5','#87a69c','#b0dcff'),('#ffd19c','#ba7055','#d7aa6c','#fed17d'),('#d0f2ff','#6e9fcb','#e9f5ff','#84dbff'),('#ffad6b','#b94142','#8c4953','#ff6d44'),('#cbb1e9','#62477c','#a491c2','#b56bee'),('#fff3d5','#a5b9d0','#b1f1e3','#ffd87a'),('#f6a28c','#832b37','#6b475d','#fd764e')]
