@@ -21,7 +21,7 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
+      - name: Validate browser JavaScript\n        run: |\n          node --check public/game.js\n          node --check public/config.js\n          test -s public/index.html\n          test -f public/assets/maps/map-10.png\n          test -f public/assets/sprites/hero-3.png\n      - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: public
