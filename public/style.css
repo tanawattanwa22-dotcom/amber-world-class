@@ -32,3 +32,17 @@
 .job-sprite-icon{display:block;width:48px;height:48px;margin:0 auto 5px;
  background-repeat:no-repeat;background-position:0 0;background-size:192px 384px;
  image-rendering:pixelated;filter:drop-shadow(0 2px 1px #101424)}
+
+
+/* AMBER WORLD CLASS V0.5 visual-only polish. No gameplay, hitbox, network or layout coordinate edits. */
+.brand{background:linear-gradient(180deg,#fff9d4 0%,#ffdf94 38%,#c27f36 70%,#fff2b8 100%);background-clip:text;-webkit-background-clip:text;color:transparent;-webkit-text-stroke:.22px #774529;filter:drop-shadow(0 2px 2px #130e15)}
+.panel,.modal{border-color:#d6a85a;box-shadow:0 3px 14px #090b1d9e,inset 0 0 0 1px #fff0b839,inset 0 0 13px #ddab5430}
+.panel .section-head,.modal-head h2{color:#ffdb94;text-shadow:0 1px #412b21,0 0 7px #d9b9694a}
+.nav{background:linear-gradient(180deg,#14263be6,#081526f4);box-shadow:0 -2px 12px #040810b3}
+.nav button{transition:background .12s ease,filter .12s ease;text-shadow:0 1px 4px #000}
+.nav button:active{filter:brightness(1.25)}
+.orb{box-shadow:inset 0 0 15px #ffffff1d,0 0 0 2px #65442d,0 4px 15px #080c1dcc}
+.orb.attack{box-shadow:inset 0 0 17px #ffbd8640,0 0 0 2px #a97232,0 0 12px #ff9b3936}
+.auto-button.active{background:linear-gradient(160deg,#bd4935,#75212a 70%);border-color:#ffca89;box-shadow:inset 0 0 8px #ffd4ae44,0 0 8px #dd3a373b}
+#app::after{content:"";pointer-events:none;position:absolute;inset:0;z-index:29;border:2px solid #c18b4533;box-shadow:inset 0 0 24px #1e130c2c}
+@media(min-width:650px){.brand strong{font-size:19px}.nav button:hover{background:#56432e7a}}
