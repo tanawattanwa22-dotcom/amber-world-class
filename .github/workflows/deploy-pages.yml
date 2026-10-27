@@ -1,10 +1,6 @@
 name: Deploy AMBER WORLD CLASS Demo
+# Legacy deployment retained for manual fallback; auto publish handled by pages.yml.
 on:
-  push:
-    branches: [main]
-    paths:
-      - "public/**"
-      - ".github/workflows/deploy-pages.yml"
   workflow_dispatch:
 permissions:
   contents: read
