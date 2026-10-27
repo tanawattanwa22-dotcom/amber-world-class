@@ -27,9 +27,9 @@ Deno.serve(async(req:Request)=>{
   const payload=await req.json();
   if(!payload||typeof payload!=='object'||Array.isArray(payload))return json({ok:false,error:'Invalid request'},400,origin);
   const action=payload.type;
-  if(typeof action!=='string'||!['login','state','move','attack','skill','travel','potion','chooseClass'].includes(action))return json({ok:false,error:'Unsupported action'},400,origin);
+  if(typeof action!=='string'||!['login','state','move','attack','skill','travel','potion','chooseClass','allocateStat'].includes(action))return json({ok:false,error:'Unsupported action'},400,origin);
   const params:Record<string,unknown>={};
-  for(const key of ['dx','dy','targetId','classId','mapId']){
+  for(const key of ['dx','dy','targetId','classId','mapId','stat']){
     if(Object.prototype.hasOwnProperty.call(payload,key))params[key]=payload[key];
   }
   const {data,error}=await admin.rpc('awc_server_action',{p_user:user.id,p_action:action,p_payload:params});
