@@ -1,4 +1,4 @@
-/* AMBER WORLD CLASS v0.1 — original playable client. Offline mode is a sandbox.
+/* AMBER WORLD CLASS v0.4 — original playable client. Offline mode is a sandbox.
    In online mode all authoritative stats, movements, kills, rewards and damage come from server.
    No pre-existing 55 AMBERLANDS resources or database IDs are used. */
 const $ = id => document.getElementById(id);
@@ -33,7 +33,7 @@ const spawnPoints=[[336,610],[760,490],[300,830],[842,760],[540,330],[936,400],[
 const defaultHero=()=>({id:'local',name:'Hero',level:1,exp:0,mapId:0,x:570,y:656,classId:-1,statPoints:0,STR:0,DEX:0,INT:0,POW:0,VIT:0,atk:24,def:7,hp:110,maxHp:110,mp:70,maxMp:70,gold:250,gems:10,potions:10,mobKills:0,questKills:0,cardCount:0});
 let player=defaultHero();
 try{const v=JSON.parse(localStorage.getItem('awc-demo-hero-v1')||'null');if(v&&typeof v.level==='number')player={...player,...v,id:'local'};}catch{}
-let mobs=[], otherPlayers=[], effects=[],input={jx:0,jy:0,keys:new Set(),target:null},auto=false,modal=null,modalCb=null,collapsed=false;
+let mobs=[], otherPlayers=[], effects=[],combatAnimations=[],skillImgs=[],input={jx:0,jy:0,keys:new Set(),target:null},auto=false,modal=null,modalCb=null,collapsed=false;
 let frameTime=0,last=0,animTick=0,shake=0,regenTimer=0, attackTimer=0,skillTimer=0,netInputTimer=0;
 const canvas=$('world'),ctx=canvas.getContext('2d',{alpha:false});
 let screenW=400,screenH=700,dpr=1;
@@ -52,20 +52,26 @@ function updateHUD(){const hp=clamp(player.hp/player.maxHp,0,1)*100;const mp=cla
  $('mp-bar').style.width=mp+'%';$('mp-text').textContent=`${Math.ceil(player.mp)} / ${player.maxMp}`;
  $('exp-bar').style.width=xp+'%';$('exp-text').textContent=`${player.exp} / ${expMax(player.level)} EXP`;
  $('player-name').textContent=player.name;$('player-level').textContent=`Lv.${player.level}`;$('coins').textContent=Number(player.gold).toLocaleString();$('gems').textContent=player.gems;$('potions-count').textContent=player.potions;
- $('portrait').textContent=['⚔️','🏹','🔮','🥊'][Math.max(0,player.classId)];$('skill-cd').textContent=skillTimer>0?Math.ceil(skillTimer/1000):'';
+ const portrait=$('portrait'),portraitClass=Math.max(0,Math.min(3,player.classId||0));
+ portrait.textContent='';portrait.classList.add('pixel-portrait');
+ portrait.style.backgroundImage=`url("./assets/sprites/hero-${portraitClass}.png")`;$('skill-cd').textContent=skillTimer>0?Math.ceil(skillTimer/1000):'';
  $('mode-state').textContent=online?'● ONLINE · SERVER':'● DEMO OFFLINE';$('mode-state').style.color=online?'#9fffa5':'#f1d38e';
  $('quest-title').textContent=`กำจัดมอนสเตอร์ ${Math.min(5,player.questKills)}/5`;
 }
 function targetMonster(){return mobs.filter(m=>m.alive&&m.hp>0).sort((a,b)=>distance(a,player)-distance(b,player))[0]||null;}
 function nearestInRange(range){return mobs.filter(m=>m.alive&&m.hp>0&&distance(m,player)<range).sort((a,b)=>distance(a,player)-distance(b,player))[0]||null;}
 function fx(x,y,label,color='#fff2bd'){effects.push({x,y,label,color,t:1000});}
+function spawnSkillSprite(x,y,job,small=false){
+ combatAnimations.push({x,y,job:Math.max(0,Math.min(3,Number(job)||0)),started:animTick,small});
+ if(combatAnimations.length>25)combatAnimations.shift();
+}
 function offlineHit(skill=false){const range=skill?190:player.classId===1||player.classId===2?155:100;const enemy=nearestInRange(range);
  if(!enemy){text('ไม่มีมอนสเตอร์ในระยะโจมตี');return;}
  const cost=skill?15:0;if(player.mp<cost){toast('MP ไม่เพียงพอ');return;}
  if(skill)player.mp-=cost;
  const atk=player.atk+(player.level*2)+(player.classId<0?0:player.classId*4);
  const damage=Math.max(1,Math.floor(atk*(skill?2.35:1)*(0.86+Math.random()*.28)-enemy.level*.48));
- enemy.hp=Math.max(0,enemy.hp-damage);fx(enemy.x,enemy.y-35,damage.toLocaleString(),skill?'#cf9cff':'#ffe9a0');shake=skill?4:1.6;
+ enemy.hp=Math.max(0,enemy.hp-damage);fx(enemy.x,enemy.y-35,damage.toLocaleString(),skill?'#cf9cff':'#ffe9a0');spawnSkillSprite(enemy.x,enemy.y,player.classId, !skill);shake=skill?4:1.6;
  if(enemy.hp===0){enemy.alive=false;enemy.respawn=enemy.boss?26000:9000;const exp=enemy.boss?550+enemy.level*9:55+enemy.level*8;const gold=enemy.boss?600:16+enemy.level*3;player.exp+=exp;player.gold+=gold;player.mobKills++;player.questKills++;
    text(`กำจัด ${enemy.boss?MAPS[player.mapId][3]:MOBNAMES[enemy.type]} • +${exp} EXP • +${gold} Gold`);
    if(player.questKills===5){player.exp+=250;player.gold+=100;toast('ภารกิจสำเร็จ! EXP +250 · Gold +100');}
@@ -91,7 +97,7 @@ function allocateStat(code){
  else if(code==='INT'){player.maxMp+=8;player.mp+=8;}
  saveOffline();openPanel('character');
 }
-function showClasses(){if(online){toast('เลือกอาชีพจะบันทึกที่เซิร์ฟเวอร์');}showModal('เลือกอาชีพหลัก · Level 10',`<p>เลือกหนึ่งใน 4 อาชีพ เมื่อเลือกแล้วจะเข้าสู่สายพัฒนา POW / DEX / INT ในอนาคต</p><div class="class-grid">${CLASSES.map((name,k)=>`<button class="class-choice" data-class="${k}"><span style="font-size:31px">${['⚔️','🏹','🔮','🥊'][k]}</span><b>${name}</b><small>${classDesc[k]}</small></button>`).join('')}</div>`);
+function showClasses(){if(online){toast('เลือกอาชีพจะบันทึกที่เซิร์ฟเวอร์');}showModal('เลือกอาชีพหลัก · Level 10',`<p>เลือกหนึ่งใน 4 อาชีพ เมื่อเลือกแล้วจะเข้าสู่สายพัฒนา POW / DEX / INT ในอนาคต</p><div class="class-grid">${CLASSES.map((name,k)=>`<button class="class-choice" data-class="${k}"><span class="job-sprite-icon" style="background-image:url('./assets/sprites/hero-${k}.png')"></span><b>${name}</b><small>${classDesc[k]}</small></button>`).join('')}</div>`);
  document.querySelectorAll('[data-class]').forEach(b=>b.onclick=()=>{const kind=Number(b.dataset.class);if(online){if(edgeMode)edgeAction({type:'chooseClass',classId:kind});else socket?.send(JSON.stringify({type:'chooseClass',classId:kind}));closeModal();return;}player.classId=kind;player.atk+=8;toast('เปลี่ยนอาชีพเป็น '+CLASSES[kind]);saveOffline();closeModal();});}
 function showMaps(){showModal('แผนที่โลก · World Map',`<p>ภาพแผนที่ 10 ฉากที่วาดใหม่ แผนที่ทั้งหมดเปิดให้สำรวจได้ในโหมดเดโม</p><div class="map-grid">${MAPS.map((m,i)=>`<button class="map-option" data-map="${i}"><img src="${asset(`maps/map-${String(i+1).padStart(2,'0')}.png`)}" alt="${m[0]}"><span>${i+1}. ${m[0]}<small>Lv.${m[1]}–${m[2]} · ${m[3]}</small></span></button>`).join('')}</div>`);document.querySelectorAll('[data-map]').forEach(el=>el.onclick=()=>setMap(Number(el.dataset.map)));}
 $('open-maps').onclick=showMaps;
@@ -103,7 +109,7 @@ function openPanel(id){if(id==='maps')return showMaps();const s=(v)=>`<div class
  case 'inventory':showModal('กระเป๋า · Inventory',`<div class="item-card"><div><b>🧪 ยาฟื้นฟู HP</b><br><small>ใช้ฟื้นฟู HP ระหว่างต่อสู้</small></div><b>x ${player.potions}</b></div><div class="item-card"><div><b>🪙 Gold</b><br><small>ได้จากการกำจัดมอนสเตอร์</small></div><b>${player.gold}</b></div><div class="item-card"><div><b>💎 Gems</b><br><small>สกุลเงินทดสอบ</small></div><b>${player.gems}</b></div><p>ช่องอุปกรณ์ การ์ด หินตีบวก และของบอสจะเพิ่มในเฟสถัดไป</p>`);break;
  case 'party':showModal('ปาร์ตี้ · Party',`<h3>🛡️ ระบบปาร์ตี้</h3><p>พัฒนาต่อใน Phase 5: เชิญเพื่อน สถานะออนไลน์ และแชร์ EXP โดยเซิร์ฟเวอร์</p><p>โหมดเดโมเป็นการเล่นคนเดียว จึงยังไม่สามารถสร้างปาร์ตี้ออนไลน์ได้</p>`);break;
  case 'ranking':showModal('อันดับผู้เล่น · Ranking',`<h3>🏆 AMBER WORLD TOP 3</h3><p>อันดับตามจำนวนมอนสเตอร์ที่กำจัด บันทึกจากเซิร์ฟเวอร์เท่านั้น</p>${topThreeHtml()}`);break;
- case 'menu':showModal('เมนู · System',`<div class="item-card"><div><b>🗺️ เลือกแผนที่</b><small> · 10 ฉาก</small></div><button class="secondary" id="btn-map">เปิด</button></div><div class="item-card"><div><b>🎮 โหมดเล่น</b><br><small id="mode-detail">${online?'ออนไลน์ เซิร์ฟเวอร์ควบคุม':'ออฟไลน์ ข้อมูลอยู่ในเครื่อง (แก้ไขได้)'}</small></div></div><div class="item-card"><div><b>🔐 Google Login</b><br><small>${onlineConfigured?'พร้อมตั้งค่าเชื่อมต่อ':'ต้องตั้งค่า Supabase + Game Server ใหม่ก่อน'}</small></div><button class="primary" id="btn-login" ${onlineConfigured?'':'disabled'}>${online?'ออนไลน์':'เข้าสู่ระบบ'}</button></div><div class="item-card"><div style="width:100%"><b>✉️ เข้าสู่ระบบด้วยอีเมล</b><input id="awc-email" class="awc-auth-input" placeholder="อีเมล" autocomplete="email" type="email"><input id="awc-password" class="awc-auth-input" placeholder="รหัสผ่าน 8 ตัวขึ้นไป" autocomplete="current-password" type="password"><div style="display:flex;gap:8px;margin-top:8px"><button class="primary" id="btn-email-login">เข้าสู่ระบบ</button><button class="secondary" id="btn-email-register">สมัครบัญชี</button><button class="secondary" id="btn-logout">ออกระบบ</button></div></div></div><div class="item-card"><div><b>📦 Version</b><br><small>Amber World Class V0.1 · Original Assets</small></div></div><p>GitHub และ Supabase ของ 55 AMBERLANDS เดิมไม่ได้ถูกเชื่อมกับโปรเจกต์นี้</p>`);$('btn-map').onclick=showMaps;$('btn-login').onclick=loginOnline;$('btn-email-login').onclick=()=>passwordAuth(false);$('btn-email-register').onclick=()=>passwordAuth(true);$('btn-logout').onclick=logoutOnline;break;
+ case 'menu':showModal('เมนู · System',`<div class="item-card"><div><b>🗺️ เลือกแผนที่</b><small> · 10 ฉาก</small></div><button class="secondary" id="btn-map">เปิด</button></div><div class="item-card"><div><b>🎮 โหมดเล่น</b><br><small id="mode-detail">${online?'ออนไลน์ เซิร์ฟเวอร์ควบคุม':'ออฟไลน์ ข้อมูลอยู่ในเครื่อง (แก้ไขได้)'}</small></div></div><div class="item-card"><div><b>🔐 Google Login</b><br><small>${onlineConfigured?'พร้อมตั้งค่าเชื่อมต่อ':'ต้องตั้งค่า Supabase + Game Server ใหม่ก่อน'}</small></div><button class="primary" id="btn-login" ${onlineConfigured?'':'disabled'}>${online?'ออนไลน์':'เข้าสู่ระบบ'}</button></div><div class="item-card"><div style="width:100%"><b>✉️ เข้าสู่ระบบด้วยอีเมล</b><input id="awc-email" class="awc-auth-input" placeholder="อีเมล" autocomplete="email" type="email"><input id="awc-password" class="awc-auth-input" placeholder="รหัสผ่าน 8 ตัวขึ้นไป" autocomplete="current-password" type="password"><div style="display:flex;gap:8px;margin-top:8px"><button class="primary" id="btn-email-login">เข้าสู่ระบบ</button><button class="secondary" id="btn-email-register">สมัครบัญชี</button><button class="secondary" id="btn-logout">ออกระบบ</button></div></div></div><div class="item-card"><div><b>📦 Version</b><br><small>Amber World Class V0.4 · Original Pixel Art Asset Pack</small></div></div><p>GitHub และ Supabase ของ 55 AMBERLANDS เดิมไม่ได้ถูกเชื่อมกับโปรเจกต์นี้</p>`);$('btn-map').onclick=showMaps;$('btn-login').onclick=loginOnline;$('btn-email-login').onclick=()=>passwordAuth(false);$('btn-email-register').onclick=()=>passwordAuth(true);$('btn-logout').onclick=logoutOnline;break;
  }}
 document.querySelectorAll('[data-panel]').forEach(el=>el.addEventListener('click',()=>openPanel(el.dataset.panel)));
 // Tap-to-move / joystick / keyboard
@@ -132,7 +138,7 @@ function update(dt){const ms=dt,sec=ms/1000;animTick+=ms;attackTimer=Math.max(0,
   if(auto&&attackTimer<=0){const e=targetMonster();if(e){const d=distance(e,player);if(d>85){const ux=(e.x-player.x)/d,uy=(e.y-player.y)/d;player.x=clamp(player.x+ux*115*sec,20,WORLD-20);player.y=clamp(player.y+uy*115*sec,20,WORLD-20);const head=heading(ux,uy);if(head!==null)facing=head;moving=true;}else attack(false);}}
   if(regenTimer>=1100){regenTimer=0;if(player.mp<player.maxMp)player.mp=Math.min(player.maxMp,player.mp+1);saveOffline();}
  }
- effects=effects.filter(e=>(e.t-=ms)>0);updateHUD();}
+ effects=effects.filter(e=>(e.t-=ms)>0);combatAnimations=combatAnimations.filter(e=>animTick-e.started<720);updateHUD();}
 function drawSprite(sheet,x,y,dir,frame,width=48,height=48){if(!sheet)return;ctx.drawImage(sheet,frame*FRAME,dir*FRAME,FRAME,FRAME,Math.round(x-width/2),Math.round(y-height*.82),width,height);}
 function draw(){ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,screenW,screenH);ctx.fillStyle='#183a3c';ctx.fillRect(0,0,screenW,screenH);
  const img=mapImgs[player.mapId],camX=clamp(player.x-screenW/2,0,Math.max(0,WORLD-screenW)),camY=clamp(player.y-screenH/2,0,Math.max(0,WORLD-screenH));
@@ -146,6 +152,13 @@ function draw(){ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,screenW,screen
        if(ent.hp<ent.maxHp||boss){const bw=boss?96:44;ctx.fillStyle='#111726';ctx.fillRect(ex-bw/2,ey-(boss?91:45),bw,6);ctx.fillStyle=boss?'#ef7b43':'#cf4954';ctx.fillRect(ex-bw/2,ey-(boss?91:45),bw*clamp(ent.hp/ent.maxHp,0,1),6);ctx.strokeStyle='#f2cb77';ctx.lineWidth=1;ctx.strokeRect(ex-bw/2,ey-(boss?91:45),bw,6);}
        if(boss){ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.fillStyle='#ffd68e';ctx.strokeStyle='#181016';ctx.lineWidth=3;ctx.strokeText('★ '+MAPS[player.mapId][3],ex,ey-97);ctx.fillText('★ '+MAPS[player.mapId][3],ex,ey-97);}
    }
+ }
+ for(const e of combatAnimations){
+  const sheet=skillImgs[e.job];if(!sheet)continue;
+  const frame=Math.min(15,Math.max(0,Math.floor((animTick-e.started)/45)));
+  const size=e.small?77:124;
+  ctx.drawImage(sheet,(frame%4)*96,Math.floor(frame/4)*96,96,96,
+   Math.round(e.x-camX-size/2),Math.round(e.y-camY-size*.82),size,size);
  }
  ctx.font='bold 17px system-ui';ctx.textAlign='center';for(const e of effects){ctx.globalAlpha=clamp(e.t/500,0,1);ctx.strokeStyle='#1b1525';ctx.lineWidth=3;ctx.strokeText(e.label,e.x-camX,e.y-camY-(1000-e.t)*.05);ctx.fillStyle=e.color;ctx.fillText(e.label,e.x-camX,e.y-camY-(1000-e.t)*.05);}ctx.globalAlpha=1;
  ctx.restore();}
@@ -200,6 +213,10 @@ async function edgeAction(action,quiet=false){
   if(!response.ok||!data?.ok)throw new Error(data?.error||'Server rejected request');
   if(!online){online=true;edgeReady=true;toast('เชื่อมต่อ Supabase Game Server แล้ว');}
   applyEdgeState(data);
+  if(['skill','attack'].includes(action.type) && typeof action.targetId==='string' && data.notice?.startsWith('โจมตี')){
+   const target=data.mobs?.find(m=>m.id===action.targetId);
+   if(target)spawnSkillSprite(target.x,target.y,player.classId,action.type==='attack');
+  }
  }catch(e){
   if(!quiet&&Date.now()-lastEdgeError>1600){toast(String(e.message||e));lastEdgeError=Date.now();}
  }finally{edgePending=false;const next=edgeQueue.shift();if(next)edgeAction(next);}
@@ -255,7 +272,8 @@ async function init(){resize();window.addEventListener('resize',resize);const pr
  for(let i=1;i<=10;i++)promises.push(loadImage(asset(`maps/map-${String(i).padStart(2,'0')}.png`)));
  for(let i=0;i<4;i++)promises.push(loadImage(asset(`sprites/hero-${i}.png`)));
  for(let i=0;i<10;i++)promises.push(loadImage(asset(`sprites/mob-${i}.png`)));
- const images=await Promise.all(promises);mapImgs=images.slice(0,10);heroImgs=images.slice(10,14);mobImgs=images.slice(14);ready=true;setMap(player.mapId);if(player.level===10&&player.classId<0)toast('เลเวล 10 แล้ว! ไปที่เมนูตัวละครเพื่อเลือกอาชีพ');
+ for(let i=0;i<4;i++)promises.push(loadImage(asset(`effects/skill-${i}.png`)));
+ const images=await Promise.all(promises);mapImgs=images.slice(0,10);heroImgs=images.slice(10,14);mobImgs=images.slice(14,24);skillImgs=images.slice(24,28);ready=true;setMap(player.mapId);if(player.level===10&&player.classId<0)toast('เลเวล 10 แล้ว! ไปที่เมนูตัวละครเพื่อเลือกอาชีพ');
  if(!images.every(Boolean))toast('มี Asset บางไฟล์โหลดไม่สำเร็จ');requestAnimationFrame(loop);
  if(onlineConfigured){const q=new URLSearchParams(location.search);if(q.has('code')){try{await loginOnline()}catch{}}}
 }
