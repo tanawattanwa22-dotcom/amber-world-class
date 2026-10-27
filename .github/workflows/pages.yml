@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - 'public/**'
-      - 'tools/generate_assets_v04.py'
+      - 'tools/upgrade_assets_v05.py'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -28,17 +28,27 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Build original pixel-art assets (V0.4)
+      - name: Validate versioned V0.5 sprite atlases without overwriting committed artwork
+        shell: bash
         run: |
           python -m pip install --disable-pip-version-check pillow==11.3.0
-          python tools/generate_assets_v04.py
           python - <<'PY'
           from pathlib import Path
+          from PIL import Image
           base=Path('public/assets')
-          images=list(base.rglob('*.png'))
-          assert len(images)>=28, f'expected at least 28 sprites/maps, got {len(images)}'
-          assert (base/'effects/skill-0.png').is_file()
-          print(f'Assets compiled: {len(images)} PNG')
+          expected={**{f'maps/map-{i:02d}.png':(1152,1152) for i in range(1,11)},
+                    **{f'sprites/boss-{i:02d}.png':(192,384) for i in range(10)},
+                    **{f'sprites/wing-{i}.png':(192,384) for i in range(4)},
+                    **{f'effects/skill-{i}.png':(384,384) for i in range(4)},
+                    **{f'sprites/hero-{i}.png':(192,384) for i in range(4)},
+                    **{f'sprites/mob-{i}.png':(192,384) for i in range(10)},
+                    'ui/interface-icons-v05.png':(384,256)}
+          for rel,size in expected.items():
+            file=base/rel
+            assert file.exists(), f'missing asset: {file}'
+            with Image.open(file) as im:
+              assert im.size == size, f'bad frame grid: {file}: {im.size} != {size}'
+          print('Validated',len(expected),'unchanged asset PNG files')
           PY
 
       - name: Validate game files
