@@ -213,7 +213,7 @@ async function edgeAction(action,quiet=false){
   if(!response.ok||!data?.ok)throw new Error(data?.error||'Server rejected request');
   if(!online){online=true;edgeReady=true;toast('เชื่อมต่อ Supabase Game Server แล้ว');}
   applyEdgeState(data);
-  if(['skill','attack'].includes(action.type) && typeof action.targetId==='string' && data.notice?.startsWith('โจมตี')){
+  if(['skill','attack'].includes(action.type) && typeof action.targetId==='string'){
    const target=data.mobs?.find(m=>m.id===action.targetId);
    if(target)spawnSkillSprite(target.x,target.y,player.classId,action.type==='attack');
   }
