@@ -7,8 +7,18 @@
 - Never import, write to, reset, or reuse `55amberlands/55amberlands.github.io` or Supabase `55-amberlands`.
 - All game images in this repository were generated as prototype assets, not copied from the reference collage.
 
-## What works in V0.3
-- Android/Chrome single-page pixel-art demo: 10 illustrated maps, 8-direction sprite sheets, touch joystick, tap-to-move, combat, potions, AUTO and basic HUD.
+
+## V0.4 Original Sprite and Map Assets
+- 10 original world maps rendered at 1152 x 1152 pixels with distinct terrain palettes and structures.
+- 4 **separate character sprite sheets**, each 192 x 384 PNG (RGBA): 8 facing directions, 4 unique walking phases; weapons are drawn aligned to hands.
+- 10 **separate monster sheets**, also 8 directions x 4 frames, with distinctive silhouettes; these are base archetypes, not 48 unique finished monster species.
+- 4 **transparent combat skill animation sheets**, each 384 x 384 PNG with 16 distinct frames of 96 x 96 pixels. Attack/skill animations are anchored to the world target position, not repeated CSS images.
+- The character HUD portrait and job-selection images use those original sprites.
+- All art is created by `tools/generate_assets_v04.py` (Pillow 11.3.0), which runs **inside GitHub Pages Actions during deployment** to replace the initial placeholder PNGs in the published website. The binary originals in repository may remain older placeholders until generator runs; deployed site is the authoritative visual sample. Regenerate locally with `python -m pip install pillow==11.3.0 && python tools/generate_assets_v04.py`.
+- Art is original procedural pixel illustration, not cropped/repurposed reference images. This is a *first-pass art pack*, NOT yet the final art quality of the supplied visual references.
+
+## What works in V0.4
+- Android/Chrome single-page pixel-art demo: 10 newly generated maps, 8-direction sprite sheets, 16-frame animated effects, touch joystick, tap-to-move, combat, potions, AUTO and basic HUD.
 - Level 1–100, select one of four classes at level 10: Sword, Archer, Mage, Fighter.
 - STR/DEX/INT/POW/VIT points from level-ups, allocated by **server-side database actions**.
 - **Supabase Edge backend** `awc-action` (JWT authentication, strict action allowlist, server-only database RPC).
@@ -24,7 +34,7 @@
 | `public/index.html` | Mobile game page |
 | `public/game.js` | Frontend rendering, HUD, input, login and Edge RPC |
 | `public/config.js` | PUBLIC Supabase URL, publishable API key and function URL. No secrets. |
-| `public/assets/` | 10 generated map images and 14 sprite sheets |
+| `public/assets/` | 10 generated map images and 14 sprite sheets, built into the published site from source |
 | `supabase/functions/awc-action/index.ts` | Deployed trusted Edge gateway |
 | `supabase/migrations/` | Reproducible PostgreSQL game schema and server RPC |
 | `.github/workflows/pages.yml` | Validate JS and deploy public/ through GitHub Actions |
@@ -65,4 +75,4 @@ Database engine was exercised using a **rollback-only temporary auth user** to a
 These DB checks are not a replacement for end-to-end browser login/performance testing.
 See GitHub Actions syntax/asset checks before publishing.
 
-**Do not call this finished or launch-ready.** This is V0.3 with real protected persistence.
+**Do not call this finished or launch-ready.** This is V0.4 with real protected persistence.
