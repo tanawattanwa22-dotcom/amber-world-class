@@ -8,3 +8,18 @@
  font:inherit;font-size:15px;outline-offset:2px}
 .awc-auth-input:focus{border-color:#edc77a;outline:2px solid #7b95b8}
 .item-card #btn-email-login,.item-card #btn-email-register,.item-card #btn-logout{min-height:40px;flex:1;font-size:12px;padding:5px}
+
+
+/* Server-certified top 3 characters: small noninteractive floating HUD */
+.awc-ranking-peek{position:fixed;z-index:16;right:8px;top:clamp(153px,23vh,255px);
+ width:137px;max-width:36vw;padding:6px;border:1px solid rgba(242,196,119,.45);
+ border-radius:9px;background:rgba(13,22,38,.76);box-shadow:0 2px 13px #030a14aa;
+ color:#ffe9b9;pointer-events:none;backdrop-filter:blur(4px);display:none}
+.awc-rank-heading{font-size:10px;text-align:center;font-weight:800;letter-spacing:.7px;margin-bottom:5px}
+.awc-rank-entry{display:flex;align-items:center;gap:3px;padding:3px 1px;min-height:29px;border-top:1px solid rgba(233,180,110,.16)}
+.awc-rank-entry>span:first-child{font-size:12px;flex:none}
+.awc-rank-avatar{height:22px;width:22px;flex:none;background-size:88px 176px;background-position:0 0;background-repeat:no-repeat;image-rendering:pixelated}
+.awc-rank-person{display:flex;flex-direction:column;white-space:nowrap;min-width:0;font-size:10px}
+.awc-rank-person b{overflow:hidden;text-overflow:ellipsis;max-width:72px}
+.awc-rank-person small{color:#b5c4dc;font-size:8px}
+@media(max-width:365px){.awc-ranking-peek{width:108px}.awc-rank-avatar{width:16px;height:17px;background-size:64px 128px}.awc-rank-person b{max-width:45px}}
