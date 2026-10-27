@@ -8,6 +8,19 @@
 - All game images in this repository were generated as prototype assets, not copied from the reference collage.
 
 
+## V0.5 Visual Asset Integration (October 28, 2026)
+- Preserved V0.4 client gameplay, Supabase RPC, combat/stat logic, save data and four classes.
+- Regenerated and **checked in** 10 enriched 1152×1152 pixel-art map backgrounds, retaining the same world-coordinate system.
+- Created 10 original transparent boss atlases (`public/assets/sprites/boss-00.png` to `boss-09.png`), each **4 × 8 frames of 48 × 48 px**. Boss now renders from its own dedicated art rather than enlarged common mobs.
+- Added four separately animated **paper-doll wing** atlases (`wing-0.png` to `wing-3.png`) in matching frame grids, rendered behind existing character art and aligned by direction/frame.
+- Replaced four skill FX PNG atlases, each **4 × 4 frames of 96 × 96 px** with transparent pixels and time-progressing effects. Effects are still **four prototype sets**, not the requested 120 unique final skills.
+- Created a 24-icon fantasy UI atlas (6 × 4 frames at 64 × 64 pixels); visual references can be inspected in the repository.
+- Expanded `public/asset-gallery.html` to show 10 bosses, wing layers, 10 maps, classes and frame animations.
+- **Reproducible workflow:** run `python -m pip install pillow==11.3.0`, then `python tools/upgrade_assets_v05.py`; it first resets V0.4 generated images from the committed baseline generator, then applies V0.5 and writes `public/assets/`. Confirmed deterministic PNG output when rerun.
+- GitHub Actions deploys committed images **without running V0.4 generator again**. Old competing deploy workflow is manual-only.
+- No existing 55 AMBERLANDS repository or Supabase project was changed.
+- The visual result is still **not the same quality as the submitted high-fidelity concept art**, which would require authored high-end character/model sheets, environment art, normal/attack/hurt/death state animation passes and much deeper asset production.
+
 ## V0.4 Original Sprite and Map Assets
 - 10 original world maps rendered at 1152 x 1152 pixels with distinct terrain palettes and structures.
 - 4 **separate character sprite sheets**, each 192 x 384 PNG (RGBA): 8 facing directions, 4 unique walking phases; weapons are drawn aligned to hands.
@@ -75,4 +88,4 @@ Database engine was exercised using a **rollback-only temporary auth user** to a
 These DB checks are not a replacement for end-to-end browser login/performance testing.
 See GitHub Actions syntax/asset checks before publishing.
 
-**Do not call this finished or launch-ready.** This is V0.4 with real protected persistence.
+**Do not call this finished or launch-ready.** This is V0.5 pixel-art prototype with protected backend persistence.
