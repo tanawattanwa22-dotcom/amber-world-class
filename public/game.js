@@ -24,7 +24,8 @@ const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 const asset=(s)=>`./assets/${s}`;
 const loadImage=(path)=>new Promise((resolve)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>resolve(null);im.src=path;});
 const cfg=window.AWC_CONFIG||{};
-const onlineConfigured=Boolean(cfg.supabaseUrl&&cfg.supabasePublishableKey&&cfg.gameServerWebSocketUrl);
+const edgeMode=Boolean(cfg.edgeFunctionUrl);
+const onlineConfigured=Boolean(cfg.supabaseUrl&&cfg.supabasePublishableKey&&(cfg.gameServerWebSocketUrl||cfg.edgeFunctionUrl));
 let authClient=null, socket=null, online=false, currentUid=null;
 let loggedIn=false, ready=false, mapImgs=[], heroImgs=[],mobImgs=[];
 const sprites={};
@@ -45,7 +46,7 @@ $('modal-close').addEventListener('click',closeModal);
 $('overlay').addEventListener('click',(e)=>{if(e.target===$('overlay'))closeModal();});
 function saveOffline(){if(!online)try{localStorage.setItem('awc-demo-hero-v1',JSON.stringify(player));}catch{}}
 function makeMobs(mapId){const level=MAPS[mapId][1];return spawnPoints.map(([x,y],i)=>({id:`m${mapId}-${i}`,type:(mapId+i%3)%10,level:level+i%3,x,y,homeX:x,homeY:y,hp:90+mapId*62+i*13,maxHp:90+mapId*62+i*13,alive:true,boss:false,respawn:0,phase:i*3.2})).concat([{id:`boss${mapId}`,type:(mapId+7)%10,level:MAPS[mapId][2],x:945,y:855,homeX:945,homeY:855,hp:850+mapId*400,maxHp:850+mapId*400,alive:true,boss:true,respawn:0,phase:0}]);}
-function setMap(id,fromServer=false){if(!Number.isInteger(id)||id<0||id>=MAPS.length)return;if(online&&!fromServer){socket?.send(JSON.stringify({type:'travel',mapId:id}));return;}player.mapId=id;player.x=560;player.y=640;input.target=null;mobs=makeMobs(id);$('zone-name').textContent=MAPS[id][0];$('zone-lv').textContent=`Lv.${MAPS[id][1]}–${MAPS[id][2]}`;$('quest-title').textContent=`กำจัดมอนสเตอร์ ${Math.min(5,player.questKills)}/5`;closeModal();text('เข้าสู่พื้นที่ '+MAPS[id][0]);if(!online)saveOffline();}
+function setMap(id,fromServer=false){if(!Number.isInteger(id)||id<0||id>=MAPS.length)return;if(online&&!fromServer){if(edgeMode)edgeAction({type:'travel',mapId:id});else socket?.send(JSON.stringify({type:'travel',mapId:id}));return;}player.mapId=id;player.x=560;player.y=640;input.target=null;mobs=makeMobs(id);$('zone-name').textContent=MAPS[id][0];$('zone-lv').textContent=`Lv.${MAPS[id][1]}–${MAPS[id][2]}`;$('quest-title').textContent=`กำจัดมอนสเตอร์ ${Math.min(5,player.questKills)}/5`;closeModal();text('เข้าสู่พื้นที่ '+MAPS[id][0]);if(!online)saveOffline();}
 function updateHUD(){const hp=clamp(player.hp/player.maxHp,0,1)*100;const mp=clamp(player.mp/player.maxMp,0,1)*100;const xp=clamp(player.exp/expMax(player.level),0,1)*100;
  $('hp-bar').style.width=hp+'%';$('hp-text').textContent=`${Math.ceil(player.hp)} / ${player.maxHp}`;
  $('mp-bar').style.width=mp+'%';$('mp-text').textContent=`${Math.ceil(player.mp)} / ${player.maxMp}`;
@@ -73,13 +74,13 @@ function offlineHit(skill=false){const range=skill?190:player.classId===1||playe
    if(player.level===100)player.exp=0;
  }
  saveOffline();}
-function attack(skill=false){if(online){socket?.send(JSON.stringify({type:skill?'skill':'attack',targetId:targetMonster()?.id||null}));return;}
+function attack(skill=false){if(online){if(edgeMode){if(skill&&skillTimer>0||!skill&&attackTimer>0)return;if(skill)skillTimer=3500;else attackTimer=480;edgeAction({type:skill?'skill':'attack',targetId:targetMonster()?.id||null});}else socket?.send(JSON.stringify({type:skill?'skill':'attack',targetId:targetMonster()?.id||null}));return;}
  if(skill){if(skillTimer>0)return;skillTimer=3500;offlineHit(true);}else{if(attackTimer>0)return;attackTimer=480;offlineHit(false);}}
-function potion(){if(online){socket?.send(JSON.stringify({type:'potion'}));return;}if(player.potions<=0){toast('ยาหมดแล้ว');return;}if(player.hp>=player.maxHp){toast('HP เต็มแล้ว');return;}player.potions--;player.hp=Math.min(player.maxHp,player.hp+80+player.level*6);toast('ใช้ยาฟื้นฟู HP');saveOffline();}
+function potion(){if(online){if(edgeMode)edgeAction({type:'potion'});else socket?.send(JSON.stringify({type:'potion'}));return;}if(player.potions<=0){toast('ยาหมดแล้ว');return;}if(player.hp>=player.maxHp){toast('HP เต็มแล้ว');return;}player.potions--;player.hp=Math.min(player.maxHp,player.hp+80+player.level*6);toast('ใช้ยาฟื้นฟู HP');saveOffline();}
 $('do-attack').onclick=()=>attack(false);$('do-skill').onclick=()=>attack(true);$('use-potion').onclick=potion;
 $('toggle-auto').onclick=()=>{auto=!auto;$('toggle-auto').classList.toggle('active',auto);$('toggle-auto').textContent=auto?'⚔ AUTO : ON':'⚔ AUTO : OFF';toast(auto?'เริ่มโจมตีอัตโนมัติ':'หยุด AUTO');};
 function showClasses(){if(online){toast('เลือกอาชีพจะบันทึกที่เซิร์ฟเวอร์');}showModal('เลือกอาชีพหลัก · Level 10',`<p>เลือกหนึ่งใน 4 อาชีพ เมื่อเลือกแล้วจะเข้าสู่สายพัฒนา POW / DEX / INT ในอนาคต</p><div class="class-grid">${CLASSES.map((name,k)=>`<button class="class-choice" data-class="${k}"><span style="font-size:31px">${['⚔️','🏹','🔮','🥊'][k]}</span><b>${name}</b><small>${classDesc[k]}</small></button>`).join('')}</div>`);
- document.querySelectorAll('[data-class]').forEach(b=>b.onclick=()=>{const kind=Number(b.dataset.class);if(online){socket?.send(JSON.stringify({type:'chooseClass',classId:kind}));closeModal();return;}player.classId=kind;player.atk+=8;toast('เปลี่ยนอาชีพเป็น '+CLASSES[kind]);saveOffline();closeModal();});}
+ document.querySelectorAll('[data-class]').forEach(b=>b.onclick=()=>{const kind=Number(b.dataset.class);if(online){if(edgeMode)edgeAction({type:'chooseClass',classId:kind});else socket?.send(JSON.stringify({type:'chooseClass',classId:kind}));closeModal();return;}player.classId=kind;player.atk+=8;toast('เปลี่ยนอาชีพเป็น '+CLASSES[kind]);saveOffline();closeModal();});}
 function showMaps(){showModal('แผนที่โลก · World Map',`<p>ภาพแผนที่ 10 ฉากที่วาดใหม่ แผนที่ทั้งหมดเปิดให้สำรวจได้ในโหมดเดโม</p><div class="map-grid">${MAPS.map((m,i)=>`<button class="map-option" data-map="${i}"><img src="${asset(`maps/map-${String(i+1).padStart(2,'0')}.png`)}" alt="${m[0]}"><span>${i+1}. ${m[0]}<small>Lv.${m[1]}–${m[2]} · ${m[3]}</small></span></button>`).join('')}</div>`);document.querySelectorAll('[data-map]').forEach(el=>el.onclick=()=>setMap(Number(el.dataset.map)));}
 $('open-maps').onclick=showMaps;
 $('open-menu').onclick=()=>openPanel('menu');
@@ -111,7 +112,7 @@ function update(dt){const ms=dt,sec=ms/1000;animTick+=ms;attackTimer=Math.max(0,
  if(moving){const d=heading(v.x,v.y);if(d!==null)facing=d;
  if(!online){const speed=168;player.x=clamp(player.x+v.x*speed*sec,22,WORLD-22);player.y=clamp(player.y+v.y*speed*sec,24,WORLD-20);}
  }
- if(online){netInputTimer+=ms;if(netInputTimer>=80&&socket?.readyState===WebSocket.OPEN){netInputTimer=0;socket.send(JSON.stringify({type:'input',dx:v.x,dy:v.y}));}}
+ if(online){netInputTimer+=ms;if(edgeMode){if(auto&&!moving&&attackTimer<=0){const e=targetMonster();if(e){const range=player.classId===1||player.classId===2?150:92;if(distance(e,player)>range)input.target={x:e.x,y:e.y};else attack(false);}}if(netInputTimer>=170){netInputTimer=0;if(moving)edgeAction({type:'move',dx:v.x,dy:v.y},true);}}else if(netInputTimer>=80&&socket?.readyState===WebSocket.OPEN){netInputTimer=0;socket.send(JSON.stringify({type:'input',dx:v.x,dy:v.y}));}}
  else {
   for(const m of mobs){if(!m.alive){m.respawn-=ms;if(m.respawn<=0){m.hp=m.maxHp;m.alive=true;m.x=m.homeX;m.y=m.homeY;}continue;}m.phase+=sec;
    const delta=distance(player,m);if(delta<85&&regenTimer>900&&player.hp>0){const damage=Math.max(1,Math.floor((m.level+7)*.25-player.def*.12));player.hp=Math.max(0,player.hp-damage);if(player.hp===0){player.hp=player.maxHp;player.x=560;player.y=640;toast('พ่ายแพ้! กลับจุดเกิด');saveOffline();}}
@@ -137,9 +138,53 @@ function draw(){ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,screenW,screen
  ctx.font='bold 17px system-ui';ctx.textAlign='center';for(const e of effects){ctx.globalAlpha=clamp(e.t/500,0,1);ctx.strokeStyle='#1b1525';ctx.lineWidth=3;ctx.strokeText(e.label,e.x-camX,e.y-camY-(1000-e.t)*.05);ctx.fillStyle=e.color;ctx.fillText(e.label,e.x-camX,e.y-camY-(1000-e.t)*.05);}ctx.globalAlpha=1;
  ctx.restore();}
 function loop(now){const dt=clamp(now-last,0,45);last=now;if(ready){update(dt);draw();}requestAnimationFrame(loop);}
+
+let edgePending=false,edgePoll=null,lastEdgeError=0,edgeReady=false;
+function applyEdgeState(packet){
+ if(!packet?.ok)return;
+ const oldMap=player.mapId,oldLevel=player.level;
+ player={...player,...packet.character};
+ mobs=packet.mobs||mobs;otherPlayers=packet.players||[];
+ if(oldMap!==player.mapId){
+  input.target=null;
+  $('zone-name').textContent=MAPS[player.mapId]?.[0]||'';
+  $('zone-lv').textContent='Lv.'+MAPS[player.mapId]?.[1]+'–'+MAPS[player.mapId]?.[2];
+  closeModal();
+ }
+ if(packet.notice)text(packet.notice);
+ if(packet.levelUp){toast('LEVEL UP! LV.'+player.level);if(player.level>=10&&player.classId<0)showClasses();}
+ updateHUD();
+}
+async function edgeAction(action,quiet=false){
+ if(!onlineConfigured||edgePending||!authClient)return;
+ edgePending=true;
+ try{
+  const {data:{session},error:sessionError}=await authClient.auth.getSession();
+  if(sessionError||!session?.access_token)throw new Error('ต้องเข้าสู่ระบบใหม่');
+  const controller=new AbortController(),limit=setTimeout(()=>controller.abort(),9500);
+  let response;
+  try{response=await fetch(cfg.edgeFunctionUrl,{method:'POST',mode:'cors',signal:controller.signal,headers:{
+   'Content-Type':'application/json','apikey':cfg.supabasePublishableKey,'Authorization':'Bearer '+session.access_token
+  },body:JSON.stringify(action)});}finally{clearTimeout(limit);}
+  const data=await response.json();
+  if(!response.ok||!data?.ok)throw new Error(data?.error||'Server rejected request');
+  if(!online){online=true;edgeReady=true;toast('เชื่อมต่อ Supabase Game Server แล้ว');}
+  applyEdgeState(data);
+ }catch(e){
+  if(!quiet&&Date.now()-lastEdgeError>1600){toast(String(e.message||e));lastEdgeError=Date.now();}
+ }finally{edgePending=false;}
+}
+function connectEdge(jwt){
+ if(!jwt)return;
+ edgeAction({type:'login'});
+ if(!edgePoll)edgePoll=setInterval(()=>{
+  if(online&&document.visibilityState==='visible')edgeAction({type:'state'},true);
+ },900);
+}
+
 async function loginOnline(){if(!onlineConfigured){toast('ยังไม่ได้ตั้งค่าเซิร์ฟเวอร์ใหม่');return;}
  try{if(!authClient){const mod=await import('https://esm.sh/@supabase/supabase-js@2.57.0');authClient=mod.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey);}
- const {data:{session}}=await authClient.auth.getSession();if(!session){await authClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});return;}connectServer(session.access_token);
+ const {data:{session}}=await authClient.auth.getSession();if(!session){await authClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});return;}if(edgeMode)connectEdge(session.access_token);else connectServer(session.access_token);
  }catch(e){toast('เข้าสู่ระบบไม่สำเร็จ');text('Login: '+e.message);}}
 function connectServer(jwt){if(socket&&socket.readyState===WebSocket.OPEN)return;const ws=new WebSocket(cfg.gameServerWebSocketUrl);socket=ws;ws.onopen=()=>{ws.send(JSON.stringify({type:'auth',accessToken:jwt}));};
  ws.onmessage=(evt)=>{try{const msg=JSON.parse(evt.data);if(msg.type==='hello'){online=true;currentUid=msg.userId;player={...defaultHero(),...msg.character};mobs=msg.mobs||[];setMap(player.mapId,true);mobs=msg.mobs||[];closeModal();toast('เชื่อมต่อเกมออนไลน์แล้ว');}
