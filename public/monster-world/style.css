@@ -120,7 +120,7 @@ button:focus-visible,input:focus-visible{outline:2px solid #82e1ff;outline-offse
 
 /* Each pet illustration is a unique cell in the original 10×10 creature atlas. */
 .creature-art>.creature-image{display:block;position:absolute;inset:0;z-index:1;
-background-image:url('./creatures-100.svg?v=1');background-size:1000% 1000%;
+background-image:url('./creatures-100-v2.svg?v=2');background-size:1000% 1000%;
 background-repeat:no-repeat;image-rendering:auto;animation:float 3.2s ease-in-out infinite}
 .creature-art.small>.creature-image{animation:none}
 .creature-art.locked>.creature-image{filter:grayscale(1)}
