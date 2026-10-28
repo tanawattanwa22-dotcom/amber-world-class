@@ -71,7 +71,17 @@ jobs:
         shell: bash
         run: |
           node --check public/game.js
+          node --check public/monster-world/game.js
           node --check public/config.js
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+          svg=Path('public/monster-world/creatures-100.svg')
+          root=ET.parse(svg).getroot()
+          ids=[g.get('id') for g in root.iter() if (g.get('id') or '').startswith('m') and len(g.get('id'))==4]
+          assert len(ids)==100 and len(set(ids))==100, f'expected 100 unique creature sprites, got {len(ids)}'
+          print('Validated 100 independent creature atlas cells')
+          PY
           test -s public/index.html
           test -f public/assets/maps/map-10.png
           test -f public/assets/sprites/hero-3.png
