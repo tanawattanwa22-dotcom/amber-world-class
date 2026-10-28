@@ -52,10 +52,21 @@ function maxLevel(){return Math.max(1,...state.pets.map(x=>Number(x.level)||1));
 function team(){return state.pets.filter(x=>x.slot!=null).sort((a,b)=>a.slot-b.slot);}
 function leader(){return team().find(x=>x.hp>0)||null;}
 function collected(){return new Set(state.pets.map(x=>Number(x.speciesId)));}
+// Independent illustrated files take priority. Legacy art is a fallback for
+// species not yet illustrated in this art batch, never an Emoji substitute.
+const ORIGINAL_CREATURE_FAMILIES=['flamefox','tidewyrm','verdant'];
+function creatureSrc(id){
+ const m=get(id);
+ if(m.f>2)return null;
+ return './assets/creatures/'+ORIGINAL_CREATURE_FAMILIES[m.f]+'-'+(m.stage+1)+'.svg?v=030';
+}
 function art(id,size='normal',lock=false){
  const m=get(id),rgb=elements[m.type],k=m.id-1,col=(k%10)/9*100,row=Math.floor(k/10)/9*100;
  const style='--c1:'+rgb[0]+';--c2:'+rgb[1];
- return '<div class="creature-art '+(size==='normal'?'':size)+(lock?' locked':'')+'" style="'+style+'"><span class="creature-image" style="background-position:'+col.toFixed(5)+'% '+row.toFixed(5)+'%" aria-label="'+clean(m.name)+'"></span></div>';
+ const src=creatureSrc(id);
+ const image=src?'<img class="anime-creature" alt="'+clean(m.name)+'" src="'+src+'" loading="lazy" decoding="async">'
+  :'<span class="creature-image" style="background-position:'+col.toFixed(5)+'% '+row.toFixed(5)+'%" role="img" aria-label="'+clean(m.name)+'"></span>';
+ return '<div class="creature-art '+(size==='normal'?'':size)+(lock?' locked':'')+(src?' original-illustration':'')+'" style="'+style+'">'+image+'</div>';
 }
 function type(id){const m=get(id);return '<span class="badge">'+elements[m.type][2]+' '+m.type+'</span> <span class="badge '+(m.rarity>=3?'gold':'')+'">'+rarity[m.rarity]+'</span>';}
 function button(label,action,value='',klass='blue',disabled=false){return '<button class="btn '+klass+'" data-action="'+action+'" data-value="'+clean(value)+'"'+(disabled?' disabled':'')+'>'+label+'</button>';}
@@ -65,9 +76,26 @@ function progress(current,max,kind='hp'){return '<div class="progress '+kind+'">
 function title(h,t='',extra=''){return '<div class="topline"><div><h1>'+h+'</h1>'+(t?'<p class="subtitle">'+t+'</p>':'')+'</div>'+extra+'</div>';}
 function message(msg){lastMessage=String(msg||'');if(!msg)return;const x=document.createElement('div');x.className='toast';x.textContent=msg;$('toast').replaceChildren(x);setTimeout(()=>{if(x.isConnected)x.remove()},3000);}
 function saveView(p){page=p;modal=null;render();window.scrollTo({top:0,behavior:'instant'});}
+// Tiny inline SVG interface pictograms, not emoji-as-assets.
+const ICONS={
+ home:'M3 11.5 12 4l9 7.5M5 10.5V20h14v-9.5M9 20v-6h6v6',
+ explore:'M12 2l3.8 8.2L22 12l-8.2 3.8L12 22l-3.8-6.2L2 12l6.2-3.8L12 2ZM12 9v6M9 12h6',
+ battle:'m4 20 16-16M4 4l16 16M5 9l-2-2 4-4 2 2M15 19l4 2 2-4-2-2',
+ team:'M7 13c-2-2-5 0-5 3 0 4 5 6 10 6s10-2 10-6c0-3-3-5-5-3M7 9V7M12 7V5M17 9V7M7 13l5-3 5 3',
+ dex:'M12 5c-3-2-7-2-10-1v15c3-1 7-1 10 1 3-2 7-2 10-1V4c-3-1-7-1-10 1v15',
+ evolve:'M12 3v18M3 12h18M5 5l14 14M19 5 5 19',
+ map:'M3 5l6-2 6 2 6-2v16l-6 2-6-2-6 2V5ZM9 3v16M15 5v16',
+ bag:'M4 8h16v13H4V8ZM8 8V6a4 4 0 0 1 8 0v2M9 12h6',
+ shop:'M3 10h18l-2 11H5L3 10ZM4 10l2-6h12l2 6M9 15h6',
+ quests:'M6 3h12v18H6V3ZM9 8h6M9 12h6M9 16h4',
+ social:'M16 19c0-3-2-4-4-4s-4 1-4 4M12 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM19 17c0-2-1-3-3-3M17 5c3 1 3 5 0 6',
+ profile:'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM4 12a8 8 0 1 0 16 0 8 8 0 0 0-16 0ZM8 18c1-2 3-2 4-2s3 0 4 2'
+};
+function menuIcon(id){const d=ICONS[id]||ICONS.home;return '<svg class="menu-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+d+'"/></svg>';}
+
 function navDraw(){
- $('menu').innerHTML=nav.map(n=>'<button data-route="'+n[0]+'" class="'+(page===n[0]?'active':'')+'"><span>'+n[1]+'</span>'+n[2]+'</button>').join('');
- $('mobile-menu').innerHTML=nav.filter(n=>['home','explore','battle','team','dex'].includes(n[0])).map(n=>'<button data-route="'+n[0]+'" class="'+(page===n[0]?'active':'')+'"><b>'+n[1]+'</b>'+n[2]+'</button>').join('')+'<button data-action="more" class="more"><b>☰</b>เพิ่มเติม</button>';
+ $('menu').innerHTML=nav.map(n=>'<button data-route="'+n[0]+'" class="'+(page===n[0]?'active':'')+'"><span>'+menuIcon(n[0])+'</span>'+n[2]+'</button>').join('');
+ $('mobile-menu').innerHTML=nav.filter(n=>['home','explore','battle','team','dex'].includes(n[0])).map(n=>'<button data-route="'+n[0]+'" class="'+(page===n[0]?'active':'')+'"><b>'+menuIcon(n[0])+'</b>'+n[2]+'</button>').join('')+'<button data-action="more" class="more"><b>☰</b>เพิ่มเติม</button>';
  $('mode').textContent=online?'● ONLINE':'● DEMO';
  $('mode').style.color=online?'#bfffe6':'#ffe3aa';
  $('trainer').textContent=state.player.name;
