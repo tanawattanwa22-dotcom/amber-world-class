@@ -1,3 +1,20 @@
+# 🌈 MONSTER WORLD ONLINE — NEW GAME (CBT 0.1)
+
+**New default game:** [Play on Android/Chrome](https://tanawattanwa22-dotcom.github.io/amber-world-class/)
+
+**Previous AMBER WORLD CLASS game preserved:** [Open Classic V0.9](https://tanawattanwa22-dotcom.github.io/amber-world-class/amber-classic.html)
+
+- Creature collector with **100 species** in **25 four-stage evolution families**, 11 element classes, 4 rarity tiers, and 10 unlockable regions.
+- **12 mobile menus:** Home, Creature Book, Team, Explore, Capture/Battle, Evolution, Map, Bag, Shop, Quests, Online, Profile.
+- Starter selection, creature encounters, server-side capture rolls, level-gated evolutions, 6-member teams, persistent accounts, online rankings, coin shop and daily gifts.
+- Brand-new, colorful **100-cell vector creature atlas** and phone-friendly UI; does **not import the previous game's art**.
+- Server-side actions on separate Supabase Edge Function `awc-pets`, with dedicated `awc_pet_*` tables and RLS. Old game tables and 55 AMBERLANDS untouched.
+- **Scope warning:** CBT prototype; the sprite artwork is not final hand-illustrated HD quality, and synchronous PvP/guild/trade systems are not implemented.
+
+More details: [MONSTER WORLD status and testing](docs/MONSTER_WORLD_CBT_TH.md).
+
+---
+
 # AMBER WORLD CLASS
 **Original 2D pixel-art Android/Chrome MMORPG prototype — separate from 55 AMBERLANDS.**
 
