@@ -1,5 +1,5 @@
 
-/* MONSTER WORLD ONLINE V0.2 - rebuild of visual/game flow; original 100-species server data preserved. */
+/* MONSTER WORLD ONLINE V0.3 - 12 standalone creature illustrations and original fantasy town artwork; server logic preserved. */
 'use strict';
 const cfg=window.AWC_CONFIG||{},SUPA=String(cfg.supabaseUrl||'').replace(/\/$/,''),PUB=cfg.supabasePublishableKey||'';
 const API=SUPA+'/functions/v1/awc-pets';
@@ -109,7 +109,7 @@ function starter(){
  const m=get(id);return '<button class="creature-card" data-action="starter" data-value="'+id+'">'+art(id)+'<div class="name">'+clean(m.name)+'</div><div class="sub">'+type(id)+'</div><div class="sub">แตะเพื่อเลือกคู่หู</div></button>';
  }).join('')+'</div></div>';
 }
-function regionStyle(i){i=clamp(i|0,0,9);return 'background-position:center,'+((i%5)/4*100)+'% '+Math.floor(i/5)*100+'%';}
+function regionStyle(i){i=clamp(i|0,0,9);if(i===0)return 'background-image:linear-gradient(90deg,#0e354bbc,#153d5655 49%,#16465a22),url(./assets/scenes/sunvale.svg?v=030);background-size:cover,cover;background-position:center,center';return 'background-position:center,'+((i%5)/4*100)+'% '+Math.floor(i/5)*100+'%';}
 function home(){
  const p=state.player,hero=leader(),area=areas[p.area||0],none=!state.pets.length;
  let h='<div class="page-width">'+title('MONSTER WORLD <span style="color:#78e3ff">ONLINE</span>','โลกแฟนตาซีสะสมสัตว์ต้นฉบับ 100 ชนิด · เลือกคู่หู จับสัตว์ ฝึกเลเวล และวิวัฒนาการ');
