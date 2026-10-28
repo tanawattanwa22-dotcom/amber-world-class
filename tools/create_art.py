@@ -1,8 +1,10 @@
 from PIL import Image, ImageDraw, ImageFilter
 from pathlib import Path
-import random,math
+import random,math,os
 R=random.Random(60554)
-OUT=Path('/mnt/data/awc_v06_build/assets')
+PROJECT=Path(__file__).resolve().parents[1]
+OUT=Path(os.environ.get('AWC_ASSET_DIR', str(PROJECT / 'public' / 'assets')))
+OUT.mkdir(parents=True,exist_ok=True)
 SZ=576
 im=Image.new('RGB',(SZ,SZ),'#245344');d=ImageDraw.Draw(im)
 
@@ -293,5 +295,7 @@ for j in range(4):
  clip=sample.crop((0,0,192,96)).resize((240,120),Image.Resampling.NEAREST)
  canvas.paste(clip,(1202,row+55),clip)
  cv.text((1202,row+28),JOBS[j]['name'].upper(),fill='#ffdf98')
-canvas.save('/mnt/data/AWC_V06_ART_PREVIEW.png',optimize=True)
+preview=PROJECT/'docs'/'previews'/'AWC_V06_ART_PREVIEW.png'
+preview.parent.mkdir(parents=True,exist_ok=True)
+canvas.save(preview,optimize=True)
 print('preview done')
