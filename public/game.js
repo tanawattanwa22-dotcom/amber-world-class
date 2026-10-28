@@ -28,6 +28,10 @@ const edgeMode=Boolean(cfg.edgeFunctionUrl);
 const onlineConfigured=Boolean(cfg.supabaseUrl&&cfg.supabasePublishableKey&&(cfg.gameServerWebSocketUrl||cfg.edgeFunctionUrl));
 let authClient=null, socket=null, online=false, currentUid=null;
 let loggedIn=false, ready=false, mapImgs=[], heroImgs=[],mobImgs=[],bossImgs=[],wingImgs=[];
+// High-detail front-facing Sword artwork: only use verified down-facing idle frames.
+const hdSwordIdle=new Image();
+hdSwordIdle.decoding='async';
+hdSwordIdle.src='./assets/sprites/sword-idle-front-4f-v08.svg';
 const sprites={};
 // V0.7 only adds visual sprites. Game stats, hitboxes and networking stay unchanged.
 const v07Cache=new Map();
@@ -182,9 +186,16 @@ function draw(){ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,screenW,screen
      let action=!ent.isPeer&&moving?'walk':'idle';
      if(!ent.isPeer&&heroVisualUntil>animTick)action=heroVisualAction;
      const atlas=v07Image('heroes/hero-'+role+'-'+action+'.png');
-     drawSprite(wingImgs[role],ex,ey,facingNow,frame,w,h);
-     if(!v07Frame(atlas,ex,ey,facingNow,frame,48,w,h))drawSprite(im,ex,ey,facingNow,frame,w,h);
-     ctx.fillStyle='#ffeab2';ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.shadowColor='#000';ctx.shadowBlur=4;ctx.fillText(ent.name,ex,ey-51);ctx.shadowBlur=0;
+     const hdSword=role===0 && (Number(ent.classId)===0 || Number(ent.classId)===-1) && facingNow===0 && action==='idle' && hdSwordIdle.complete && hdSwordIdle.naturalWidth===768;
+     if(hdSword){
+       const hdFrame=Math.floor(animTick/210)%4;
+       const hdW=69,hdH=102;
+       ctx.drawImage(hdSwordIdle,hdFrame*192,0,192,288,Math.round(ex-hdW/2),Math.round(ey-hdH*.94),hdW,hdH);
+     }else{
+       drawSprite(wingImgs[role],ex,ey,facingNow,frame,w,h);
+       if(!v07Frame(atlas,ex,ey,facingNow,frame,48,w,h))drawSprite(im,ex,ey,facingNow,frame,w,h);
+     }
+     ctx.fillStyle='#ffeab2';ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.shadowColor='#000';ctx.shadowBlur=4;ctx.fillText(ent.name,ex,ey-(hdSword?97:51));ctx.shadowBlur=0;
    }else {let boss=ent.boss;const scale=boss?2:1;const sheet=(boss?bossImgs[player.mapId]:null)||mobImgs[ent.type];
      const walkFrame=Math.floor((animTick+ent.phase*100)/320)%4;
      const mobSlot=Number(String(ent.id||'').match(/(\d+)$/)?.[1]??ent.type)||0;
