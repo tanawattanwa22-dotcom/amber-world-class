@@ -12,6 +12,10 @@ aside{border:1px solid #8c6d3e;background:#0f1f34da;padding:17px;border-radius:1
 h2{color:#ffe1a4}p,li{line-height:1.7}ul{padding-left:22px}small{color:#b5c3d6}.stamp{font-size:12px;color:#aadbc5;letter-spacing:1px}
 .avatar{width:96px;height:96px;object-fit:cover;object-position:top;border:2px solid #ebc477;border-radius:12px;background:#34263f}
 @media(max-width:660px){main{display:block}figure{min-height:310px;margin-bottom:15px}figure img{height:58vh}}
+
+.idle-preview{grid-column:1/-1;border:1px solid #a7814b;padding:14px;border-radius:12px;background:#101a2e;display:grid;grid-template-columns:1fr 300px;align-items:center;gap:14px}
+.idle-preview h2{margin:0 0 5px}.idle-preview .stage{display:grid;place-items:center;gap:8px;border-radius:12px;background:radial-gradient(circle at center,#39415a,#17182e);padding:12px}.stage canvas{width:220px;height:330px;image-rendering:pixelated}.idle-preview .stage small{font-size:10px}
+@media(max-width:660px){.idle-preview{display:block}.idle-preview .stage{margin-top:10px}.stage canvas{width:180px;height:270px}}
 </style></head>
 <body><header><h1>⚔ AMBER WORLD CLASS · ART V0.8</h1><a href="./index.html?v=08">กลับเข้าเกม</a></header>
 <main>
@@ -24,4 +28,16 @@ h2{color:#ffe1a4}p,li{line-height:1.7}ul{padding-left:22px}small{color:#b5c3d6}.
 <p><strong>ส่วนที่ใช้งานแล้ว:</strong> ภาพตัวละครและภาพ Portrait ในหน้า Character ของอาชีพ Sword</p>
 <p><strong>ส่วนที่ยังไม่เสร็จ:</strong> Sprite Sheet เดิน 8 ทิศ, โจมตี, ใช้สกิล, บาดเจ็บ, ตาย, และ Asset คุณภาพเดียวกันอีก 3 อาชีพ</p>
 <small>ภาพนี้เป็น Character Art ต้นฉบับ ไม่ได้ปลอมว่า 1 ภาพคือแอนิเมชัน 32 เฟรม ระบบเกมต่อสู้/เซิร์ฟเวอร์ไม่ถูกแก้ไข</small>
-</aside></main></body></html>
+</aside>
+<section class="idle-preview">
+  <div><h2>Sprite Sheet · Sword Idle</h2><p>แสดง 4 เฟรมจากภาพตัวละครต้นฉบับจริง ชุดนี้เป็นภาพหน้าตรงและการหายใจกับผ้าคลุมขยับเท่านั้น ไม่ใช่การเดิน 8 ทิศที่เสร็จแล้ว</p><a href="./sprite-lab-v07.html">เปรียบเทียบกับ Sprite Sheet เกมเดิม</a></div>
+  <div class="stage"><canvas id="sprite" width="192" height="288" aria-label="animated Sword idle sprite"></canvas><small id="spriteState">กำลังโหลด Sprite Sheet...</small></div>
+</section>
+</main>
+<script>
+const spriteSheet=new Image(),preview=document.getElementById('sprite'),g=preview.getContext('2d');let f=0;
+spriteSheet.onload=()=>{document.getElementById('spriteState').textContent='4 เฟรม · 192×288 พิกเซล / เฟรม · 210ms';g.imageSmoothingEnabled=false;setInterval(()=>{g.clearRect(0,0,192,288);g.drawImage(spriteSheet,f*192,0,192,288,0,0,192,288);f=(f+1)%4},210)};
+spriteSheet.onerror=()=>document.getElementById('spriteState').textContent='ไม่พบ Sprite Sheet';
+spriteSheet.src='./assets/sprites/sword-idle-front-4f-v08.svg';
+</script>
+</body></html>
