@@ -65,3 +65,14 @@ h1,h2,h3,p{margin-top:0}h1{font-size:clamp(23px,4.6vw,37px);line-height:1.18;col
 .bottom{display:none}
 @media(max-width:750px){#app{display:block;padding:8px}.side{display:none}.main{padding-bottom:90px}.top{gap:5px}.top .player-pill{min-width:135px;font-size:11px}.wallet{font-size:11px;padding:8px}.online-pill{font-size:10px;padding:8px}.panels{grid-template-columns:1fr}.scene{min-height:275px;padding:14px}.scene-copy{max-width:56%}.scene .pet-stage{width:46%;height:200px}.scene .pet-stage .pet-art{font-size:86px}.bottom{display:flex;position:fixed;z-index:15;bottom:0;left:0;right:0;height:76px;background:#0e2441f4;border-top:2px solid #4d8bc1;overflow-x:auto;justify-content:space-around;padding:6px 3px max(8px,env(safe-area-inset-bottom))}.bottom button{background:none;border:0;color:#cce5ff;font-size:10px;font-weight:800;min-width:65px;display:grid;gap:1px;justify-items:center}.bottom button span{font-size:24px}.bottom button.active{color:#ffe17e}.pet-visual.big{width:160px;height:160px}.pet-visual.big .emoji{font-size:96px}}
 @media(max-width:390px){.scene-copy{max-width:52%}.cards{grid-template-columns:repeat(3,minmax(0,1fr))}.pet-card .pet-visual{width:70px;height:70px}.pet-card .pet-visual .emoji{font-size:46px}.grid100{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* Original, self-contained 100-cell illustration atlas. No old AMBER assets loaded. */
+.pet-visual .creature-sprite{
+ display:block;width:100%;height:100%;position:relative;z-index:1;flex:none;
+ background-image:url('./creatures-100.svg?v=1');background-repeat:no-repeat;
+ background-size:1000% 1000%;image-rendering:auto;filter:drop-shadow(0 7px 3px #13204466);
+ animation:bob 2.8s ease-in-out infinite;
+}
+.pet-stage>.pet-visual.big{position:relative;z-index:2;box-shadow:0 14px 26px #16485399;}
+.pet-visual.locked .creature-sprite{filter:grayscale(1) brightness(.8)}
+@media(max-width:750px){.scene .pet-stage>.pet-visual.big{width:130px;height:130px;border-radius:22px}}
