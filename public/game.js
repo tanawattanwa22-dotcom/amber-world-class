@@ -186,13 +186,14 @@ function draw(){ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,screenW,screen
      let action=!ent.isPeer&&moving?'walk':'idle';
      if(!ent.isPeer&&heroVisualUntil>animTick)action=heroVisualAction;
      const atlas=v07Image('heroes/hero-'+role+'-'+action+'.png');
+     // Wings remain on their original visual layer behind the character.
+     drawSprite(wingImgs[role],ex,ey,facingNow,frame,w,h);
      const hdSword=role===0 && (Number(ent.classId)===0 || Number(ent.classId)===-1) && facingNow===0 && action==='idle' && hdSwordIdle.complete && hdSwordIdle.naturalWidth===768;
      if(hdSword){
        const hdFrame=Math.floor(animTick/210)%4;
        const hdW=69,hdH=102;
        ctx.drawImage(hdSwordIdle,hdFrame*192,0,192,288,Math.round(ex-hdW/2),Math.round(ey-hdH*.94),hdW,hdH);
      }else{
-       drawSprite(wingImgs[role],ex,ey,facingNow,frame,w,h);
        if(!v07Frame(atlas,ex,ey,facingNow,frame,48,w,h))drawSprite(im,ex,ey,facingNow,frame,w,h);
      }
      ctx.fillStyle='#ffeab2';ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.shadowColor='#000';ctx.shadowBlur=4;ctx.fillText(ent.name,ex,ey-(hdSword?97:51));ctx.shadowBlur=0;
