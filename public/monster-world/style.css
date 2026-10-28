@@ -76,3 +76,10 @@ h1,h2,h3,p{margin-top:0}h1{font-size:clamp(23px,4.6vw,37px);line-height:1.18;col
 .pet-stage>.pet-visual.big{position:relative;z-index:2;box-shadow:0 14px 26px #16485399;}
 .pet-visual.locked .creature-sprite{filter:grayscale(1) brightness(.8)}
 @media(max-width:750px){.scene .pet-stage>.pet-visual.big{width:130px;height:130px;border-radius:22px}}
+
+/* Scene art is a completely new ten-panel fantasy world atlas, not copied from AWC. */
+.scene.has-area-art{background-repeat:no-repeat;border-color:#d7d4ff;box-shadow:inset 0 -25px 85px #0736634f,0 10px 35px #0006}
+.scene.has-area-art:before,.scene.has-area-art:after{display:none}
+.scene.has-area-art .scene-copy{background:#132f4a99;padding:10px;border-radius:14px;backdrop-filter:blur(1px);text-shadow:0 2px 5px #132d47}
+.area-thumb{width:100%;height:104px;border-radius:10px;background-image:url('./areas-10.svg?v=1');
+background-size:500% 200%;background-repeat:no-repeat;border:1px solid #a0dff9;box-shadow:inset 0 -15px 35px #0715222e;margin-bottom:8px}
