@@ -50,6 +50,27 @@ function v07Frame(sheet,x,y,dir,frame,cell=48,w=59,h=59){
  ctx.drawImage(sheet,col*cell,row*cell,cell,cell,Math.round(x-w/2),Math.round(y-h*.82),w,h);
  return true;
 }
+// Render real 5 x 4 / 20-frame visual effects directly inside the existing Skills panel.
+// Throttle previews to avoid running 30 canvas draws at the game's 60fps frame rate.
+let lastVfxThumbTime=-99999;
+function renderVfxThumbs(force=false){
+ if(modal!=='ทักษะ · Skills'||(!force&&animTick-lastVfxThumbTime<130))return;
+ lastVfxThumbTime=animTick;
+ const job=Math.max(0,Math.min(3,player.classId|0));
+ const frame=Math.floor(animTick/85)%20;
+ document.querySelectorAll('canvas[data-vfx-thumb]').forEach(canvas=>{
+   const n=Number(canvas.dataset.vfxThumb);
+   if(!Number.isInteger(n)||n<0||n>=30)return;
+   const img=v07Image('skills/skill-'+job+'-'+String(n).padStart(2,'0')+'.png');
+   if(!img)return;
+   const c=canvas.getContext('2d');
+   if(!c)return;
+   c.imageSmoothingEnabled=false;
+   c.clearRect(0,0,54,54);
+   c.drawImage(img,(frame%5)*80,Math.floor(frame/5)*80,80,80,0,0,54,54);
+ });
+}
+
 function chooseVisualSkill(index){
  if(!Number.isInteger(index)||index<0||index>=30)return;
  selectedVisualSkill=index;toast('เปลี่ยนเอฟเฟกต์สกิลภาพ '+(index+1));
@@ -134,13 +155,15 @@ function openPanel(id){if(id==='maps')return showMaps();const s=(v)=>`<div class
  case 'character': showModal('ตัวละครและค่าสเตตัส',`${player.classId===0?'<div class="awc-sword-art"><img src="./assets/portraits/sword-concept-v08.svg" loading="lazy" alt="ภาพนักดาบต้นฉบับ"><div><b>⚔️ Sword · HD Character Art</b><small>ภาพต้นฉบับแยกจาก Sprite Sheet เดินเดิม ไม่ตัดจากโปสเตอร์</small><a href="./hd-art-v08.html">เปิดดูภาพเต็มตัว</a></div></div>':''}<h3>🧑 ${player.name} · Lv.${player.level} ${CLASSES[player.classId]||'Novice'}</h3>${[['HP',`${player.hp}/${player.maxHp}`],['MP',`${player.mp}/${player.maxMp}`],['ATK',player.atk],['DEF',player.def],['แต้มสถานะ',player.statPoints],['มอนสเตอร์ที่กำจัด',player.mobKills]].map(s).join('')}<h3>เพิ่มค่าสเตตัส (มี ${player.statPoints} แต้ม)</h3>${['STR','DEX','INT','POW','VIT'].map(code=>`<div class="stat-line"><b>${code} · ${Number(player[code]||0)}</b><button class="secondary" data-stat="${code}" ${player.statPoints<=0?'disabled':''}>+ 1</button></div>`).join('')}<p>เลเวล 10 สามารถเลือกอาชีพได้ เมื่อถึงเลเวล 100 จะเป็นเลเวลสูงสุด</p>${player.level>=10&&player.classId<0?'<button class="primary" id="choose-job">เลือกอาชีพ</button>':''}<hr><p>เฉพาะเดโมออฟไลน์: ใช้ปุ่มด้านล่างทดสอบระบบเลเวล 10</p><button class="secondary" id="demo-lv10" ${online?'disabled':''}>ทดสอบ Level 10</button>`);document.querySelectorAll('[data-stat]').forEach(b=>b.onclick=()=>allocateStat(b.dataset.stat));$('choose-job')?.addEventListener('click',showClasses);$('demo-lv10').onclick=()=>{if(online)return;player.level=10;player.exp=0;player.maxHp=380;player.maxMp=160;player.hp=380;player.mp=160;player.statPoints+=45;player.atk+=25;saveOffline();showClasses();};break;
  case 'skills':{
  const job=Math.max(0,Math.min(3,player.classId|0));
- showModal('ทักษะ · Skills',`<h3>✨ ${CLASSES[player.classId]||'Novice'} · V0.7</h3>
- <p>เอฟเฟกต์ภาพ 30 ชุดต่ออาชีพ รวม 120 ชุด × 20 เฟรม — เลือกภาพได้โดยไม่เปลี่ยนค่าสกิลหรือดาเมจฝั่งเซิร์ฟเวอร์</p>
- <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px">
- ${Array.from({length:30},(_,i)=>`<button class="secondary" data-vfx="${i}" style="min-height:51px;border-color:${selectedVisualSkill===i?'#f6d187':''}">
- <b>${String(i+1).padStart(2,'0')}</b><small style="display:block;font-size:10px">${selectedVisualSkill===i?'เลือกแล้ว':'VFX'}</small></button>`).join('')}</div>
- <p>ดูตัวอย่างทุกเฟรมใน Sprite Lab V0.7</p>`);
+ showModal('ทักษะ · Skills',`<h3>✨ ${CLASSES[player.classId]||'Novice'} · เอฟเฟกต์ 30 ชุด</h3>
+ <p>ดู Sprite Sheet เคลื่อนไหวจริง 20 เฟรมต่อชุด แล้วแตะเพื่อเลือกแสดงเมื่อใช้สกิล (เป็นภาพ VFX ยังไม่ใช่ 120 สกิลบนเซิร์ฟเวอร์)</p>
+ <div class="awc-vfx-grid">
+ ${Array.from({length:30},(_,i)=>`<button class="secondary awc-vfx-choice ${selectedVisualSkill===i?'selected':''}" data-vfx="${i}" aria-label="เอฟเฟกต์ ${i+1}">
+ <canvas width="54" height="54" class="awc-vfx-thumb" data-vfx-thumb="${i}" aria-hidden="true"></canvas>
+ <span>FX ${String(i+1).padStart(2,'0')}</span>${selectedVisualSkill===i?'<small>✓ เลือกแล้ว</small>':''}</button>`).join('')}</div>
+ <p class="awc-vfx-note">แอนิเมชันเล่นในหน้านี้ได้เลย · สีและรูปร่างยังเป็นงานภาพต้นแบบ</p>`);
  document.querySelectorAll('[data-vfx]').forEach(btn=>btn.onclick=()=>chooseVisualSkill(Number(btn.dataset.vfx)));
+ renderVfxThumbs(true);
  break;}
  case 'inventory':showModal('กระเป๋า · Inventory',`<div class="item-card"><div><b>🧪 ยาฟื้นฟู HP</b><br><small>ใช้ฟื้นฟู HP ระหว่างต่อสู้</small></div><b>x ${player.potions}</b></div><div class="item-card"><div><b>🪙 Gold</b><br><small>ได้จากการกำจัดมอนสเตอร์</small></div><b>${player.gold}</b></div><div class="item-card"><div><b>💎 Gems</b><br><small>สกุลเงินทดสอบ</small></div><b>${player.gems}</b></div><p>ช่องอุปกรณ์ การ์ด หินตีบวก และของบอสจะเพิ่มในเฟสถัดไป</p>`);break;
  case 'party':showModal('ปาร์ตี้ · Party',`<h3>🛡️ ระบบปาร์ตี้</h3><p>พัฒนาต่อใน Phase 5: เชิญเพื่อน สถานะออนไลน์ และแชร์ EXP โดยเซิร์ฟเวอร์</p><p>โหมดเดโมเป็นการเล่นคนเดียว จึงยังไม่สามารถสร้างปาร์ตี้ออนไลน์ได้</p>`);break;
@@ -176,7 +199,7 @@ function update(dt){const ms=dt,sec=ms/1000;animTick+=ms;attackTimer=Math.max(0,
  }
  effects=effects.filter(e=>(e.t-=ms)>0);combatAnimations=combatAnimations.filter(e=>animTick-e.started<720);updateHUD();}
 function drawSprite(sheet,x,y,dir,frame,width=48,height=48){if(!sheet)return;ctx.drawImage(sheet,frame*FRAME,dir*FRAME,FRAME,FRAME,Math.round(x-width/2),Math.round(y-height*.82),width,height);}
-function draw(){ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,screenW,screenH);ctx.fillStyle='#183a3c';ctx.fillRect(0,0,screenW,screenH);
+function draw(){renderVfxThumbs();ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,screenW,screenH);ctx.fillStyle='#183a3c';ctx.fillRect(0,0,screenW,screenH);
  const img=mapImgs[player.mapId],camX=clamp(player.x-screenW/2,0,Math.max(0,WORLD-screenW)),camY=clamp(player.y-screenH/2,0,Math.max(0,WORLD-screenH));
  ctx.save();if(shake){ctx.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);}
  if(img)ctx.drawImage(img,-camX,-camY,WORLD,WORLD);
@@ -215,7 +238,7 @@ function draw(){ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,screenW,screen
    }else {let boss=ent.boss;const scale=boss?2:1;const sheet=(boss?bossImgs[player.mapId]:null)||mobImgs[ent.type];
      const walkFrame=Math.floor((animTick+ent.phase*100)/320)%4;
      const mobSlot=Number(String(ent.id||'').match(/(\d+)$/)?.[1]??ent.type)||0;
-     const visualIndex=(player.mapId*5+mobSlot%5)%48;
+     const visualIndex=(player.mapId*8+mobSlot%8)%48; // eight distinct visual monster slots per map
      const atlas=boss?v07Image('bosses/boss-'+String(player.mapId).padStart(2,'0')+'.png'):
        v07Image('monsters/monster-'+String(visualIndex).padStart(2,'0')+'.png');
      if(!v07Frame(atlas,ex,ey,0,walkFrame,boss?96:48,52*scale,52*scale))
