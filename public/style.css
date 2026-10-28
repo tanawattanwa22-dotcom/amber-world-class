@@ -46,3 +46,13 @@
 .auto-button.active{background:linear-gradient(160deg,#bd4935,#75212a 70%);border-color:#ffca89;box-shadow:inset 0 0 8px #ffd4ae44,0 0 8px #dd3a373b}
 #app::after{content:"";pointer-events:none;position:absolute;inset:0;z-index:29;border:2px solid #c18b4533;box-shadow:inset 0 0 24px #1e130c2c}
 @media(min-width:650px){.brand strong{font-size:19px}.nav button:hover{background:#56432e7a}}
+
+/* V0.8: original standalone high-detail character art (does not alter world renderer) */
+#portrait.pixel-portrait.hd-sword{background-size:cover!important;background-position:center 17%!important;image-rendering:auto!important;border-color:#eec88b;box-shadow:inset 0 0 10px #fbaf4f33,0 0 7px #e0a45c80}
+.awc-sword-art{display:grid;grid-template-columns:minmax(85px,35%) 1fr;gap:12px;padding:9px;margin-bottom:12px;border:1px solid #b9975b;border-radius:12px;background:radial-gradient(circle at 12% 40%,#533147,#13233c 72%)}
+.awc-sword-art img{width:100%;height:205px;object-fit:contain;align-self:center;filter:drop-shadow(0 6px 10px #080713)}
+.awc-sword-art>div{display:flex;flex-direction:column;gap:7px;justify-content:center}
+.awc-sword-art b{color:#f6d99d;line-height:1.3}
+.awc-sword-art small{color:#d9c8bc;font-size:11px}
+.awc-sword-art a{font-size:12px;text-align:center;padding:9px;border-radius:7px;border:1px solid #d2a55a;color:#ffe1ad;background:#182841;text-decoration:none}
+@media(max-width:360px){.awc-sword-art img{height:158px}}
