@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111827">
-<title>AMBER WORLD CLASS | Asset Lab V0.6</title>
+<title>AMBER WORLD CLASS | Asset Lab V0.6.1</title>
 <style>
 :root{--bg:#0b1524;--box:#15263a;--edge:#9b6c3d;--gold:#f1ce89;--text:#ffeed0}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#15283a,var(--bg) 45%,#080c18);color:var(--text);font-family:system-ui,-apple-system,"Noto Sans Thai",sans-serif}
@@ -33,15 +33,15 @@ a{color:#ffe1a5}p{line-height:1.5}footer{text-align:center;padding:15px;font-siz
 </head>
 <body>
 <header>
-<h1>⚔ AMBER WORLD CLASS <span style="color:#a5e4ef">· ASSET LAB V0.6</span></h1>
+<h1>⚔ AMBER WORLD CLASS <span style="color:#a5e4ef">· ASSET LAB V0.6.1</span></h1>
 <div class="note">ทดลองภาพจริงจากเกม · ไม่ใช้รูปตัวอย่างมาตัดแปะ · Sprite Sheet 8 ทิศ / เอฟเฟกต์ 16 เฟรม</div>
-<a class="control" href="./index.html?v=06">← กลับเข้าเกม</a>
+<a class="control" href="./index.html?v=061">← กลับเข้าเกม</a>
 </header>
 <main>
 <section class="panel">
 <h2>🗺️ แผนที่โลก 10 แห่ง</h2>
 <div class="stamp" id="mapLabel">01 · หมู่บ้านอำพัน</div>
-<div class="frame"><img id="mapView" src="./assets/maps/map-01.png?v=06" alt="Amber Village map art"></div>
+<div class="frame"><img id="mapView" src="./assets/maps/map-01.png?v=061" alt="Amber Village map art"></div>
 <div class="controls thumbnail-grid" id="mapButtons"></div>
 <p class="note">แต่ละแมพเป็น PNG ขนาด 1152×1152 และวาดแยกฉากจริง ไม่ใช่การเปลี่ยนสีพื้นหลังอย่างเดียว</p>
 </section>
@@ -71,7 +71,7 @@ a{color:#ffe1a5}p{line-height:1.5}footer{text-align:center;padding:15px;font-siz
 <div class="panel" style="margin-top:10px;padding:10px">
 <b>ข้อมูล Asset Pack</b>
 <p class="note">4 ตัวละคร + ปีก 4 ชุด × 8 ทิศ × 4 เฟรม · มอนสเตอร์ 10 แบบ · บอส 10 แบบ × 8 ทิศ × 4 เฟรม · 4 สกิล × 16 เฟรม · แผนที่ 10 ฉาก</p>
-<p class="note">เป็นชุดต้นแบบ V0.6 ที่ใช้บนเว็บไซต์จริง ยังไม่ใช่งานภาพเก็บรายละเอียดขั้นสุดท้ายและยังไม่ครบ 120 สกิล</p>
+<p class="note">เป็นชุดต้นแบบ V0.6.1 ที่ใช้บนเว็บไซต์จริง ยังไม่ใช่งานภาพเก็บรายละเอียดขั้นสุดท้ายและยังไม่ครบ 120 สกิล</p>
 </div>
 </section>
 </main>
@@ -80,7 +80,7 @@ a{color:#ffe1a5}p{line-height:1.5}footer{text-align:center;padding:15px;font-siz
 'use strict';
 const maps=['หมู่บ้านอำพัน','ป่ามรกต','ทุ่งสายลม','นครหินผา','ทะเลทรายเพลิง','ภูเขาหิมะ','หุบเขามังกร','นครรัตติกาล','ดินแดนสวรรค์','ป้อมจอมมาร'];
 const jobs=['Sword','Archer','Mage','Fighter'],directions=['ลง','ลงซ้าย','ซ้าย','ขึ้นซ้าย','ขึ้น','ขึ้นขวา','ขวา','ลงขวา'];
-const img=(name)=>{const obj=new Image();obj.src='./assets/'+name+'.png?v=06';return obj};
+const img=(name)=>{const obj=new Image();obj.src='./assets/'+name+'.png?v=061';return obj};
 const heroes=jobs.map((_,i)=>img('sprites/hero-'+i));
 const monsters=Array.from({length:10},(_,i)=>img('sprites/mob-'+i));
 const bosses=Array.from({length:10},(_,i)=>img('sprites/boss-'+String(i).padStart(2,'0')));
@@ -102,10 +102,10 @@ function refresh(){
  el('effectLabel').textContent=jobs[effect]+' · RGBA 16 เฟรม (96×96 ต่อเฟรม)';
 }
 maps.forEach((name,i)=>{
- const button=document.createElement('button');button.className='thumb';button.innerHTML='<img loading="lazy" src="./assets/maps/map-'+String(i+1).padStart(2,'0')+'.png?v=06" alt=""><b>'+(i+1)+'</b>';
+ const button=document.createElement('button');button.className='thumb';button.innerHTML='<img loading="lazy" src="./assets/maps/map-'+String(i+1).padStart(2,'0')+'.png?v=061" alt=""><b>'+(i+1)+'</b>';
  button.title=name;
  button.addEventListener('click',()=>{
-  el('mapView').src='./assets/maps/map-'+String(i+1).padStart(2,'0')+'.png?v=06';
+  el('mapView').src='./assets/maps/map-'+String(i+1).padStart(2,'0')+'.png?v=061';
   el('mapLabel').textContent=String(i+1).padStart(2,'0')+' · '+name;
   Array.from(el('mapButtons').children).forEach((b,j)=>b.classList.toggle('active',i===j));
  });

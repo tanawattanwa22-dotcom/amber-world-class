@@ -149,21 +149,30 @@ for x,y in [(176,70),(397,70),(151,168),(410,175),(106,348),(414,364),(128,522),
  flowers(x,y,45,35)
 # trees only outside roads main
 for ar in [(150,90,34),(380,113,29),(21,283,36),(520,276,36),(154,402,32),(374,424,30),(86,535,30),(504,548,27),(195,540,25),(381,548,28)]:arbor(*ar)
+# V0.6.1 visual correction: keep the player spawn on the paved plaza, never inside fountain water.
+# Change only fountain graphics; all world coordinates and combat remain unchanged.
+FOUNTAIN_Y_OFFSET=-69
+def town_ellipse(b,*a,**kw):
+ return ellipse((b[0],b[1]+FOUNTAIN_Y_OFFSET,b[2],b[3]+FOUNTAIN_Y_OFFSET),*a,**kw)
+def town_rect(b,*a,**kw):
+ return rect((b[0],b[1]+FOUNTAIN_Y_OFFSET,b[2],b[3]+FOUNTAIN_Y_OFFSET),*a,**kw)
+def town_poly(points,*a,**kw):
+ return poly([(x,y+FOUNTAIN_Y_OFFSET) for x,y in points],*a,**kw)
 # fountain circular central stone basin / water animated glints not static sprite player overlap
-ellipse((234,230,347,339),'#3e5360')
-ellipse((237,224,344,330),'#8a9e9a','#e0cdb0',5)
-ellipse((247,237,335,322),'#2c819f','#32596a',4)
-ellipse((252,242,330,316),'#379fc4','#80dbef',2)
+town_ellipse((234,230,347,339),'#3e5360')
+town_ellipse((237,224,344,330),'#8a9e9a','#e0cdb0',5)
+town_ellipse((247,237,335,322),'#2c819f','#32596a',4)
+town_ellipse((252,242,330,316),'#379fc4','#80dbef',2)
 for k in range(100):
  a=R.uniform(0,2*math.pi);rr=R.uniform(4,35);x=int(291+rr*math.cos(a));y=int(282+rr*math.sin(a))
- if R.random()<.46:rect((x,y,x+2,y+1),R.choice(['#b3edee','#4dcde5','#74c5e7','#9ce5ee']))
-rect((285,254,298,281),'#c7d7d0','#2e6773',2)
-poly([(279,255),(291,231),(304,255)],'#dce7d9','#a3bcb2',2)
-ellipse((278,278,307,289),'#94c2c3','#426977',2)
+ if R.random()<.46:town_rect((x,y,x+2,y+1),R.choice(['#b3edee','#4dcde5','#74c5e7','#9ce5ee']))
+town_rect((285,254,298,281),'#c7d7d0','#2e6773',2)
+town_poly([(279,255),(291,231),(304,255)],'#dce7d9','#a3bcb2',2)
+town_ellipse((278,278,307,289),'#94c2c3','#426977',2)
 for p in [(270,265),(306,260),(289,298)]:
  for j in range(10):
   x=p[0]+R.randint(-10,10);y=p[1]+R.randint(-11,11)
-  rect((x,y,x+1,y+2),'#a6f4f0')
+  town_rect((x,y,x+1,y+2),'#a6f4f0')
 # water canals small ponds along green edge
 for x,y,w,h in [(384,146,99,45),(58,365,116,33)]:
  ellipse((x,y,x+w,y+h),'#6b8177','#c8c1a2',4)

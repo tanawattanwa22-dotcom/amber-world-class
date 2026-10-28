@@ -25,3 +25,9 @@ python tools/create_art.py
 python tools/create_skill_fx.py
 ```
 This overwrites only the V0.6 art files in `public/assets/`; test in Asset Gallery and gameplay before merging new revisions.
+
+## V0.6.1 visual spawn correction
+- The starter-town map fountain was north-shifted in the ORIGINAL ART GENERATOR to prevent player starting inside water (saved player spawn remains x570/y656).
+- The image stays 1152 × 1152 PNG, generated natively as world art, without cutting a reference poster.
+- Client gameplay, collision, server positions, progress, Supabase and the 55 AMBERLANDS project are unchanged.
+- Visual target reference quality is NOT yet achieved: this is a narrowly scoped visual bug fix, not a completed asset pack.
