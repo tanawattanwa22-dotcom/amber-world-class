@@ -45,6 +45,10 @@ const MENU=[
  ['map','🗺️','แผนที่'],['bag','🎒','กระเป๋า'],['shop','🛒','ร้านค้า'],
  ['quests','📜','ภารกิจ'],['social','🏆','ออนไลน์'],['profile','⚙️','บัญชี']
 ];
+function sceneStyle(i){
+ const a=Math.max(0,Math.min(9,Number(i)||0));
+ return ' style="background-image:url(./areas-10.svg?v=1);background-size:500% 200%;background-position:'+((a%5)/4*100)+'% '+(Math.floor(a/5)*100)+'%"';
+}
 const species=Array.from({length:100},(_,i)=>{
  const f=Math.floor(i/4),stage=i%4,a=FAMILIES[f],rarity=f>=23?4:f>=18?3:f>=10?2:1;
  return {id:i+1,family:f,stage,name:a[0]+SUFFIX[stage],emoji:a[1],type:a[2],rarity,
@@ -92,7 +96,7 @@ function starterPanel(){
 }
 function home(){
  const p=state.player,m=lead(),a=AREA[p.area||0];let h='<h1>🌈 MONSTER WORLD ONLINE</h1><p class="subtitle">100 สัตว์แฟนตาซี · 25 สายวิวัฒนาการ · 10 ดินแดน · จับสัตว์ ต่อสู้ เก็บสะสม และจัดทีมออนไลน์</p>';
- h+='<section class="scene"><div class="scene-content"><div class="scene-copy"><div class="badge gold">🌤 '+safe(a[0])+' · '+safe(a[1])+'</div><div class="scene-title">การผจญภัย<br>เริ่มที่นี่!</div><p>ตามหาสัตว์หายาก ฝึกทีมให้เก่ง และวิวัฒนาการเป็นร่างตำนาน</p>'+btn('🌿 ออกสำรวจ','explore','', 'blue')+'</div><div class="pet-stage">'+vis(m?m.speciesId:1,'big')+'</div></div></section>';
+ h+='<section class="scene has-area-art"'+sceneStyle(p.area||0)+'><div class="scene-content"><div class="scene-copy"><div class="badge gold">🌤 '+safe(a[0])+' · '+safe(a[1])+'</div><div class="scene-title">การผจญภัย<br>เริ่มที่นี่!</div><p>ตามหาสัตว์หายาก ฝึกทีมให้เก่ง และวิวัฒนาการเป็นร่างตำนาน</p>'+btn('🌿 ออกสำรวจ','explore','', 'blue')+'</div><div class="pet-stage">'+vis(m?m.speciesId:1,'big')+'</div></div></section>';
  if(!(state.pets||[]).length)h+=starterPanel();
  h+='<div class="panels"><div class="panel"><h2>🎯 ภารกิจวันนี้</h2><div class="info-row"><span>จับสัตว์ที่พบ</span><b>'+fmt(p.captures)+'/100</b></div><div class="meter"><i style="width:'+Math.min(100,p.captures)+'%"></i></div><div class="info-row"><span>ชนะการต่อสู้</span><b>'+fmt(p.wins)+' ครั้ง</b></div><div class="actions">'+btn('🎁 รับของรายวัน','daily')+btn('📜 เควสต์','goto','quests','ghost')+'</div></div>';
  h+='<div class="panel"><h2>🐾 ทีมของฉัน</h2>'+(state.pets||[]).filter(x=>x.slot!=null).sort((a,b)=>a.slot-b.slot).map(x=>'<div class="list-row">'+vis(x.speciesId,'tiny')+'<div class="grow"><strong>'+safe(info(x.speciesId).name)+'</strong><small>Lv.'+x.level+' · HP '+x.hp+'/'+x.maxHp+'</small></div></div>').join('')+'<div class="actions">'+btn('ดูทีม','goto','team','ghost')+'</div></div></div>';
@@ -146,7 +150,7 @@ function petPage(){
 function explore(){
  const a=AREA[state.player.area],wild=state.wild;
  let h='<h1>🌎 สำรวจ '+safe(a[0])+'</h1><p class="subtitle">'+safe(a[3])+' · ความยาก Lv.'+a[2]+'–'+(a[2]+9)+'</p>';
- h+='<div class="scene"><div class="scene-content"><div class="scene-copy"><div class="scene-title">'+a[1]+' '+safe(a[0])+'</div><p>เลือกสำรวจเพื่อค้นหาสัตว์ป่า ความหายากขึ้นอยู่กับพื้นที่และโอกาสของเซิร์ฟเวอร์</p>';
+ h+='<div class="scene has-area-art"'+sceneStyle(p.area||0)+'><div class="scene-content"><div class="scene-copy"><div class="scene-title">'+a[1]+' '+safe(a[0])+'</div><p>เลือกสำรวจเพื่อค้นหาสัตว์ป่า ความหายากขึ้นอยู่กับพื้นที่และโอกาสของเซิร์ฟเวอร์</p>';
  h+=wild?btn('⚔️ เข้าสู่การต่อสู้','goto','battle'):btn('🔍 ค้นหาสัตว์ป่า','explore');
  h+='</div><div class="pet-stage">'+vis(wild?wild.speciesId:9,'big')+'</div></div></div>';
  h+='<div class="panels"><div class="panel"><h2>🎯 ตัวเลือกสำรวจ</h2><div class="actions">'+btn('🔍 เดินสำรวจ','explore')+btn('🗺️ เปลี่ยนพื้นที่','goto','map','ghost')+btn('⚔️ สู้ / จับ','goto','battle','ghost')+'</div></div><div class="panel"><h2>📊 ระดับความหายาก</h2><div class="info-row">ธรรมดา <span>★</span></div><div class="info-row">หายาก <span>★★</span></div><div class="info-row">มหากาพย์ <span>★★★</span></div><div class="info-row">ตำนาน <span>★★★★</span></div></div></div>';return h;
