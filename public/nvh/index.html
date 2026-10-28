@@ -5,7 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a101a">
 <meta name="description" content="55 MB NVH HUNTER — Mobile Noise & Vibration Diagnosis Assistant">
-<title>55 MB NVH HUNTER V0.1</title>
+<title>55 PERFORMANCE NVH HUNTER</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="./icon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="application-name" content="55 NVH HUNTER">
+<meta property="og:title" content="55 PERFORMANCE NVH HUNTER">
 <style>
 :root{color-scheme:dark;--bg:#080e18;--panel:#111a29;--panel2:#152133;--line:#263448;--text:#edf5ff;--dim:#8e9db4;--cyan:#48e7ed;--teal:#49d6aa;--amber:#ffbf66;--pink:#d29bff;--red:#ff7e91;--radius:17px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 8% -8%,#123349 0%,transparent 35%),var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Noto Sans Thai",Tahoma,sans-serif;font-size:14px;font-variant-numeric:tabular-nums}
@@ -19,12 +27,34 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
 @media(max-width:760px){.grid2{grid-template-columns:1fr}.wrap{padding:12px 10px 60px}.topbar{padding:7px 4px 16px}.card{padding:13px}.hero{padding:18px 16px}.metric{padding:13px 10px}.metric .val{font-size:clamp(19px,5vw,24px)}.metric .tip{font-size:8.8px}.actionbar .btn{font-size:11px;padding:8px 5px}.plot{height:207px}.plot.water{height:152px}.kpis{gap:7px}}
 @media(max-width:370px){.brand strong{font-size:13px}.tag{font-size:9px}.metric .val{font-size:19px}.hero h1{font-size:23px}.actionbar{grid-template-columns:1fr 1fr}.actionbar .btn:last-child{grid-column:1/-1}.compare{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto;transition:none!important}}
+
+.usage-guide{border-color:#35576a;background:linear-gradient(140deg,#14253a,#101b2b)}
+.usage-guide summary{cursor:pointer;color:#75eadc;font-size:15px;font-weight:800;line-height:1.55;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.usage-guide summary::-webkit-details-marker{display:none}
+.usage-guide summary::after{content:'＋';font-size:22px;line-height:1;color:#5de1d3}
+.usage-guide[open] summary::after{content:'−'}
+.guide-intro{font-size:12px;color:#b5c7d7;line-height:1.85;margin:10px 0 16px}
+.guide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.guide-box{padding:12px;background:#0b1626;border:1px solid #2a4054;border-radius:13px}
+.guide-box h3{margin:0 0 8px;color:#fff;font-size:13px}
+.guide-box p,.guide-box li{font-size:11.5px;line-height:1.85;color:#bed0df;margin:0}
+.guide-box ul,.guide-box ol{margin:6px 0 0;padding-left:21px}
+.guide-box strong{color:#6be7d5}
+.guide-table{width:100%;border-collapse:collapse;font-size:11.5px;line-height:1.7}
+.guide-table th,.guide-table td{text-align:left;border-bottom:1px solid #304153;padding:8px 5px;vertical-align:top}
+.guide-table th{color:#62e6d4}
+.guide-wide{grid-column:1/-1}
+.quick-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px;margin-bottom:9px}
+.quick-links .btn{flex:1;min-width:125px}
+.guide-alert{font-size:11.5px;line-height:1.85;margin-top:12px;border-left:3px solid #ffbf66;background:#272435;padding:11px 12px;border-radius:7px;color:#ffd9a2}
+.brand-logo{width:45px;height:45px;object-fit:contain;border-radius:12px;border:1px solid #284457;flex-shrink:0}
+@media(max-width:600px){.guide-grid{grid-template-columns:1fr}.guide-box{padding:11px}.guide-wide{grid-column:auto}.usage-guide summary{font-size:13px}.quick-links .btn{min-width:0}}
 </style>
 </head>
 <body>
 <main class="wrap">
   <header class="topbar">
-    <div class="brand"><div class="emblem">55</div><div><strong>MB NVH HUNTER</strong><small>NOISE DIAGNOSTIC · V0.1</small></div></div>
+    <div class="brand"><img class="brand-logo" src="./icon.svg" alt="55 PERFORMANCE NVH"><div><strong>55 PERFORMANCE</strong><small>NVH HUNTER · AUDIO LAB V0.2</small></div></div>
     <div class="state" id="stateBadge"><i class="dot"></i><span id="stateText">STANDBY</span></div>
   </header>
   <section class="hero">
@@ -36,8 +66,64 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
       <button class="btn secondary" id="demoBtn">▶ ลอง DEMO</button>
       <button class="btn stop" id="stopBtn" disabled>■ หยุดวัด</button>
     </div>
+    <div class="quick-links"><button class="btn small secondary" id="installBtn" type="button">📲 ติดตั้งลงจอมือถือ</button><button class="btn small muted" id="guideBtn" type="button">📖 คู่มืออ่านกราฟ</button></div>
     <div id="notice" role="status" aria-live="polite">ยังไม่เปิดไมโครโฟน · ทดลองระบบก่อนได้ด้วยปุ่ม DEMO</div>
   </section>
+
+  <details class="card usage-guide" id="usageGuide">
+    <summary>📖 คู่มือ 55 PERFORMANCE NVH — วิธีวัดและอ่านค่าทีละขั้น</summary>
+    <p class="guide-intro">โปรแกรมรับ <strong>เสียงในอากาศจากไมโครโฟน Android</strong> แล้วใช้ FFT แยกพลังงานตามความถี่ วาดรูปคลื่นและกราฟความถี่ตามเวลา พร้อมคำนวณความถี่ที่สัมพันธ์กับรอบเครื่องจาก RPM ที่ช่างกรอกเอง เครื่องมือนี้ช่วยหาเบาะแสของเสียงผิดปกติ ไม่ใช่เครื่องฟันธงอะไหล่เสีย</p>
+    <div class="guide-grid">
+      <div class="guide-box">
+        <h3>01 · เริ่มวัดเสียงจริง</h3>
+        <ol><li>เปิดหน้าเว็บนี้ด้วย Chrome ผ่าน HTTPS หรือไอคอนที่ติดตั้งบนหน้าจอ</li><li>กด <strong>เริ่มไมค์จริง</strong> และอนุญาตให้ใช้ไมโครโฟน</li><li>วางมือถือ ณ จุดปลอดภัยและกำหนดระยะห่างคงที่</li><li>รอกราฟนิ่งแล้วบันทึก Hz หรือกด Before / After</li><li>กด <strong>หยุดวัด</strong> เมื่อเสร็จ</li></ol>
+        <p><strong>โหมด DEMO</strong> เป็นเสียงจำลอง ไม่ใช่ค่าจากรถ ห้ามนำไปวินิจฉัยจริง</p>
+      </div>
+      <div class="guide-box">
+        <h3>02 · อ่านตัวเลขบนสุด</h3>
+        <p><strong>PEAK FREQUENCY (Hz)</strong> ความถี่ที่เด่นที่สุดในย่านที่เลือก เช่น 185 Hz แปลว่าพบองค์ประกอบเสียงเด่นประมาณ 185 รอบคลื่นต่อวินาที <em>ไม่ได้แปลว่าลูกปืนเสีย</em></p>
+        <p><strong>SECOND PEAK</strong> ความถี่เด่นอันดับรอง อาจเป็นฮาร์มอนิกของเสียงเดียวกันหรือแหล่งเสียงอื่น</p>
+        <p><strong>SIGNAL LEVEL (dBFS)</strong> ระดับสัญญาณดิจิทัล: ค่าใกล้ 0 dBFS คือสัญญาณแรงขึ้น เป็น <strong>ไม่ใช่ dB SPL</strong> และไม่ใช่ระดับเสียงจริงที่สอบเทียบ</p>
+      </div>
+      <div class="guide-box">
+        <h3>03 · Frequency Spectrum (FFT)</h3>
+        <p>แกนนอนเป็น <strong>Hz</strong> (ซ้ายความถี่ต่ำ → ขวาความถี่สูง) กราฟยิ่งสูงหมายถึงพลังงานเสียงในย่านนั้นมาก เลือกย่าน 500 / 2,000 / 8,000 Hz เพื่อซูมช่วงที่สนใจ</p>
+        <p><strong>ตัวอย่าง:</strong> พบยอดที่ 120 Hz และ 240 Hz อาจเกี่ยวข้องกันเป็นความถี่หลักกับ 2 เท่า ควรลองเปลี่ยนรอบหรือเงื่อนไขงานเพื่อดูว่ายอดเคลื่อนตามหรือไม่</p>
+      </div>
+      <div class="guide-box">
+        <h3>04 · Waveform และ Spectrogram</h3>
+        <p><strong>Waveform:</strong> รูปร่างสัญญาณตามเวลา ใช้ดูจังหวะเสียงกระแทก เสียงเป็นพัก ๆ หรือสัญญาณที่ดังขึ้น ไม่สามารถระบุชิ้นส่วนจากรูปคลื่นลำพัง</p>
+        <p><strong>Spectrogram:</strong> ซ้ายคืออดีต ขวาคือปัจจุบัน; ความถี่ต่ำอยู่ล่าง สูงอยู่บน แถบสีสว่างแสดงพลังงานมากขึ้น เส้นแนวนอนต่อเนื่องอาจหมายถึงเสียงคงที่ เส้นที่เลื่อนขึ้นเมื่อเร่งอาจสัมพันธ์กับรอบ</p>
+      </div>
+      <div class="guide-box">
+        <h3>05 · RPM / Engine Order</h3>
+        <p>ใส่ <strong>RPM จากหน้าปัดหรือเครื่องสแกน</strong> ด้วยตนเอง (โปรแกรมยังไม่อ่าน ECU) โปรแกรมคำนวณ: <strong>1× = RPM ÷ 60</strong>; 2× และ 4× คือสองและสี่เท่า</p>
+        <p>เช่น 1,500 RPM → 1× = 25 Hz, 2× = 50 Hz, 4× = 100 Hz; ค่า Firing สำหรับเครื่อง 4 จังหวะคำนวณจากจำนวนสูบ แต่แรงสั่นจริงมีฮาร์มอนิกและแหล่งอื่นได้</p>
+      </div>
+      <div class="guide-box">
+        <h3>06 · ก่อน–หลังซ่อม / Export</h3>
+        <p>วัดใน <strong>ตำแหน่งเดิม ระยะเดิม RPM เดิม และสภาพแวดล้อมใกล้เคียงกัน</strong> แล้วกด BEFORE ก่อนซ่อม และ AFTER หลังซ่อม ระบบเทียบค่าเฉลี่ยช่วงล่าสุดประมาณ 5 วินาที</p>
+        <p>กด <strong>เริ่มบันทึกเสียง</strong> เพื่อบันทึก WebM; <strong>CSV</strong> เพื่อส่งออกค่าตามเวลา; <strong>PNG</strong> เพื่อเก็บรูป FFT ระหว่างตรวจ</p>
+      </div>
+      <div class="guide-box guide-wide">
+        <h3>07 · อาการที่ใช้ช่วยตรวจได้</h3>
+        <table class="guide-table">
+          <thead><tr><th>อาการ</th><th>วิธีเปรียบเทียบ</th><th>ข้อควรระวังในการตีความ</th></tr></thead>
+          <tbody>
+            <tr><td>เสียงหอนตามรอบเครื่อง</td><td>เปรียบเทียบ FFT ที่เดินเบาและรอบสูงขึ้นขณะรถจอดอย่างปลอดภัย</td><td>เสียงอาจมาจากสายพาน ลูกลอก พัดลม หรือระบบอื่น ไม่ใช่คำยืนยัน</td></tr>
+            <tr><td>เสียงหอนตามความเร็วรถ</td><td>บันทึกในห้องโดยสารด้วยอุปกรณ์ยึดแน่น ให้ผู้โดยสารเป็นผู้ควบคุม</td><td>มือถืออย่างเดียวแยกลูกปืนล้อ ยาง และเฟืองท้ายไม่ได้แน่นอน</td></tr>
+            <tr><td>เสียงกุกกัก / กระแทก</td><td>ดู Waveform และ Spectrogram ว่าเกิดเป็นช่วงใด</td><td>ต้องตรวจช่วงล่างเชิงกลและทดสอบซ้ำ</td></tr>
+            <tr><td>ตรวจหลังเปลี่ยนอะไหล่</td><td>เทียบ BEFORE / AFTER ภายใต้เงื่อนไขเดิม</td><td>Auto Gain Control ของไมค์อาจเปลี่ยนระดับเสียงที่วัดได้</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="guide-box guide-wide">
+        <h3>📲 วิธีติดตั้งไอคอนบน Android</h3>
+        <ol><li>เปิด <strong>https://tanawattanwa22-dotcom.github.io/amber-world-class/nvh/</strong> ใน Chrome</li><li>แตะ <strong>⋮</strong> มุมขวาบน เลือก <strong>ติดตั้งแอป</strong> หรือ <strong>เพิ่มลงในหน้าจอหลัก</strong> (ชื่อเมนูขึ้นอยู่กับรุ่น Chrome)</li><li>ยืนยันติดตั้ง จะเห็นไอคอน <strong>55 PERFORMANCE NVH</strong> บนหน้าจอมือถือ</li><li>เข้าไอคอนแล้วกดเริ่มไมโครโฟนเพื่อวัดจริง หากไม่ขึ้นไอคอนใหม่ให้ลบทางลัดเก่าและเพิ่มอีกครั้ง</li></ol>
+      </div>
+    </div>
+    <div class="guide-alert"><strong>ความปลอดภัย:</strong> ห้ามถือมือถือวัดเสียงขณะขับรถหรือเข้าใกล้พัดลม/สายพาน/ท่อไอเสียร้อน ๆ; อย่าวางมือถือในบริเวณที่หล่นเข้าชิ้นส่วนหมุนหรือรบกวนถุงลมนิรภัย ไมค์มือถือวัดเสียงในอากาศ <strong>ไม่ใช่</strong> เซนเซอร์การสั่นชิ้นส่วนโดยตรง และไม่ควรใช้ค่า dBFS เปรียบเทียบระหว่างคนละรุ่นมือถือเพื่อยืนยันงานซ่อม</div>
+  </details>
   <section class="kpis" aria-label="ค่าที่วัดได้">
     <div class="metric"><div class="lab">PEAK FREQUENCY</div><div class="val accent"><span id="peakVal" style="font-size:inherit;color:inherit">—</span><span>Hz</span></div><div class="tip">ความถี่เด่นในช่วงที่เลือก</div></div>
     <div class="metric"><div class="lab">SIGNAL LEVEL</div><div class="val green"><span id="rmsVal" style="font-size:inherit;color:inherit">—</span><span>dBFS</span></div><div class="tip">ระดับสัญญาณ ไม่ใช่ dB SPL</div></div>
@@ -87,7 +173,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
     </div>
   </div>
   <section class="card"><div class="section-header">ขอบเขตการใช้งานในงานช่าง</div><div class="help" style="font-size:11px;line-height:1.85">เหมาะสำหรับค้นหาเสียงฮัม/หอน/ความถี่เด่นในอากาศและเปรียบเทียบเสียงก่อน–หลังซ่อม <strong style="color:#c6d8e8">ยังไม่ใช่เครื่องวัดแรงสั่นสะเทือนสัมผัสชิ้นส่วน หรือเครื่องวัดระดับเสียง dB SPL ที่สอบเทียบ</strong> สมาร์ตโฟนอาจมีการปรับเกนอัตโนมัติและกรองเสียงแม้ร้องขอให้ปิดไว้ ความถี่ต่ำและความถี่สูงอาจวัดได้ไม่ตรงตามจริง</div><div class="hint"><b>ความปลอดภัย:</b> อย่านำโทรศัพท์หรือสายไมค์เข้าใกล้สายพาน พัดลม เพลาหมุน จุดร้อน หรืออุปกรณ์ไฟฟ้าแรงสูง ห้ามถือโทรศัพท์ใช้งานระหว่างขับรถ หากต้องวัดตอนรถเคลื่อนที่ ให้มีผู้โดยสารที่เป็นผู้ปฏิบัติการวัดและติดตั้งอุปกรณ์อย่างปลอดภัย</div></section>
-  <footer class="footstrip"><span>55 PERFORMANCE · MB NVH HUNTER V0.1</span><span id="sampleRateText">AUDIO INPUT: NOT CONNECTED</span></footer>
+  <footer class="footstrip"><span>55 PERFORMANCE · NVH HUNTER V0.2</span><span id="sampleRateText">AUDIO INPUT: NOT CONNECTED</span></footer>
 </main>
 <script>
 (()=>{'use strict';
@@ -146,6 +232,13 @@ function downloadAudio(){if(!st.lastAudio)return;const ext=st.lastAudioType.incl
 function csv(){if(!st.history.length){tell('ยังไม่มีข้อมูลให้ส่งออก','warn');return}const head=['timestamp','seconds','mode','peak_hz','second_peak_hz','rms_dbfs','rpm_manual','frequency_range_hz'];const rows=st.history.map(x=>[x.iso,x.secs,x.mode,x.peakHz,x.secondHz,x.rmsDbFS,x.rpm,x.rangeHz].map(v=>v==null?'':String(v)).join(','));const b=new Blob(['\ufeff'+head.join(',')+'\r\n'+rows.join('\r\n')],{type:'text/csv;charset=utf-8'});dl(b,'55_MBNVH_LOG_'+stamp()+'.csv');tell('ส่งออกข้อมูล CSV จำนวน '+st.history.length+' แถวแล้ว','ok')}
 function png(){const c=ui.spect;c.toBlob(b=>{if(b){dl(b,'55_MBNVH_FFT_'+stamp()+'.png');tell('บันทึกภาพ FFT แล้ว','ok')}else tell('บันทึกภาพไม่สำเร็จ','error')},'image/png')}
 ui.start.addEventListener('click',startMic);ui.demo.addEventListener('click',startDemo);ui.stop.addEventListener('click',stop);ui.pause.addEventListener('click',togglePause);ui.range.addEventListener('change',updateAxes);ui.rpm.addEventListener('input',calcOrders);ui.cyl.addEventListener('change',calcOrders);ui.before.addEventListener('click',()=>snapshot('before'));ui.after.addEventListener('click',()=>snapshot('after'));$('resetCompareBtn').addEventListener('click',resetCompare);$('clearWaterBtn').addEventListener('click',prepareWater);ui.record.addEventListener('click',audioRecord);ui.audio.addEventListener('click',downloadAudio);ui.csv.addEventListener('click',csv);ui.png.addEventListener('click',png);window.addEventListener('resize',()=>{if(!active())idleDraw();else prepareWater()});window.addEventListener('pagehide',()=>{if(st.stream){st.stream.getTracks().forEach(t=>t.stop())}});loadCompare();calcOrders();updateAxes();idleDraw();uiState();
+
+let installEvent=null;
+window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installEvent=event});
+$('guideBtn').addEventListener('click',()=>{const d=$('usageGuide');d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'})});
+$('installBtn').addEventListener('click',async()=>{if(installEvent){const event=installEvent;installEvent=null;await event.prompt();return}const d=$('usageGuide');d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'});tell('หากไม่เห็นหน้าติดตั้ง ให้ใช้เมนู Chrome ⋮ → ติดตั้งแอป / เพิ่มลงในหน้าจอหลัก','ok')});
+window.addEventListener('appinstalled',()=>tell('ติดตั้ง 55 PERFORMANCE NVH HUNTER ลงหน้าจอเรียบร้อย','ok'));
+if('serviceWorker' in navigator && window.isSecureContext){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(error=>console.warn('NVH offline cache',error)))}
 })();
 </script>
 </body></html>
