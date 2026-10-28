@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071629"><meta name="description" content="Monster World Online - 100 collectible fantasy creatures with server-backed encounters and evolutions">
+<title>MONSTER WORLD ONLINE · 100 Creatures</title>
+<link rel="stylesheet" href="./style.css?v=1"></head>
+<body>
+<div id="app">
+ <aside class="side">
+  <div class="brand">🌈 MONSTER<br>WORLD <small>ONLINE · 100 CREATURES</small></div>
+  <nav class="nav" id="sidebar"></nav>
+  <div class="side-footer">ต้นฉบับใหม่ ไม่ใช้ Asset ของ AMBER WORLD CLASS เดิม<br><br>SERVER · SUPABASE</div>
+ </aside>
+ <div class="main">
+  <header class="top">
+   <div class="player-pill"><span class="avatar">🧑🏻‍🚀</span><span id="trainer">นักสำรวจ <small style="display:block;color:#9ebedf">เลเวลทีม · 1</small></span></div>
+   <div class="wallet">🪙 <span id="coins">1,600</span></div>
+   <div class="wallet">🔮 <span id="balls">15</span></div>
+   <div class="online-pill" id="net-status">◉ DEMO</div>
+  </header>
+  <div id="content" role="main" aria-live="polite"></div>
+ </div>
+</div>
+<nav class="bottom" id="bottom"></nav>
+<div id="toast" aria-live="polite"></div>
+<script src="../config.js"></script>
+<script defer src="./game.js?v=1"></script>
+</body></html>
