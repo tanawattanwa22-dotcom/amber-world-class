@@ -111,7 +111,7 @@ function battle(){
  '<p class="tips">ทำให้ HP ฝ่ายตรงข้ามต่ำลง เพื่อเพิ่มโอกาสจับ · ถ้าสัตว์ของคุณหมดแรงให้ใช้ยาฟื้นฟู</p></div>';
  h+='<div class="panel"><h2>⚔️ เลือกคำสั่ง</h2><div class="battle-buttons">'+
  button('⚔️ จู่โจม','attack','0','blue',!p)+button('🌪️ ท่าธาตุ','attack','1','blue',!p)+
- button('💥 โจมตีหนัก','attack','2','blue',!p)+button('✨ ท่าพิเศษ','attack','3','blue',!p)+
+ button('💥 โจมตีหนัก','attack','2','blue',!p)+button('✨ ท่าพิเศษ (2 เทิร์น)','attack','3','blue',!p||(w.turns||0)<2)+
  button('🔮 จับ ('+state.player.balls+')','capture','','',!p||!state.player.balls)+button('🏃 หนี','flee','','ghost')+
  '</div></div></div><div class="notice">การต่อสู้ออนไลน์คำนวณดาเมจ เลเวล รางวัล และผลการจับที่ Supabase เท่านั้น</div></div>';
  return h;
@@ -254,12 +254,21 @@ function demo(action,data={}){
   if(!w)throw Error('ยังไม่พบสัตว์ป่า');let a=alive();if(!a)throw Error('สัตว์ในทีมหมดแรง');
   let foe=get(w.speciesId),move=Number(data.move);
   if(!Number.isInteger(move)||move<0||move>3)throw Error('ท่าโจมตีไม่ถูกต้อง');
-  const dmg=Math.max(1,Math.floor((get(a.speciesId).atk+a.level*2)*(.7+move*.19)*(.86+Math.random()*.30)-foe.def*.22));
+  if(move===3&&(w.turns||0)<2)throw Error('ท่าพิเศษต้องสะสม 2 เทิร์นก่อน');
+  const advantage={'ไฟ':['พฤกษา','น้ำแข็ง'],'น้ำ':['ไฟ','หิน'],'พฤกษา':['น้ำ','หิน'],
+    'สายฟ้า':['น้ำ','ลม'],'น้ำแข็ง':['พฤกษา','ลม'],'เงา':['แสง'],'แสง':['เงา'],
+    'หิน':['สายฟ้า','ไฟ'],'ลม':['พฤกษา'],'คริสตัล':['เงา'],'เวท':['คริสตัล']};
+  const heroType=get(a.speciesId).type;
+  const multiplier=[.76,1.08,1.32,1.76][move]*(move===1&&(advantage[heroType]||[]).includes(foe.type)?1.4:1);
+  const dmg=Math.max(1,Math.floor((get(a.speciesId).atk+a.level*2)*multiplier*(.86+Math.random()*.30)-foe.def*.22));
   w.hp=Math.max(0,w.hp-dmg);msg='โจมตี '+dmg+' ดาเมจ';
   if(!w.hp){let xp=w.level*16+60,coin=w.level*9+30;a.exp+=xp;
-   if(a.exp>=a.level*30&&a.level<80){a.level++;a.exp=0;a.maxHp+=4;a.hp=Math.min(a.maxHp,a.hp+4);a.atk=get(a.speciesId).atk+a.level*2;a.def=get(a.speciesId).def+a.level;}
+   let levels=0;
+   while(a.level<80&&a.exp>=a.level*30){a.exp-=a.level*30;a.level++;levels++;a.maxHp+=4;a.hp=Math.min(a.maxHp,a.hp+4);}
+   if(a.level===80)a.exp=0;
+   if(levels){a.atk=get(a.speciesId).atk+a.level*2;a.def=get(a.speciesId).def+a.level;}
    p.coins+=coin;p.wins++;p.xp+=xp;state.wild=null;msg+=' · ชนะ! +'+xp+' EXP +'+coin+' เหรียญ';
-  }else{let back=Math.max(1,Math.floor((foe.atk+w.level*2)*(.16+Math.random()*.2)-3));a.hp=Math.max(0,a.hp-back);w.turns++;msg+=' · โดนสวนกลับ -'+back+' HP';}
+  }else{let back=Math.max(1,Math.floor((foe.atk+w.level*2)*(.16+Math.random()*.2)-3));if(move===0)back=Math.max(1,Math.floor(back*.55));if(move===2)back=Math.max(1,Math.floor(back*1.15));a.hp=Math.max(0,a.hp-back);w.turns++;msg+=' · โดนสวนกลับ -'+back+' HP';}
  }else if(action==='capture'){
   if(!w)throw Error('ยังไม่พบสัตว์ป่า');if(p.balls<=0)throw Error('บอลหมด');
   if(own.length>=300)throw Error('คลังเต็ม');const a=alive();if(!a)throw Error('สัตว์ในทีมหมดแรง');
@@ -284,7 +293,7 @@ function demo(action,data={}){
   if(!['balls','potions'].includes(item)||!Number.isInteger(n)||n<1||n>20||p.coins<price)throw Error('เงินไม่พอหรือข้อมูลผิด');
   p.coins-=price;p[item]+=n;msg='ซื้อไอเทมสำเร็จ';
  }else if(action==='heal'){
-  if(p.potions<1)throw Error('ยาฟื้นฟูหมด');p.potions--;
+  if(p.potions<1)throw Error('ยาฟื้นฟูหมด');if(!own.some(x=>x.slot!=null&&x.hp<x.maxHp))throw Error('สัตว์ในทีมมี HP เต็มอยู่แล้ว');p.potions--;
   for(let x of own)if(x.slot!=null)x.hp=x.maxHp;msg='รักษาสัตว์ในทีมสำเร็จ';
  }else if(action==='daily'){
   const d=new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Bangkok'});
