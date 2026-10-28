@@ -1,5 +1,4 @@
--- AMBER PETS / MONSTER WORLD ONLINE -- independent game data from AMBER WORLD CLASS.
--- Requires the five awc_pet_* tables and 100-species seed in 001_schema.sql.
+-- MONSTER WORLD ONLINE V0.2.3 — validated server-side battle and economy rules.
 CREATE OR REPLACE FUNCTION public.awc_pet_action(p_uid uuid, p_action text, p_payload jsonb DEFAULT '{}'::jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -66,24 +65,44 @@ BEGIN
    IF extract(epoch FROM now_ts-p.last_action)<0.36 THEN RETURN jsonb_build_object('ok',false,'error','รอคูลดาวน์');END IF;
    BEGIN chosen=(p_payload->>'move')::int; EXCEPTION WHEN others THEN chosen:=0; END;
    IF chosen IS NULL OR chosen<0 OR chosen>3 THEN RETURN jsonb_build_object('ok',false,'error','Invalid move');END IF;
-   SELECT base_atk INTO amount FROM public.awc_pet_species WHERE id=lead.species_id;
-   d:=greatest(1,floor((amount+lead.level*2)*(0.7+chosen*.19)*(0.86+random()*.30)-sp.base_def*.22)::int);
+   IF chosen=3 AND w.turns<2 THEN RETURN jsonb_build_object('ok',false,'error','ท่าพิเศษต้องสะสม 2 เทิร์นก่อน');END IF;
+   SELECT base_atk,element INTO amount,x FROM public.awc_pet_species WHERE id=lead.species_id;
+   -- Four real combat choices: quick, element, heavy, charged special.
+   chance := CASE chosen WHEN 0 THEN 0.76 WHEN 1 THEN 1.08 WHEN 2 THEN 1.32 ELSE 1.76 END;
+   IF chosen=1 AND ((x='fire' AND sp.element IN('grass','ice'))
+    OR (x='water' AND sp.element IN('fire','earth'))
+    OR (x='grass' AND sp.element IN('water','earth'))
+    OR (x='electric' AND sp.element IN('water','wind'))
+    OR (x='ice' AND sp.element IN('grass','wind'))
+    OR (x='dark' AND sp.element='light') OR (x='light' AND sp.element='dark')
+    OR (x='earth' AND sp.element IN('electric','fire'))
+    OR (x='wind' AND sp.element='grass')
+    OR (x='crystal' AND sp.element='dark')
+    OR (x='arcane' AND sp.element='crystal')) THEN chance:=chance*1.4;END IF;
+   d:=greatest(1,floor((amount+lead.level*2)*chance*(0.86+random()*.30)-sp.base_def*.22)::int);
    UPDATE public.awc_pet_encounters SET hp=greatest(0,hp-d),turns=turns+1 WHERE user_id=p_uid;
    UPDATE public.awc_pet_players SET last_action=now_ts WHERE user_id=p_uid;
    response_text='โจมตี '||d||' ดาเมจ';
    IF w.hp<=d THEN
      xp_award:=w.level*16+60;coin_award:=w.level*9+30;
-     UPDATE public.awc_pet_owned SET exp=exp+xp_award WHERE id=lead.id;
      SELECT * INTO own FROM public.awc_pet_owned WHERE id=lead.id;
-     IF own.exp>=own.level*30 AND own.level<80 THEN
-      UPDATE public.awc_pet_owned SET exp=0,level=level+1,max_hp=max_hp+4,hp=least(max_hp+4,hp+4) WHERE id=lead.id;
-      response_text:=response_text||' · LEVEL UP!';
-     END IF;
+     new_level:=own.level;amount:=own.exp+xp_award;
+     WHILE new_level<80 AND amount>=new_level*30 LOOP
+       amount:=amount-new_level*30;new_level:=new_level+1;
+     END LOOP;
+     IF new_level=80 THEN amount:=0;END IF;
+     UPDATE public.awc_pet_owned SET exp=amount,level=new_level,
+       max_hp=max_hp+(new_level-own.level)*4,
+       hp=least(max_hp+(new_level-own.level)*4,hp+(new_level-own.level)*4)
+       WHERE id=lead.id;
+     IF new_level>own.level THEN response_text:=response_text||' · LEVEL UP!';END IF;
      UPDATE public.awc_pet_players SET wins=wins+1,coins=coins+coin_award,xp=xp+xp_award WHERE user_id=p_uid;
      DELETE FROM public.awc_pet_encounters WHERE user_id=p_uid;
      response_text:=response_text||' ชนะ! +'||xp_award||' EXP +'||coin_award||' Gold';
    ELSE
      d:=greatest(1,floor((sp.base_atk+w.level*2)*(.16+random()*.2)-3)::int);
+     IF chosen=0 THEN d:=greatest(1,floor(d*.55)::int);END IF;
+     IF chosen=2 THEN d:=greatest(1,floor(d*1.15)::int);END IF;
      UPDATE public.awc_pet_owned SET hp=greatest(0,hp-d) WHERE id=lead.id;
      response_text:=response_text||' · ถูกสวนกลับ -'||d||' HP';
    END IF;
@@ -152,12 +171,13 @@ BEGIN
   response_text='ซื้อไอเทมสำเร็จ x'||amount;
  ELSIF p_action='heal' THEN
   IF p.potions<=0 THEN RETURN jsonb_build_object('ok',false,'error','ยาฟื้นฟูหมด');END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.awc_pet_owned WHERE user_id=p_uid AND slot IS NOT NULL AND hp<max_hp) THEN RETURN jsonb_build_object('ok',false,'error','สัตว์ในทีมมี HP เต็มอยู่แล้ว');END IF;
   UPDATE public.awc_pet_owned SET hp=max_hp WHERE user_id=p_uid AND slot IS NOT NULL;
   UPDATE public.awc_pet_players SET potions=potions-1 WHERE user_id=p_uid;
   response_text='รักษาสัตว์ทั้งทีมแล้ว';
  ELSIF p_action='daily' THEN
-  IF p.daily_claim=current_date THEN RETURN jsonb_build_object('ok',false,'error','รับรางวัลวันนี้แล้ว');END IF;
-  UPDATE public.awc_pet_players SET coins=coins+600,balls=balls+7,potions=potions+2,daily_claim=current_date WHERE user_id=p_uid;
+  IF p.daily_claim=(now() AT TIME ZONE 'Asia/Bangkok')::date THEN RETURN jsonb_build_object('ok',false,'error','รับรางวัลวันนี้แล้ว');END IF;
+  UPDATE public.awc_pet_players SET coins=coins+600,balls=balls+7,potions=potions+2,daily_claim=(now() AT TIME ZONE 'Asia/Bangkok')::date WHERE user_id=p_uid;
   response_text='รับรางวัลรายวัน +600 เหรียญ +7 บอล +2 ยา';
  ELSIF p_action='rename' THEN
   x:=trim(coalesce(p_payload->>'name',''));
