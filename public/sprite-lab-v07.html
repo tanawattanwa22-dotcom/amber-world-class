@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d182b"><title>AMBER WORLD CLASS | Sprite Lab V0.7</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#090f1e;color:#f5e4c2;font:14px system-ui,"Noto Sans Thai",sans-serif}header{padding:16px;border-bottom:2px solid #c99b59;background:linear-gradient(#1c3855,#0d182b)}h1{font-size:21px;margin:0;color:#f4ca7c;text-shadow:0 2px 3px #121}small{color:#a6b6d2}main{max-width:1020px;margin:auto;padding:12px;display:grid;grid-template-columns:minmax(200px,360px) 1fr;gap:12px}.panel{border:1px solid #9c7445;border-radius:11px;background:#112137;padding:12px;min-width:0}h2{font-size:17px;color:#f1d59b;margin:0 0 12px}button,a{border:1px solid #ad8a57;background:#1e3450;color:#ffe7b1;border-radius:7px;padding:9px 12px;font:inherit;cursor:pointer;min-height:40px;text-decoration:none}button:focus-visible,button.active{background:#81603c;outline:2px solid #f7d993}.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;max-height:53vh;overflow:auto}button.option{padding:7px 2px;font-size:11px}.actions,.classes{display:flex;flex-wrap:wrap;gap:5px;margin:9px 0}#stage{display:flex;align-items:center;justify-content:center;min-height:380px;background:radial-gradient(circle at 50% 60%,#264656,#152b3d 59%,#071321);border:2px solid #c99b59;border-radius:12px}canvas{width:280px;height:280px;max-width:100%;image-rendering:pixelated}.meter{height:7px;border:1px solid #b99967;border-radius:8px;overflow:hidden;background:#111827}.bar{height:100%;width:0;background:#e3b66d}#sheetImg{display:block;image-rendering:pixelated;max-width:100%;max-height:300px;object-fit:contain;margin:auto}.meta{line-height:1.7;color:#b9c9da}.warning{border-left:3px solid #dfb76c;padding:7px 11px;margin:12px 0;background:#1b2a3a}.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}@media(max-width:690px){main{display:block}.panel{margin-bottom:12px}.grid{max-height:32vh}#stage{min-height:290px}canvas{width:230px;height:230px}}
+</style>
+</head>
+<body>
+<header><h1>⚔ AMBER WORLD CLASS · SPRITE LAB V0.7</h1><div class="meta">เปิดดูแอนิเมชันจริงทีละเฟรม · 4 อาชีพ / 48 มอนสเตอร์ / 10 บอส / 120 เอฟเฟกต์</div><p><a href="./index.html?v=07">← กลับเกม</a> <a href="./asset-gallery.html">Asset Gallery V0.6</a></p></header>
+<main>
+<section class="panel">
+<h2>เลือก Sprite Sheet</h2>
+<div class="actions" id="categories"></div>
+<div class="actions" id="classes"></div>
+<div class="actions" id="actions"></div>
+<div class="grid" id="items"></div>
+<div class="warning">ภาพชุดนี้เป็น Pixel Art ที่สร้างเฟรมต้นฉบับด้วยโค้ด ไม่ใช่ภาพโปสเตอร์ที่ตัดแปะ และยังไม่ใช่ภาพคุณภาพสุดท้ายตามตัวอย่าง สกิล 120 ชุดเป็นเอฟเฟกต์ภาพ ไม่ใช่ทักษะต่อสู้ 120 ชุดที่เปิดใช้งานบนเซิร์ฟเวอร์</div>
+</section>
+<section class="panel">
+<h2 id="title">กำลังแสดง</h2>
+<div id="stage"><canvas id="preview" width="256" height="256"></canvas></div>
+<div class="row"><label>ทิศทาง <select id="direction"><option value="0">ลง</option><option value="1">ลงซ้าย</option><option value="2">ซ้าย</option><option value="3">ขึ้นซ้าย</option><option value="4">ขึ้น</option><option value="5">ขึ้นขวา</option><option value="6">ขวา</option><option value="7">ลงขวา</option></select></label><button id="pause">หยุด/เล่น</button><span id="frameLabel">Frame</span></div>
+<div class="meter"><div class="bar" id="progress"></div></div>
+<p class="meta" id="info"></p><h2>ไฟล์ Sprite Sheet</h2><img id="sheetImg" alt="Sprite sheet used by gameplay"><p><a id="source" target="_blank" rel="noopener">เปิดไฟล์ PNG ต้นฉบับ</a></p>
+</section>
+</main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id),A='./assets/v07/',jobs=['Sword','Archer','Mage','Fighter'],actions=['idle','walk','attack','cast','hurt','die'];
+let category='hero',job=0,action='walk',index=0,dir=0,playing=true,current=null,frame=0,started=performance.now();
+const cache=new Map();
+function path(){
+ if(category==='hero')return 'heroes/hero-'+job+'-'+action+'.png';
+ if(category==='monster')return 'monsters/monster-'+String(index).padStart(2,'0')+'.png';
+ if(category==='boss')return 'bosses/boss-'+String(index).padStart(2,'0')+'.png';
+ return 'skills/skill-'+job+'-'+String(index).padStart(2,'0')+'.png';
+}
+function button(text,fn,active=false){const b=document.createElement('button');b.textContent=text;if(active)b.className='active';b.onclick=fn;return b}
+function opts(id,names,current,fn){
+ const target=$(id);target.replaceChildren();names.forEach((name,i)=>target.appendChild(button(name,()=>{fn(i);render()},current===i)));
+}
+function render(){
+ const cats=['hero','monster','boss','skill'];opts('categories',['ตัวละคร 4 อาชีพ','มอนสเตอร์ 48','บอส 10','สกิลภาพ 120'],cats.indexOf(category),i=>{category=cats[i];index=0});
+ $('classes').hidden=!(category==='hero'||category==='skill');
+ $('actions').hidden=category!=='hero';
+ opts('classes',jobs,job,i=>{job=i;index=0});
+ opts('actions',actions,actions.indexOf(action),i=>{action=actions[i]});
+ const size=category==='hero'?4:category==='monster'?48:category==='boss'?10:30;
+ const names=Array.from({length:size},(_,i)=>category==='hero'?'Hero '+(i+1):category==='monster'?'M '+String(i+1).padStart(2,'0'):category==='boss'?'Boss '+(i+1):'Skill '+String(i+1).padStart(2,'0'));
+ $('items').hidden=category==='hero';
+ if(category!=='hero')opts('items',names,index,i=>{index=i});
+ $('direction').disabled=category==='skill';
+ const url=A+path()+'?v=07';
+ $('title').textContent=category==='hero'?jobs[job]+' · '+action:category==='monster'?'Monster '+(index+1):category==='boss'?'Boss '+(index+1):jobs[job]+' · FX '+(index+1);
+ const isSkill=category==='skill';const cell=category==='boss'?96:isSkill?80:48;
+ $('info').textContent=(isSkill?'5 × 4 · 20 เฟรม': '4 × 8 · 32 เฟรม')+' · ช่องละ '+cell+' × '+cell+' px · RGBA transparent';
+ $('source').href=url;$('sheetImg').src=url;
+ started=performance.now();frame=0;
+ let img=cache.get(path());if(!img){img=new Image();img.src=url;cache.set(path(),img);}
+ current=img;
+}
+function draw(t){
+ requestAnimationFrame(draw);
+ const canvas=$('preview'),ctx=canvas.getContext('2d');ctx.imageSmoothingEnabled=false;
+ ctx.clearRect(0,0,256,256);
+ if(playing)frame=Math.floor((t-started)/(category==='skill'?60:160))%(category==='skill'?20:4);
+ const cells=category==='skill'?5:4,cell=category==='boss'?96:category==='skill'?80:48,fx=frame%cells,fy=category==='skill'?Math.floor(frame/5):dir;
+ const sw=Math.min(224,cell*3.3),h=sw;
+ if(current&&current.complete&&current.naturalWidth>0)ctx.drawImage(current,fx*cell,fy*cell,cell,cell,128-sw/2,125-h/2,sw,h);
+ $('frameLabel').textContent='Frame '+(frame+1)+' / '+(category==='skill'?20:4);
+ $('progress').style.width=((frame+1)/(category==='skill'?20:4)*100)+'%';
+}
+$('direction').onchange=()=>{dir=Number($('direction').value)||0};
+$('pause').onclick=()=>{playing=!playing;started=performance.now();frame=0};
+render();requestAnimationFrame(draw);
+</script>
+</body></html>
