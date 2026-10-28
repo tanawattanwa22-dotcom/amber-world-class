@@ -75,7 +75,7 @@ function updateHUD(){const hp=clamp(player.hp/player.maxHp,0,1)*100;const mp=cla
  $('exp-bar').style.width=xp+'%';$('exp-text').textContent=`${player.exp} / ${expMax(player.level)} EXP`;
  $('player-name').textContent=player.name;$('player-level').textContent=`Lv.${player.level}`;$('coins').textContent=Number(player.gold).toLocaleString();$('gems').textContent=player.gems;$('potions-count').textContent=player.potions;
  const portrait=$('portrait'),portraitClass=Math.max(0,Math.min(3,player.classId||0));
- portrait.textContent='';portrait.classList.add('pixel-portrait');
+ portrait.textContent='';portrait.classList.add('pixel-portrait');portrait.classList.toggle('hd-sword',player.classId===0);
  portrait.style.backgroundImage=player.classId===0?'url("./assets/portraits/sword-portrait-v08.svg")':`url("./assets/sprites/hero-${portraitClass}.png?v=061")`;portrait.style.backgroundSize=player.classId===0?'cover':'160px 320px';portrait.style.backgroundPosition=player.classId===0?'center 17%':'0 0';$('skill-cd').textContent=skillTimer>0?Math.ceil(skillTimer/1000):'';
  $('mode-state').textContent=online?'● ONLINE · SERVER':'● DEMO OFFLINE';$('mode-state').style.color=online?'#9fffa5':'#f1d38e';
  $('quest-title').textContent=`กำจัดมอนสเตอร์ ${Math.min(5,player.questKills)}/5`;
