@@ -1,36 +1,8 @@
-<!doctype html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-  <meta name="theme-color" content="#0d1422">
-  <meta name="description" content="AMBER WORLD CLASS V0.8 — original pixel-art MMORPG demo, 10 detailed maps, 8-direction chibi sprites, 16-frame skill animations">
-  <title>AMBER WORLD CLASS • V0.9 Sprite Atlas Preview</title>
-
-
-
-<link rel="stylesheet" href="./style.css?v=090">
-</head>
-<body>
-<div id="app">
-  <canvas id="world" aria-label="Amber World Class game world"></canvas>
-  <div class="ambient"></div>
-  <div class="top-shadow"></div>
-  <header class="topbar">
-    <div class="brand"><span class="brand-small">AMBER</span><strong>WORLD CLASS</strong><small>ONLINE MMORPG</small></div>
-    <div class="identity"><div class="portrait" id="portrait">⚔️</div><div class="ident-meta"><div class="name-row"><b id="player-name">Hero</b><span class="lvl" id="player-level">Lv.1</span></div><div class="bar hp"><span id="hp-bar"></span><small id="hp-text">100 / 100</small></div><div class="bar mp"><span id="mp-bar"></span><small id="mp-text">80 / 80</small></div><div class="bar xp"><span id="exp-bar"></span><small id="exp-text">0 / 150 EXP</small></div></div></div>
-    <div class="currencies"><span>🪙 <b id="coins">0</b></span><span>💎 <b id="gems">0</b></span><button class="tiny-icon" id="open-menu" aria-label="เมนู">☰</button></div>
-  </header>
-  <section class="location panel"><div class="location-title"><small>ZONE 01 · OPEN WORLD</small><b id="zone-name">หมู่บ้านอำพัน</b><span class="golden" id="zone-lv">Lv.1–10</span></div><button class="map-mini" id="open-maps" aria-label="แผนที่โลก"><span>🗺️</span><small>WORLD MAP</small></button></section>
-  <section class="quests panel"><div class="section-head"><span>✦ ภารกิจหลัก</span><button class="head-button" id="quest-collapse">−</button></div><div id="quest-content"><b id="quest-title">กำจัดสไลม์ 0/5</b><p>ปกป้องหมู่บ้านจากเหล่ามอนสเตอร์</p><small class="golden">รางวัล EXP +250 · 🪙 100</small></div></section>
-  <div class="online-state" id="mode-state">● DEMO OFFLINE</div>
-  <div class="effects" id="effects" aria-live="polite"></div>
-  <div class="controls"><div id="joy-area" class="joy-area" aria-label="จอยสติ๊กเดิน"><div class="joy-ring"><div id="joy-knob" class="joy-knob"></div></div></div><div class="action-area"><div class="quickslot-row"><button id="use-potion" class="orb blue" title="ยาฟื้นฟู">🧪<em id="potions-count">10</em></button><button id="do-skill" class="orb violet" title="สกิล">✦<span id="skill-cd"></span></button></div><button id="do-attack" class="orb attack" title="โจมตี">⚔️</button></div></div>
-  <div class="lower-hud"><div class="activity"><div class="chat-line" id="game-log">✦ ยินดีต้อนรับสู่ Amber World Class</div><div class="auto-wrap"><button id="toggle-auto" class="auto-button">⚔ AUTO : OFF</button></div></div><nav class="nav"><button data-panel="character">🧑<small>ตัวละคร</small></button><button data-panel="skills">✨<small>สกิล</small></button><button data-panel="inventory">🎒<small>กระเป๋า</small></button><button data-panel="party">🛡️<small>ปาร์ตี้</small></button><button data-panel="ranking">🏆<small>อันดับ</small></button><button data-panel="menu">⚙️<small>ระบบ</small></button></nav></div>
-  <div class="overlay hidden" id="overlay"><div class="modal"><div class="modal-head"><h2 id="modal-title">หน้าต่าง</h2><button id="modal-close" aria-label="ปิด">✕</button></div><div class="modal-body" id="modal-body"></div></div></div>
-  <div class="toast-wrap" id="toasts"></div>
-</div>
-<script defer src="./config.js"></script>
-<script defer src="./game.js?v=090"></script>
-</body>
-</html>
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#071629"><meta http-equiv="refresh" content="0;url=./monster-world/">
+<title>MONSTER WORLD ONLINE · 100 Creatures</title>
+<style>body{background:linear-gradient(160deg,#163e69,#071629);color:#fff;font:17px system-ui,"Noto Sans Thai",sans-serif;min-height:100dvh;display:grid;place-items:center;margin:0;text-align:center;padding:16px}a{color:#ffe48e;font-weight:800}h1{color:#ffe38a}</style></head><body>
+<main><h1>🌈 MONSTER WORLD ONLINE</h1><p>กำลังเปิดเกมสะสมสัตว์ออนไลน์ 100 ชนิด...</p>
+<p><a href="./monster-world/">เปิดเกมสะสมสัตว์</a></p>
+<small>ต้องการกลับเกม AMBER WORLD CLASS เดิม? <a href="./amber-classic.html">เปิดเวอร์ชันเดิม</a></small></main>
+<script>location.replace('./monster-world/');</script></body></html>
