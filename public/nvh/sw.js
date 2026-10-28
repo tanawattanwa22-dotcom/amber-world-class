@@ -1,4 +1,4 @@
-const CACHE_NAME='55-performance-nvh-v03';
+const CACHE_NAME='55-performance-nvh-v04';
 const FILES=['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(FILES)));self.skipWaiting()});
 self.addEventListener('activate',event=>{event.waitUntil((async()=>{for(const key of await caches.keys()){if(key.startsWith('55-performance-nvh-')&&key!==CACHE_NAME)await caches.delete(key)}await self.clients.claim()})())});
