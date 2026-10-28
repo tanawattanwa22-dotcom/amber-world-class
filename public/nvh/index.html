@@ -49,16 +49,85 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
 .guide-alert{font-size:11.5px;line-height:1.85;margin-top:12px;border-left:3px solid #ffbf66;background:#272435;padding:11px 12px;border-radius:7px;color:#ffd9a2}
 .brand-logo{width:45px;height:45px;object-fit:contain;border-radius:12px;border:1px solid #284457;flex-shrink:0}
 @media(max-width:600px){.guide-grid{grid-template-columns:1fr}.guide-box{padding:11px}.guide-wide{grid-column:auto}.usage-guide summary{font-size:13px}.quick-links .btn{min-width:0}}
-.historyGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.historyGrid canvas{display:block;width:100%;height:150px;background:#081624;border:1px solid #294153;border-radius:9px}.historyGrid h3{font-size:12px;color:#a4e3de}.historyPanel{border-color:#315d66}.historyPanel input[type=range]{width:100%;accent-color:#43d8cf}.historyPanel audio{width:100%;margin:10px 0}.historyPanel .help{line-height:1.75}@media(max-width:650px){.historyGrid{grid-template-columns:1fr}}</style>
+.historyGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.historyGrid canvas{display:block;width:100%;height:150px;background:#081624;border:1px solid #294153;border-radius:9px}.historyGrid h3{font-size:12px;color:#a4e3de}.historyPanel{border-color:#315d66}.historyPanel input[type=range]{width:100%;accent-color:#43d8cf}.historyPanel audio{width:100%;margin:10px 0}.historyPanel .help{line-height:1.75}@media(max-width:650px){.historyGrid{grid-template-columns:1fr}}
+/* 55 PERFORMANCE NVH HUNTER V0.4 — TECH CONSOLE */
+:root{--bg:#060b12;--panel:#0e1825;--panel2:#112131;--line:#274056;--text:#f0f7ff;--dim:#93abc0;--cyan:#40e9db;--teal:#67f5ce;--amber:#ffb45e;--pink:#caa5ff;--radius:18px}
+body{background:radial-gradient(circle at 95% 0%,#17345290 0%,transparent 33%),radial-gradient(circle at 0% 16%,#153a385a,transparent 29%),#060b12;background-attachment:fixed}
+.wrap{max-width:1160px}
+.topbar{padding:12px 1px 18px}
+.brand strong{font-size:17px;letter-spacing:1px;font-style:italic}
+.brand small{font-size:10px;letter-spacing:1.1px}
+.brand-logo{width:51px;height:51px;border-radius:16px;box-shadow:0 0 0 4px #36d9d010,0 8px 25px #40e9db14}
+.state{font-family:ui-monospace,monospace;letter-spacing:.7px;font-size:10px}
+.lab-ribbon{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid #335364;border-bottom:1px solid #203949;color:#8fc5cf;padding:10px 3px;font:700 10px ui-monospace,monospace;letter-spacing:1.7px;margin-bottom:15px}
+.lab-ribbon span:last-child{color:#61e0ce}
+.nav-rail{display:flex;align-items:center;gap:7px;overflow-x:auto;margin-bottom:14px;scrollbar-width:none;padding:1px 0 4px}
+.nav-rail::-webkit-scrollbar{display:none}
+.nav-rail a{white-space:nowrap;padding:10px 12px;border:1px solid #284153;background:#0e1c29;color:#adc6d6;border-radius:11px;text-decoration:none;font-size:11px;font-weight:750}
+.nav-rail a:focus-visible,.nav-rail a:hover{color:#77ffe7;border-color:#3aafad}
+.nav-rail a:first-child{border-color:#408c91;color:#83f9e6}
+.hero{border-radius:25px;border:1px solid #38576a;background:linear-gradient(116deg,#123041,#0c1828 60%,#18213a);box-shadow:0 17px 50px #0006, inset 0 1px 0 #bceaff1b;min-height:236px;padding:24px 23px}
+.hero:after{right:-118px;top:-154px;width:350px;height:350px;border:1px solid #56f1eb32;background:repeating-radial-gradient(circle,#47dbdc0f 0px,#47dbdc0f 1px,transparent 2px,transparent 38px);border-radius:50%}
+.hero h1{font-size:clamp(26px,5.8vw,42px);max-width:700px;letter-spacing:-1.2px}
+.hero p{max-width:650px}
+.hero-scope{position:absolute;right:20px;top:17px;width:120px;height:71px;opacity:.58;pointer-events:none}
+.btn{border-radius:12px}
+.btn.primary{background:linear-gradient(120deg,#39f5d7,#54acd7);box-shadow:0 6px 20px #2ddcc122}
+.btn.ai-cta{background:linear-gradient(110deg,#ff8d55,#f55f77);border:none;color:#200d18;font-weight:900;box-shadow:0 7px 25px #f5686d24}
+.card,.metric{background:linear-gradient(150deg,#101c2b,#0c1521);border-color:#263a4c;box-shadow:0 10px 27px #0003}
+.card{padding:19px}
+.card h2{font-size:16px}
+.metric{position:relative;overflow:hidden}
+.metric:before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#37e9d9,transparent)}
+.metric:nth-child(2):before{background:linear-gradient(90deg,#67f5ce,transparent)}
+.metric:nth-child(3):before{background:linear-gradient(90deg,#ffb45e,transparent)}
+.metric .lab{font-family:ui-monospace,monospace;font-size:9px;letter-spacing:.55px}
+.plot{background:#071522;border-color:#294658}
+.historyPanel{border-color:#32626e}
+.ai-panel{border:1px solid #735b56;background:linear-gradient(140deg,#1b1d31,#101d29 60%,#0c1824);position:relative;overflow:hidden}
+.ai-panel:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#f77c61,#ffc076,#46e6d7)}
+.ai-eyebrow{color:#ffc180;font:750 10px ui-monospace,monospace;letter-spacing:1.6px;margin:0 0 8px}
+.ai-label{font-size:11px;color:#bdcbd9;line-height:1.7}
+.ai-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.ai-controls label{display:block;color:#91b9c8;font-weight:700;font-size:11px;margin-bottom:6px}
+.ai-controls select,.ai-controls input{width:100%;min-height:42px;background:#0b1927;border:1px solid #385066;color:#eaf8ff;border-radius:11px;padding:9px 11px}
+.ai-controls .full{grid-column:1/-1}
+.ai-actions{display:flex;gap:9px;flex-wrap:wrap}
+.ai-actions .btn{flex:1;min-width:160px}
+.ai-results{margin-top:16px;border-radius:14px;border:1px solid #395363;background:#0a1826;padding:14px}
+.ai-stamp{font:750 10px ui-monospace,monospace;color:#61eddb;letter-spacing:1px}
+.ai-results h3{margin:10px 0 6px;font-size:20px;color:#f3f8ff;line-height:1.4}
+.ai-results p{font-size:12px;line-height:1.9;color:#c2d3e2;margin:8px 0}
+.ai-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:13px 0}
+.ai-tile{padding:11px 10px;background:#132436;border:1px solid #29475c;border-radius:11px}
+.ai-tile small{display:block;font-size:10px;color:#8caec2;line-height:1.4}
+.ai-tile strong{display:block;font-size:17px;color:#61eedb;margin-top:5px;overflow-wrap:anywhere}
+.ai-section{border-top:1px solid #2a4151;padding-top:12px;margin-top:12px}
+.ai-section h4{font-size:12px;color:#f4c28c;margin:0 0 7px}
+.ai-section ul{margin:0;padding-left:20px;color:#c3d4e1;font-size:12px;line-height:1.95}
+.ai-alert{background:#292332;border-left:3px solid #f6b66f;padding:11px 12px;border-radius:7px;color:#f1cda0;font-size:11px;line-height:1.8;margin-top:13px}
+.ai-external{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px;margin-top:12px;color:#a7bbce}
+.ai-external a{color:#7df0df}
+.ai-event{display:inline-block;margin:4px;padding:6px 9px;background:#182a3b;border:1px solid #476073;color:#7df0df;border-radius:8px;font-size:11px;cursor:pointer}
+.ai-event:focus-visible{outline:2px solid #7df0df}
+#analysisPanel{scroll-margin-top:18px}#historyPanel{scroll-margin-top:18px}#usageGuide{scroll-margin-top:18px}
+@media(max-width:760px){.hero{padding:21px 17px}.hero-scope{width:82px;height:53px;right:8px;top:9px;opacity:.36}.card{padding:14px}.nav-rail a{font-size:10px;padding:9px 11px}}
+@media(max-width:450px){.hero h1{max-width:280px}.ai-tiles{grid-template-columns:1fr 1fr}.ai-tiles .ai-tile:last-child{grid-column:1/-1}.ai-controls{grid-template-columns:1fr}.ai-controls .full{grid-column:auto}.ai-actions .btn{min-width:135px}.lab-ribbon{letter-spacing:.7px;font-size:9px}}
+</style>
 </head>
 <body>
 <main class="wrap">
+<div class="lab-ribbon"><span>55 / PERFORMANCE ENGINEERING</span><span>NVH LAB · V0.4</span></div>
   <header class="topbar">
-    <div class="brand"><img class="brand-logo" src="./icon.svg" alt="55 PERFORMANCE NVH"><div><strong>55 PERFORMANCE</strong><small>NVH HUNTER · AUDIO LAB V0.2</small></div></div>
+    <div class="brand"><img class="brand-logo" src="./icon.svg" alt="55 PERFORMANCE NVH"><div><strong>55 PERFORMANCE</strong><small>NVH HUNTER · AI ASSIST V0.4</small></div></div>
     <div class="state" id="stateBadge"><i class="dot"></i><span id="stateText">STANDBY</span></div>
   </header>
-  <section class="hero">
-    <div class="eyebrow">55 PERFORMANCE · TECH TOOLS</div>
+<nav class="nav-rail" aria-label="เมนูโปรแกรม">
+<a href="#liveDashboard">◉ LIVE SCOPE</a><a href="#historyPanel">▤ บันทึกกราฟ</a><a href="#analysisPanel">✦ วิเคราะห์อัตโนมัติ</a><a href="#usageGuide">☷ คู่มือช่าง</a>
+</nav>
+  <section class="hero" id="liveDashboard">
+    <svg class="hero-scope" viewBox="0 0 180 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="1" y="1" width="178" height="88" rx="13" fill="#071b2a" stroke="#41ead7" stroke-opacity=".5"/><path d="M12 46H40L48 27L58 67L69 18L82 51L92 38L102 46H123L134 23L144 66L155 45H169" stroke="#48f2dd" fill="none" stroke-width="3" stroke-linejoin="round"/><path d="M12 23H168M12 68H168" stroke="#325067" stroke-width="1" stroke-dasharray="3 6"/></svg>
+    <div class="eyebrow">55 PERFORMANCE · NVH DIAGNOSTIC SYSTEM</div>
     <h1>ฟังให้เห็น <span>ก่อนถอดเปลี่ยน</span></h1>
     <p>ตรวจความถี่เสียงรถด้วยไมโครโฟนมือถือ วิเคราะห์ FFT / Waveform / Spectrogram และเทียบการวัดก่อน–หลังซ่อม ใช้ Chrome ผ่าน HTTPS</p>
     <div class="actionbar">
@@ -66,7 +135,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
       <button class="btn secondary" id="demoBtn">▶ ลอง DEMO</button>
       <button class="btn stop" id="stopBtn" disabled>■ หยุดวัด</button>
     </div>
-    <div class="quick-links"><button class="btn small secondary" id="installBtn" type="button">📲 ติดตั้งลงจอมือถือ</button><button class="btn small muted" id="guideBtn" type="button">📖 คู่มืออ่านกราฟ</button></div>
+    <div class="quick-links"><button class="btn small secondary" id="installBtn" type="button">📲 ติดตั้งลงจอมือถือ</button><button class="btn small muted" id="guideBtn" type="button">📖 คู่มืออ่านกราฟ</button><button class="btn small secondary" id="goAiBtn" type="button">✦ วิเคราะห์อัตโนมัติ</button></div>
     <div id="notice" role="status" aria-live="polite">ยังไม่เปิดไมโครโฟน · ทดลองระบบก่อนได้ด้วยปุ่ม DEMO</div>
   </section>
 
@@ -179,8 +248,35 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
 <p id="historyDetails" class="help">เปิดไมค์จริง → กดเริ่มบันทึกเสียง → กดหยุดบันทึกเสียง → กดหยุดวัด แล้วเลื่อนกราฟย้อนหลังได้</p>
 <audio controls id="historyAudio" preload="metadata" hidden></audio>
 <div class="tool-actions" style="margin-top:12px"><button id="historyPngBtn" class="btn secondary" disabled>↓ บันทึกกราฟ PNG</button><button id="historyCsvBtn" class="btn secondary" disabled>↓ CSV กราฟ</button></div>
-<p class="help" style="margin:9px 0 0">กราฟล่าสุดจะเก็บในเบราว์เซอร์เครื่องนี้ (สูงสุด 2,000 จุด) เพื่อเปิดใหม่ได้ แต่ไฟล์เสียงต้องกด “โหลดเสียง” เพื่อเก็บถาวร หากปิดหน้านี้ก่อนโหลดเสียง ไฟล์เสียงชั่วคราวอาจหาย ข้อมูล DEMO แสดงแยกจากเสียงจริง</p></section><section class="card"><div class="section-header">ขอบเขตการใช้งานในงานช่าง</div><div class="help" style="font-size:11px;line-height:1.85">เหมาะสำหรับค้นหาเสียงฮัม/หอน/ความถี่เด่นในอากาศและเปรียบเทียบเสียงก่อน–หลังซ่อม <strong style="color:#c6d8e8">ยังไม่ใช่เครื่องวัดแรงสั่นสะเทือนสัมผัสชิ้นส่วน หรือเครื่องวัดระดับเสียง dB SPL ที่สอบเทียบ</strong> สมาร์ตโฟนอาจมีการปรับเกนอัตโนมัติและกรองเสียงแม้ร้องขอให้ปิดไว้ ความถี่ต่ำและความถี่สูงอาจวัดได้ไม่ตรงตามจริง</div><div class="hint"><b>ความปลอดภัย:</b> อย่านำโทรศัพท์หรือสายไมค์เข้าใกล้สายพาน พัดลม เพลาหมุน จุดร้อน หรืออุปกรณ์ไฟฟ้าแรงสูง ห้ามถือโทรศัพท์ใช้งานระหว่างขับรถ หากต้องวัดตอนรถเคลื่อนที่ ให้มีผู้โดยสารที่เป็นผู้ปฏิบัติการวัดและติดตั้งอุปกรณ์อย่างปลอดภัย</div></section>
-  <footer class="footstrip"><span>55 PERFORMANCE · NVH HUNTER V0.3</span><span id="sampleRateText">AUDIO INPUT: NOT CONNECTED</span></footer>
+<p class="help" style="margin:9px 0 0">กราฟล่าสุดจะเก็บในเบราว์เซอร์เครื่องนี้ (สูงสุด 2,000 จุด) เพื่อเปิดใหม่ได้ แต่ไฟล์เสียงต้องกด “โหลดเสียง” เพื่อเก็บถาวร หากปิดหน้านี้ก่อนโหลดเสียง ไฟล์เสียงชั่วคราวอาจหาย ข้อมูล DEMO แสดงแยกจากเสียงจริง</p></section>
+<section class="card ai-panel" id="analysisPanel">
+  <div class="ai-eyebrow">✦ 55 PERFORMANCE / INTELLIGENT DIAGNOSTIC ASSIST</div>
+  <div class="card-title"><div><h2>วิเคราะห์เสียงอัตโนมัติ</h2><p class="subtitle">อ่านกราฟที่บันทึกไว้ · ชี้เหตุการณ์ผิดปกติ · แนะนำลำดับตรวจ</p></div><span class="tag" id="aiDataStatus">NO DATA</span></div>
+  <p class="ai-label">โหมดเริ่มต้นเป็น <strong>การวิเคราะห์รูปแบบสัญญาณด้วยอัลกอริทึมบนมือถือ (Rule-based)</strong> ไม่ใช่โมเดล AI ที่จำแนกเสียงอะไหล่จากไฟล์เสียง และยังไม่สามารถระบุอะไหล่เสียหรือด้านซ้าย/ขวาได้โดยตรง</p>
+  <div class="ai-controls">
+    <div><label for="aiSymptom">อาการที่ต้องการตรวจ</label><select id="aiSymptom"><option value="unknown">ยังไม่ทราบต้นเหตุ</option><option value="suspension">กุกกัก / กระแทกช่วงล่าง</option><option value="hum">หอนตามความเร็วรถ</option><option value="engine">ฮัม / สั่นตามรอบเครื่อง</option><option value="steering">ก๊อกแก๊กเวลาเลี้ยว</option><option value="brake">ดังขณะเหยียบเบรก</option></select></div>
+    <div><label for="aiCondition">ขณะเกิดอาการ</label><select id="aiCondition"><option value="unknown">ไม่ทราบเงื่อนไข</option><option value="idle">รถจอด / เดินเบา</option><option value="bump">ผ่านหลุม / ลูกระนาด</option><option value="steady">ขับด้วยความเร็วคงที่</option><option value="accelerate">เร่ง / ผ่อนคันเร่ง</option><option value="turn">เลี้ยว / หักพวงมาลัย</option><option value="brake">ขณะเบรก</option></select></div>
+    <div class="full"><label for="aiNotes">หมายเหตุช่าง (ไม่ใส่ชื่อหรือข้อมูลลูกค้า)</label><input id="aiNotes" maxlength="160" placeholder="เช่น W205 วิ่ง 40 km/h ผ่านลูกระนาดดังหน้าซ้าย"></div>
+  </div>
+  <div class="ai-actions">
+    <button class="btn ai-cta" id="aiAnalyzeBtn" type="button">✦ วิเคราะห์จากกราฟ</button>
+    <button class="btn secondary" id="aiCopyBtn" type="button">คัดลอกข้อมูลไปถาม AI</button>
+    <button class="btn muted" id="aiExportBtn" type="button">↓ รายงาน TXT</button>
+  </div>
+  <div class="ai-results" id="aiResults" aria-live="polite">
+    <div class="ai-stamp" id="aiStamp">READY · AWAITING MEASUREMENT</div>
+    <h3 id="aiHeadline">ยังไม่มีผลวิเคราะห์</h3>
+    <p id="aiOverview">กดเริ่มไมค์จริงแล้วบันทึกเสียง 10–20 วินาที กดหยุด จากนั้นกด “วิเคราะห์จากกราฟ” ระบบจะตรวจรูปแบบความถี่และระดับสัญญาณพร้อมคำแนะนำเบื้องต้น</p>
+    <div class="ai-tiles"><div class="ai-tile"><small>ความถี่เด่นโดยประมาณ</small><strong id="aiPeakMetric">—</strong></div><div class="ai-tile"><small>เสียงกระแทกที่ตรวจพบ</small><strong id="aiHitMetric">—</strong></div><div class="ai-tile"><small>ระดับสัญญาณกลาง</small><strong id="aiLevelMetric">—</strong></div></div>
+    <div class="ai-section"><h4>หลักฐานจากกราฟ</h4><ul id="aiEvidence"><li>ยังไม่มีข้อมูล</li></ul></div>
+    <div class="ai-section"><h4>ขั้นตอนตรวจจริงที่แนะนำ</h4><ul id="aiChecks"><li>บันทึกเสียงจากรถจริงก่อน</li></ul></div>
+    <div id="aiEvents"></div>
+    <div class="ai-alert" id="aiWarning">สัญญาณจากไมค์มือถือไม่ใช่เซนเซอร์การสั่นบนชิ้นส่วนรถ ดัชนีนี้ไม่ใช่ผลตรวจอะไหล่เสีย และยังไม่มีการส่งข้อมูลไป AI ภายนอกอัตโนมัติ</div>
+  </div>
+  <div class="ai-external"><span>ต้องการให้โมเดล AI ช่วยอ่านรายงานเพิ่ม?</span><a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">เปิด ChatGPT</a><span>แล้ววางข้อความจากปุ่ม “คัดลอกข้อมูลไปถาม AI”</span></div>
+</section>
+<section class="card"><div class="section-header">ขอบเขตการใช้งานในงานช่าง</div><div class="help" style="font-size:11px;line-height:1.85">เหมาะสำหรับค้นหาเสียงฮัม/หอน/ความถี่เด่นในอากาศและเปรียบเทียบเสียงก่อน–หลังซ่อม <strong style="color:#c6d8e8">ยังไม่ใช่เครื่องวัดแรงสั่นสะเทือนสัมผัสชิ้นส่วน หรือเครื่องวัดระดับเสียง dB SPL ที่สอบเทียบ</strong> สมาร์ตโฟนอาจมีการปรับเกนอัตโนมัติและกรองเสียงแม้ร้องขอให้ปิดไว้ ความถี่ต่ำและความถี่สูงอาจวัดได้ไม่ตรงตามจริง</div><div class="hint"><b>ความปลอดภัย:</b> อย่านำโทรศัพท์หรือสายไมค์เข้าใกล้สายพาน พัดลม เพลาหมุน จุดร้อน หรืออุปกรณ์ไฟฟ้าแรงสูง ห้ามถือโทรศัพท์ใช้งานระหว่างขับรถ หากต้องวัดตอนรถเคลื่อนที่ ให้มีผู้โดยสารที่เป็นผู้ปฏิบัติการวัดและติดตั้งอุปกรณ์อย่างปลอดภัย</div></section>
+  <footer class="footstrip"><span>55 PERFORMANCE · NVH HUNTER V0.4</span><span id="sampleRateText">AUDIO INPUT: NOT CONNECTED</span></footer>
 </main>
 <script>
 (()=>{'use strict';
@@ -218,14 +314,71 @@ function capturePoint(now){if(!Number.isFinite(st.rms))return;const x={secs:(now
 function loop(now){if(!active())return;st.raf=requestAnimationFrame(loop);if(now-st.lastFrame<FRAME_MS)return;st.lastFrame=now;const frame=st.mode==='demo'?demoFrame(now):microphoneFrame();if(!frame)return;measure(frame);if(!st.paused){renderSpectrum(frame);renderWave(frame);if(now-st.lastWater>WATER_MS){st.lastWater=now;renderWater(frame)}}if(now-st.lastLog>LOG_MS){st.lastLog=now;capturePoint(now)}if(st.recorder?.state==='recording')ui.recStatus.textContent='🔴 กำลังบันทึกเสียง · '+num((now-st.recStart)/1000,0)+' วินาที'}
 
 function compact(points){const step=Math.max(1,Math.ceil(points.length/2000));return points.filter((_,i)=>i%step===0).map(x=>({secs:x.secs,peakHz:x.peakHz,rmsDbFS:x.rmsDbFS,mode:x.mode}))}
-function saveSession(points,reason){if(!points.length)return;st.graph={points:compact(points),mode:points[0].mode,reason,saved:new Date().toISOString()};st.selected=st.graph.points.length-1;try{localStorage.setItem(GRAPH_KEY,JSON.stringify(st.graph))}catch(e){}drawSession()}
-function readSession(){try{const g=JSON.parse(localStorage.getItem(GRAPH_KEY)||'null');if(g&&Array.isArray(g.points)&&g.points.length){st.graph={...g,points:compact(g.points)};st.selected=st.graph.points.length-1;drawSession()}}catch(e){}}
+function saveSession(points,reason){if(!points.length)return;st.graph={points:compact(points),mode:points[0].mode,reason,saved:new Date().toISOString()};st.selected=st.graph.points.length-1;try{localStorage.setItem(GRAPH_KEY,JSON.stringify(st.graph))}catch(e){}drawSession();if(typeof analyzeSavedSignal==='function')analyzeSavedSignal(false)}
+function readSession(){try{const g=JSON.parse(localStorage.getItem(GRAPH_KEY)||'null');if(g&&Array.isArray(g.points)&&g.points.length){st.graph={...g,points:compact(g.points)};st.selected=st.graph.points.length-1;drawSession();if(typeof analyzeSavedSignal==='function')analyzeSavedSignal(false)}}catch(e){}}
 function plotHistory(id,key,min,max,color){const c=$(id),pts=st.graph?.points;if(!pts?.length)return;resize(c);const x=c.getContext('2d'),w=c.width,h=c.height;x.fillStyle='#081624';x.fillRect(0,0,w,h);const l=38,t=10,r=10,b=23,ww=w-l-r,hh=h-t-b;if(ww<5||hh<5)return;x.font='10px sans-serif';x.strokeStyle='#284050';x.fillStyle='#94b4c1';for(let i=0;i<=4;i++){const y=t+hh*i/4;x.beginPath();x.moveTo(l,y);x.lineTo(w-r,y);x.stroke();x.textAlign='right';x.fillText(String(Math.round(max-(max-min)*i/4)),l-5,y+3)}const start=pts[0].secs,end=Math.max(.001,pts[pts.length-1].secs-start);x.textAlign='left';x.fillText('0s',l,h-5);x.textAlign='right';x.fillText(end.toFixed(1)+'s',w-r,h-5);x.strokeStyle=color;x.lineWidth=1.7;x.beginPath();let drawing=false;for(const p of pts){const val=p[key];if(!Number.isFinite(val)){drawing=false;continue}const xx=l+(p.secs-start)/end*ww,yy=t+(1-Math.max(0,Math.min(1,(val-min)/(max-min))))*hh;if(!drawing)x.moveTo(xx,yy);else x.lineTo(xx,yy);drawing=true}x.stroke();const current=pts[Math.max(0,Math.min(pts.length-1,st.selected))];const marker=l+(current.secs-start)/end*ww;x.strokeStyle='#ffbd76';x.setLineDash([4,4]);x.beginPath();x.moveTo(marker,t);x.lineTo(marker,t+hh);x.stroke();x.setLineDash([])}
 function drawSession(){const pts=st.graph?.points;if(!pts?.length)return;st.selected=Math.max(0,Math.min(pts.length-1,st.selected));const maxHz=Math.max(200,Math.ceil(Math.max(...pts.map(x=>x.peakHz||0))/100)*100);plotHistory('historyRms','rmsDbFS',-90,0,'#4de1d4');plotHistory('historyHz','peakHz',0,maxHz,'#ffba6c');const seek=$('historySeek');seek.disabled=false;seek.max=pts.length-1;seek.value=st.selected;const p=pts[st.selected],offset=p.secs-pts[0].secs;$('historyDetails').textContent='เวลา '+num(offset,2)+' วินาที | ระดับ '+num(p.rmsDbFS,1)+' dBFS | Peak '+num(p.peakHz,0)+' Hz'+(st.graph.mode==='demo'?' | DEMO จำลอง':' | ไมค์จริง');$('historyTag').textContent=(st.graph.mode==='demo'?'DEMO | ':'')+'บันทึก '+num(pts[pts.length-1].secs-pts[0].secs,1)+'s';$('historyPngBtn').disabled=false;$('historyCsvBtn').disabled=false}
 function finishRecordGraph(){if(st.recorded)return;const points=st.history.slice(st.recordFrom);if(points.length){saveSession(points,'recording');st.recorded=true}}
 function bindPlayback(){const a=$('historyAudio');if(st.audioUrl)URL.revokeObjectURL(st.audioUrl);if(!st.lastAudio){a.hidden=true;a.removeAttribute('src');return}st.audioUrl=URL.createObjectURL(st.lastAudio);a.src=st.audioUrl;a.hidden=false;a.load()}
 function saveHistoryPng(){if(!st.graph)return;const c=document.createElement('canvas');c.width=1100;c.height=650;const ctx=c.getContext('2d');ctx.fillStyle='#081624';ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle='#ebf5ff';ctx.font='bold 29px system-ui';ctx.fillText('55 PERFORMANCE NVH - RECORDED GRAPH',30,49);ctx.font='20px system-ui';ctx.fillText('Signal level (dBFS)',30,105);ctx.drawImage($('historyRms'),25,122,1050,200);ctx.fillText('Peak frequency (Hz)',30,380);ctx.drawImage($('historyHz'),25,397,1050,200);ctx.font='15px system-ui';ctx.fillStyle='#b3c8d6';ctx.fillText(st.graph.mode==='demo'?'DEMO - NOT REAL VEHICLE DATA':'MICROPHONE DATA - dBFS NOT CALIBRATED dB SPL',30,625);c.toBlob(b=>{if(b)dl(b,'55_NVH_SAVED_GRAPH_'+stamp()+'.png')},'image/png')}
 function saveHistoryCsv(){if(!st.graph)return;const pts=st.graph.points,t0=pts[0].secs;const rows=['time_seconds,peak_hz,rms_dbfs,source',...pts.map(p=>[num(p.secs-t0,3),p.peakHz??'',num(p.rmsDbFS,2),p.mode].join(','))];dl(new Blob(['\ufeff'+rows.join('\r\n')],{type:'text/csv;charset=utf-8'}),'55_NVH_SAVED_GRAPH_'+stamp()+'.csv')}
+
+const aiState={last:null};
+function median(values){const a=values.filter(Number.isFinite).sort((x,y)=>x-y);if(!a.length)return null;const m=Math.floor(a.length/2);return a.length%2?a[m]:(a[m-1]+a[m])/2}
+function percentile(values,p){const a=values.filter(Number.isFinite).sort((x,y)=>x-y);if(!a.length)return null;const k=(a.length-1)*p,lo=Math.floor(k),hi=Math.ceil(k);return a[lo]+(a[hi]-a[lo])*(k-lo)}
+function addItems(elementId,arr){const root=$(elementId);root.textContent='';for(const item of arr){const li=document.createElement('li');li.textContent=item;root.appendChild(li)}}
+function analyzeSavedSignal(scroll=true){
+  const graph=st.graph;const pts=graph?.points?.filter(p=>Number.isFinite(p.secs)&&Number.isFinite(p.rmsDbFS))||[];
+  if(pts.length<8){$('aiStamp').textContent='AWAITING DATA · ต้องมีข้อมูลอย่างน้อยประมาณ 2 วินาที';$('aiHeadline').textContent='ข้อมูลยังไม่พอสำหรับวิเคราะห์';$('aiOverview').textContent='กดเริ่มไมค์จริง เก็บข้อมูลอย่างน้อย 10–20 วินาที แล้วกดหยุดวัด';$('aiDataStatus').textContent='NO DATA';return}
+  const levels=pts.map(p=>p.rmsDbFS),hz=pts.map(p=>p.peakHz).filter(v=>Number.isFinite(v)&&v>=35),m=median(levels),hzMed=median(hz),p10=percentile(levels,.1),p90=percentile(levels,.9);
+  const start=pts[0].secs,duration=Math.max(0,pts[pts.length-1].secs-start);
+  const spikes=[];for(let i=1;i<pts.length-1;i++){const here=pts[i].rmsDbFS;if(here-m>=7&&here>=pts[i-1].rmsDbFS&&here>pts[i+1].rmsDbFS&&(spikes.length===0||pts[i].secs-spikes[spikes.length-1].secs>.65))spikes.push({secs:pts[i].secs-start,level:here,index:i})}
+  const stableFrac=hzMed==null?0:hz.filter(v=>Math.abs(v-hzMed)<=Math.max(17,hzMed*.12)).length/Math.max(1,hz.length);
+  const stable=stableFrac>=.68&&hz.length>=8,variable=Number.isFinite(p90)&&Number.isFinite(p10)&&(p90-p10>=8);
+  const sym=$('aiSymptom').value,condition=$('aiCondition').value,rpm=Number($('rpm').value)||0,isDemo=graph.mode==='demo';
+  const symptomLabel=({unknown:'ไม่ระบุ',suspension:'เสียงกระแทกช่วงล่าง',hum:'เสียงหอนตามความเร็ว',engine:'ฮัมหรือสั่นตามรอบเครื่อง',steering:'เสียงเวลาเลี้ยว',brake:'เสียงขณะเบรก'})[sym]||'ไม่ระบุ';
+  const conditionLabel=({unknown:'ไม่ได้ระบุ',idle:'จอด/เดินเบา',bump:'ผ่านหลุมหรือลูกระนาด',steady:'ความเร็วคงที่',accelerate:'เร่ง/ผ่อนคันเร่ง',turn:'เลี้ยว',brake:'เบรก'})[condition]||'ไม่ระบุ';
+  let title=spikes.length>=2?'พบสัญญาณดังขึ้นฉับพลันเป็นบางช่วง':stable?'พบความถี่เด่นค่อนข้างต่อเนื่อง':variable?'ระดับเสียงมีการเปลี่ยนแปลงหลายช่วง':'ยังไม่พบรูปแบบผิดปกติชัดเจน';
+  if(isDemo)title='DEMO · ผลทดสอบอัลกอริทึมจากสัญญาณจำลอง';
+  const ev=[
+    'ความยาวข้อมูล '+num(duration,1)+' วินาที / '+pts.length+' จุด (ข้อมูลเสียงถูกย่อเหลือค่าทุกประมาณ 0.25 วินาที ไม่ใช่คลื่นเสียงดิบ)',
+    'ระดับสัญญาณมัธยฐาน '+num(m,1)+' dBFS และความต่าง P90–P10 ประมาณ '+num(p90-p10,1)+' dBFS',
+    'พบยอดระดับสัญญาณที่สูงกว่าค่ากลาง ≥7 dBFS จำนวน '+spikes.length+' เหตุการณ์ที่แยกห่างกันอย่างน้อย 0.65 วินาที',
+    hzMed!=null?'ความถี่ Peak มัธยฐานประมาณ '+num(hzMed,0)+' Hz; ความคงที่ของ Peak '+num(stableFrac*100,0)+'% (ไม่ได้เป็นผลวัดแหล่งกำเนิดเสียงโดยตรง)':'ไม่พบข้อมูลความถี่ Peak ที่เชื่อถือได้ในช่วงที่เลือก'
+  ];
+  if(rpm>0&&hzMed!=null){const o=rpm/60;let matched=[];for(const k of [1,2,4])if(Math.abs(hzMed-o*k)<=Math.max(10,o*k*.09))matched.push(k+'×');if(matched.length)ev.push('ความถี่ที่ตรวจพบอยู่ใกล้ Engine Order '+matched.join(', ')+' ที่ RPM กรอกไว้ แต่มีเพียงจุด RPM เดียว จึงยังยืนยันว่าเสียงแปรผันตามรอบเครื่องไม่ได้')}
+  const checks=[
+    'ฟังเสียง WebM จริงประกอบ และทำซ้ำในเงื่อนไขเดียวกันก่อนสรุป',
+    'ระบุว่าเสียงเกิดเมื่อรถจอดหรือวิ่ง ผ่านหลุม เลี้ยว เบรก หรือเร่งเครื่อง',
+    'บันทึก Before/After ที่ตำแหน่งไมโครโฟนและความเร็ว/รอบเครื่องใกล้เคียงกัน'
+  ];
+  if(sym==='suspension'||condition==='bump')checks.unshift('ตรวจลูกหมากกันโคลง บูชปีกนก ลูกหมาก และจุดยึดโช้คด้วยวิธีตรวจเชิงกล โดยยังไม่เปลี่ยนอะไหล่จากกราฟอย่างเดียว');
+  if(sym==='hum'||condition==='steady')checks.unshift('แยกเสียงจากยาง ลูกปืนล้อ เฟืองท้าย และอุปกรณ์หมุน ด้วยการเปลี่ยนเงื่อนไขตามความเร็วอย่างปลอดภัย');
+  if(sym==='engine'||condition==='idle'||condition==='accelerate')checks.unshift('เทียบเสียงเมื่อเปลี่ยน RPM และตรวจอุปกรณ์หมุน เช่น พัดลม ลูกลอก สายพาน ก่อนลงความเห็น');
+  if(sym==='steering'||condition==='turn')checks.unshift('ทดลองเลี้ยวขณะรถจอดและขณะเคลื่อนช้า ๆ อย่างปลอดภัย พร้อมตรวจชิ้นส่วนบังคับเลี้ยว/ช่วงล่าง');
+  if(sym==='brake'||condition==='brake')checks.unshift('ตรวจชิ้นส่วนเบรกและจุดยึดอย่างปลอดภัย และหยุดขับทดสอบหากพบอาการเกี่ยวกับความปลอดภัย');
+  if(duration<8)checks.unshift('ข้อมูลสั้นกว่า 8 วินาที แนะนำบันทึกใหม่ให้ได้ 10–20 วินาที');
+  const warning='ผลนี้เป็นการวิเคราะห์รูปแบบกราฟด้วยอัลกอริทึม Rule-based บนเครื่อง ไม่ใช่โมเดลแมชชีนเลิร์นนิงจำแนกชิ้นส่วน ไม่สามารถบอกตำแหน่งหน้าซ้าย/หน้าขวา หรือยืนยันอะไหล่เสียจากมือถือเครื่องเดียวได้ '+(isDemo?'ข้อมูลนี้เป็น DEMO ไม่ใช่เสียงรถจริง':'ระดับ dBFS ของไมค์มือถือยังไม่สอบเทียบ และอาจมีระบบปรับเกนหรือกรองเสียง');
+  const report={title,source:graph.mode,symptom:symptomLabel,condition:conditionLabel,rpm,duration,medianDbfs:m,medianPeakHz:hzMed,spikes,variabilityDb:p90-p10,stableFraction:stableFrac,evidence:ev,checks,warning,note:$('aiNotes').value.trim(),savedAt:new Date().toISOString()};
+  aiState.last=report;
+  $('aiDataStatus').textContent=isDemo?'SIMULATED / DEMO':'MIC RECORDING';
+  $('aiStamp').textContent=(isDemo?'DEMO · ':'LOCAL SIGNAL ANALYSIS · ')+pts.length+' SAMPLES';
+  $('aiHeadline').textContent=title;
+  $('aiOverview').textContent='อาการ: '+symptomLabel+' · เงื่อนไข: '+conditionLabel+' · '+(spikes.length?'ตรวจพบการเพิ่มขึ้นฉับพลันของระดับสัญญาณ แต่ไม่ได้พิสูจน์ว่าเป็นเสียงกระแทกจริง':'ยังไม่มีหลักฐานเสียงกระแทกจากข้อมูลสรุปนี้')+'.';
+  $('aiPeakMetric').textContent=hzMed==null?'—':num(hzMed,0)+' Hz';
+  $('aiHitMetric').textContent=String(spikes.length)+' ครั้ง';
+  $('aiLevelMetric').textContent=num(m,1)+' dBFS';
+  addItems('aiEvidence',ev);addItems('aiChecks',checks);$('aiWarning').textContent=warning;
+  const events=$('aiEvents');events.textContent='';
+  if(spikes.length){const titleEl=document.createElement('div');titleEl.className='ai-section';const head=document.createElement('h4');head.textContent='จุดเสียงดังขึ้น (แตะเพื่อดูตำแหน่งบนกราฟ)';titleEl.appendChild(head);
+    for(const spike of spikes.slice(0,12)){const b=document.createElement('button');b.type='button';b.className='ai-event';b.textContent=num(spike.secs,1)+'s · '+num(spike.level,1)+' dBFS';b.addEventListener('click',()=>{const j=st.graph.points.findIndex(p=>p.secs>=spike.secs+start);st.selected=j>=0?j:0;drawSession();$('historyPanel').scrollIntoView({behavior:'smooth',block:'start'})});titleEl.appendChild(b)}events.appendChild(titleEl)}
+  if(scroll)$('analysisPanel').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function analysisPrompt(){if(!aiState.last)analyzeSavedSignal(false);const r=aiState.last;if(!r)return'';return 'ช่วยวิเคราะห์ข้อมูล NVH ของรถยนต์ในฐานะผู้ช่วยช่างเทคนิคอย่างระมัดระวัง แยกสิ่งที่วัดได้จากข้อสันนิษฐาน ห้ามฟันธงชิ้นส่วนเสียจากกราฟอย่างเดียว และให้ลำดับการตรวจยืนยันอย่างปลอดภัย\n\n'+
+'ต้นทาง: '+(r.source==='demo'?'DEMO จำลอง ห้ามใช้วินิจฉัยจริง':'ไมโครโฟนมือถือ')+'\nอาการ: '+r.symptom+'\nเงื่อนไข: '+r.condition+'\nRPM ที่กรอกเอง: '+r.rpm+'\nระยะเวลา: '+num(r.duration,1)+'s\nPeak มัธยฐาน: '+num(r.medianPeakHz,0)+' Hz\nระดับเสียงกลาง: '+num(r.medianDbfs,1)+' dBFS\nจำนวนยอดที่สูงกว่าค่ากลาง 7dB: '+r.spikes.length+'\nช่วงเวลาเหตุการณ์: '+r.spikes.map(x=>num(x.secs,1)+'s').join(', ')+'\nหมายเหตุช่าง: '+(r.note||'ไม่มี')+'\n\nจำกัดความ: ข้อมูลเป็นสรุปจากกราฟไม่ใช่ไฟล์เสียงดิบ ไม่สามารถระบุตำแหน่งอะไหล่โดยอัตโนมัติ กรุณาบอกว่าต้องมีหลักฐานอะไรเพิ่ม';
+}
+async function copyAnalysis(){const str=analysisPrompt();if(!str){tell('ยังไม่มีผลวิเคราะห์ที่จะคัดลอก','warn');return}try{await navigator.clipboard.writeText(str);tell('คัดลอกรายงานสำหรับ ChatGPT แล้ว นำไปวางเพื่อรับคำอธิบายจากโมเดล AI','ok')}catch(e){tell('คัดลอกอัตโนมัติไม่ได้ กรุณาเปิดผ่าน HTTPS ใน Chrome แล้วลองใหม่','warn')}}
+function exportAnalysis(){if(!aiState.last)analyzeSavedSignal(false);const r=aiState.last;if(!r)return;const content=['55 PERFORMANCE NVH HUNTER · SIGNAL DIAGNOSTIC ASSIST V0.4','',r.title,'',...r.evidence.map(x=>'- '+x),'','ขั้นตอนตรวจเพิ่มเติม:',...r.checks.map(x=>'- '+x),'','คำเตือน: '+r.warning,'','คำอธิบาย: วิเคราะห์โดยอัลกอริทึมบนเครื่อง ไม่ใช่โมเดล AI ที่ผ่านการฝึกกับเสียงอะไหล่รถ'];dl(new Blob(['\ufeff'+content.join('\r\n')],{type:'text/plain;charset=utf-8'}),'55_NVH_ANALYSIS_'+stamp()+'.txt')}
 function clearReadings(){st.peak=null;st.second=null;st.rms=null;st.peaks=[];st.recent=[];ui.peak.textContent='—';ui.second.textContent='—';ui.rms.textContent='—';ui.before.disabled=ui.after.disabled=true}
 async function stop(){const old=st.mode;if(st.recorder?.state==='recording')finishRecordGraph();else if(st.history.length&&!st.recorded)saveSession(st.history,'session');st.mode='idle';cancelAnimationFrame(st.raf);st.paused=false;if(st.recorder?.state==='recording'){try{st.recorder.stop()}catch(e){}}if(st.src){try{st.src.disconnect()}catch(e){}}if(st.stream){st.stream.getTracks().forEach(t=>t.stop());st.stream=null}if(st.ctx){try{await st.ctx.close()}catch(e){}st.ctx=null}st.src=null;st.analyser=null;badge('STANDBY');ui.sr.textContent='AUDIO INPUT: NOT CONNECTED';uiState();if(old!=='idle')tell('หยุดแล้ว · ดูกราฟย้อนหลังด้านล่าง เลื่อนเวลาหรือส่งออก PNG / CSV ได้','ok')}
 async function startDemo(){if(active())await stop();clearReadings();st.history=[];st.recorded=false;st.lastAudio=null;bindPlayback();ui.audio.disabled=true;st.mode='demo';st.sampleRate=48000;st.begin=performance.now();st.lastFrame=st.lastWater=st.lastLog=0;badge('DEMO MODE','demo');uiState();prepareWater();ui.sr.textContent='INPUT: SIMULATED / 48 kHz';ui.waveDuration.textContent='ช่วงเวลาประมาณ '+num(FFT_SIZE/st.sampleRate,2)+' วินาที';tell('DEMO: กราฟนี้เป็นสัญญาณที่โปรแกรมสร้างขึ้น ไม่ใช่เสียงจากรถหรือไมโครโฟน','warn');st.raf=requestAnimationFrame(loop)}
@@ -248,7 +401,7 @@ function stamp(){return new Date().toISOString().replaceAll(':','-').replaceAll(
 function downloadAudio(){if(!st.lastAudio)return;const ext=st.lastAudioType.includes('ogg')?'ogg':'webm';dl(st.lastAudio,'55_MBNVH_AUDIO_'+stamp()+'.'+ext)}
 function csv(){if(!st.history.length){tell('ยังไม่มีข้อมูลให้ส่งออก','warn');return}const head=['timestamp','seconds','mode','peak_hz','second_peak_hz','rms_dbfs','rpm_manual','frequency_range_hz'];const rows=st.history.map(x=>[x.iso,x.secs,x.mode,x.peakHz,x.secondHz,x.rmsDbFS,x.rpm,x.rangeHz].map(v=>v==null?'':String(v)).join(','));const b=new Blob(['\ufeff'+head.join(',')+'\r\n'+rows.join('\r\n')],{type:'text/csv;charset=utf-8'});dl(b,'55_MBNVH_LOG_'+stamp()+'.csv');tell('ส่งออกข้อมูล CSV จำนวน '+st.history.length+' แถวแล้ว','ok')}
 function png(){const c=ui.spect;c.toBlob(b=>{if(b){dl(b,'55_MBNVH_FFT_'+stamp()+'.png');tell('บันทึกภาพ FFT แล้ว','ok')}else tell('บันทึกภาพไม่สำเร็จ','error')},'image/png')}
-ui.start.addEventListener('click',startMic);ui.demo.addEventListener('click',startDemo);ui.stop.addEventListener('click',stop);ui.pause.addEventListener('click',togglePause);ui.range.addEventListener('change',updateAxes);ui.rpm.addEventListener('input',calcOrders);ui.cyl.addEventListener('change',calcOrders);ui.before.addEventListener('click',()=>snapshot('before'));ui.after.addEventListener('click',()=>snapshot('after'));$('resetCompareBtn').addEventListener('click',resetCompare);$('clearWaterBtn').addEventListener('click',prepareWater);ui.record.addEventListener('click',audioRecord);ui.audio.addEventListener('click',downloadAudio);ui.csv.addEventListener('click',csv);ui.png.addEventListener('click',png);window.addEventListener('resize',()=>{if(!active())idleDraw();else prepareWater();if(st.graph)drawSession()});window.addEventListener('pagehide',()=>{if(st.stream){st.stream.getTracks().forEach(t=>t.stop())}});loadCompare();calcOrders();updateAxes();idleDraw();uiState();readSession();$('historySeek').addEventListener('input',e=>{st.selected=+e.target.value;drawSession();const a=$('historyAudio');if(!a.hidden&&Number.isFinite(a.duration)){const pts=st.graph.points;a.currentTime=Math.min(a.duration,pts[st.selected].secs-pts[0].secs)}});$('historyAudio').addEventListener('timeupdate',e=>{if(!st.graph)return;const pts=st.graph.points,t0=pts[0].secs;let i=0;while(i<pts.length-1&&pts[i+1].secs-t0<e.target.currentTime)i++;st.selected=i;drawSession()});$('historyPngBtn').addEventListener('click',saveHistoryPng);$('historyCsvBtn').addEventListener('click',saveHistoryCsv);
+ui.start.addEventListener('click',startMic);ui.demo.addEventListener('click',startDemo);ui.stop.addEventListener('click',stop);ui.pause.addEventListener('click',togglePause);ui.range.addEventListener('change',updateAxes);ui.rpm.addEventListener('input',calcOrders);ui.cyl.addEventListener('change',calcOrders);ui.before.addEventListener('click',()=>snapshot('before'));ui.after.addEventListener('click',()=>snapshot('after'));$('resetCompareBtn').addEventListener('click',resetCompare);$('clearWaterBtn').addEventListener('click',prepareWater);ui.record.addEventListener('click',audioRecord);ui.audio.addEventListener('click',downloadAudio);ui.csv.addEventListener('click',csv);ui.png.addEventListener('click',png);window.addEventListener('resize',()=>{if(!active())idleDraw();else prepareWater();if(st.graph)drawSession()});window.addEventListener('pagehide',()=>{if(st.stream){st.stream.getTracks().forEach(t=>t.stop())}});loadCompare();calcOrders();updateAxes();idleDraw();uiState();readSession();$('aiAnalyzeBtn').addEventListener('click',()=>analyzeSavedSignal(true));$('aiCopyBtn').addEventListener('click',copyAnalysis);$('aiExportBtn').addEventListener('click',exportAnalysis);$('goAiBtn').addEventListener('click',()=>{$('analysisPanel').scrollIntoView({behavior:'smooth',block:'start'})});$('aiSymptom').addEventListener('change',()=>analyzeSavedSignal(false));$('aiCondition').addEventListener('change',()=>analyzeSavedSignal(false));$('aiNotes').addEventListener('input',()=>{if(st.graph)analyzeSavedSignal(false)});$('historySeek').addEventListener('input',e=>{st.selected=+e.target.value;drawSession();const a=$('historyAudio');if(!a.hidden&&Number.isFinite(a.duration)){const pts=st.graph.points;a.currentTime=Math.min(a.duration,pts[st.selected].secs-pts[0].secs)}});$('historyAudio').addEventListener('timeupdate',e=>{if(!st.graph)return;const pts=st.graph.points,t0=pts[0].secs;let i=0;while(i<pts.length-1&&pts[i+1].secs-t0<e.target.currentTime)i++;st.selected=i;drawSession()});$('historyPngBtn').addEventListener('click',saveHistoryPng);$('historyCsvBtn').addEventListener('click',saveHistoryCsv);
 
 let installEvent=null;
 window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installEvent=event});
