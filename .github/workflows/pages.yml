@@ -81,6 +81,11 @@ jobs:
           ids=[g.get('id') for g in root.iter() if (g.get('id') or '').startswith('m') and len(g.get('id'))==4]
           assert len(ids)==100 and len(set(ids))==100, f'expected 100 unique creature sprites, got {len(ids)}'
           print('Validated 100 independent creature atlas cells')
+          v2=Path('public/monster-world/creatures-100-v2.svg')
+          new_root=ET.parse(v2).getroot()
+          evolved=[g.get('id') for g in new_root.iter() if (g.get('id') or '').startswith('monster-')]
+          assert len(evolved)==100 and len(set(evolved))==100, f'expected 100 distinct evolved SVG cells, got {len(evolved)}'
+          print('Validated upgraded 100-creature SVG atlas')
           PY
           test -s public/index.html
           test -f public/assets/maps/map-10.png
