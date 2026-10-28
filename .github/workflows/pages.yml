@@ -53,6 +53,17 @@ jobs:
           PY
           python tools/verify_asset_frames_v05.py
 
+      - name: Build and validate 202 original V0.7 sprite sheets
+        shell: bash
+        run: |
+          python tools/build_sprite_full_v07.py --out public/assets/v07
+          python tools/build_sprite_full_v07.py --out public/assets/v07 --verify
+          test -s public/assets/v07/manifest.json
+          test -f public/assets/v07/monsters/monster-47.png
+          test -f public/assets/v07/skills/skill-3-29.png
+          test -f public/assets/v07/heroes/hero-2-die.png
+          test -f public/assets/v07/bosses/boss-09.png
+
       - name: Validate game files
         shell: bash
         run: |
