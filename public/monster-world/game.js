@@ -179,7 +179,7 @@ function mapPage(){
  let h='<h1>🗺️ แผนที่โลก 10 พื้นที่</h1><p class="subtitle">พื้นที่ใหม่ปลดล็อกด้วยเลเวลสัตว์สูงสุดของทีม</p><div class="cards">';
  AREA.forEach((a,i)=>{
  const unlock=levelMax()>=a[2];
- h+='<button class="pet-card" data-act="area" data-val="'+i+'" style="min-height:145px;'+(!unlock?'opacity:.56':'')+'"><div style="font-size:43px;text-align:center;margin:12px 0">'+a[1]+'</div><div class="name">'+(i+1)+'. '+safe(a[0])+'</div><div class="stats">Lv.'+a[2]+'+ · '+(unlock?'✅ เปิดแล้ว':'🔒 ยังไม่ปลดล็อก')+'</div></button>';
+ h+='<button class="pet-card" data-act="area" data-val="'+i+'" style="min-height:145px;'+(!unlock?'opacity:.56':'')+'"><div class="area-thumb" style="background-position:'+((i%5)/4*100)+'% '+(Math.floor(i/5)*100)+'%"></div><div class="name">'+(i+1)+'. '+safe(a[0])+'</div><div class="stats">Lv.'+a[2]+'+ · '+(unlock?'✅ เปิดแล้ว':'🔒 ยังไม่ปลดล็อก')+'</div></button>';
  });
  return h+'</div>';
 }
