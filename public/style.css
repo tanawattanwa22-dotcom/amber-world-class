@@ -56,3 +56,16 @@
 .awc-sword-art small{color:#d9c8bc;font-size:11px}
 .awc-sword-art a{font-size:12px;text-align:center;padding:9px;border-radius:7px;border:1px solid #d2a55a;color:#ffe1ad;background:#182841;text-decoration:none}
 @media(max-width:360px){.awc-sword-art img{height:158px}}
+
+
+/* V0.9 art browser: actual 20-frame skill visuals, not number-only placeholders. */
+.awc-vfx-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;min-width:0}
+.awc-vfx-choice{display:flex;flex-direction:column;align-items:center;justify-content:center;
+min-width:0;min-height:82px!important;padding:3px 1px!important;gap:1px;background:linear-gradient(160deg,#1c2940,#08182c)!important;
+border:1px solid #715f58!important;border-radius:9px;color:#f8e4ac}
+.awc-vfx-choice.selected{border-color:#ffdb75!important;box-shadow:inset 0 0 9px #f7bb6c49,0 0 7px #e0ba6c4b}
+.awc-vfx-choice span{font-size:10px;font-weight:750}
+.awc-vfx-choice small{font-size:9px;color:#ffdf80}
+.awc-vfx-thumb{display:block;width:min(100%,54px);height:54px;aspect-ratio:1;image-rendering:pixelated}
+.awc-vfx-note{font-size:11px;color:#bbcfda;line-height:1.6}
+@media(max-width:360px){.awc-vfx-thumb{height:44px}.awc-vfx-choice{min-height:72px!important}}
