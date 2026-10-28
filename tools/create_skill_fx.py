@@ -1,7 +1,9 @@
 from PIL import Image,ImageDraw,ImageFilter
 from pathlib import Path
-import math,random
-out=Path('/mnt/data/awc_v06_build/assets/effects');out.mkdir(exist_ok=True,parents=True)
+import math,random,os
+PROJECT=Path(__file__).resolve().parents[1]
+out=Path(os.environ.get('AWC_ASSET_DIR', str(PROJECT/'public'/'assets')))/'effects'
+out.mkdir(exist_ok=True,parents=True)
 S=96
 
 def draw_arc(draw,cx,cy,r,start,end,color,width=2):
@@ -90,4 +92,6 @@ for r in range(4):
   cell=src.crop(((fi%4)*S,(fi//4)*S,((fi%4)+1)*S,((fi//4)+1)*S))
   cell=cell.resize((96,96),Image.Resampling.NEAREST)
   preview.paste(cell,(245+j*144,7+r*119),cell)
-preview.save('/mnt/data/AWC_V06_SKILL_PREVIEW.png',optimize=True)
+preview_path=PROJECT/'docs'/'previews'/'AWC_V06_SKILL_PREVIEW.png'
+preview_path.parent.mkdir(parents=True,exist_ok=True)
+preview.save(preview_path,optimize=True)
