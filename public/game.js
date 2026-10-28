@@ -1,4 +1,4 @@
-/* AMBER WORLD CLASS v0.6 — original playable client. Offline mode is a sandbox.
+/* AMBER WORLD CLASS v0.9 — original playable client. Offline mode is a sandbox.
    In online mode all authoritative stats, movements, kills, rewards and damage come from server.
    No pre-existing 55 AMBERLANDS resources or database IDs are used. */
 const $ = id => document.getElementById(id);
@@ -161,7 +161,7 @@ function openPanel(id){if(id==='maps')return showMaps();const s=(v)=>`<div class
  ${Array.from({length:30},(_,i)=>`<button class="secondary awc-vfx-choice ${selectedVisualSkill===i?'selected':''}" data-vfx="${i}" aria-label="เอฟเฟกต์ ${i+1}">
  <canvas width="54" height="54" class="awc-vfx-thumb" data-vfx-thumb="${i}" aria-hidden="true"></canvas>
  <span>FX ${String(i+1).padStart(2,'0')}</span>${selectedVisualSkill===i?'<small>✓ เลือกแล้ว</small>':''}</button>`).join('')}</div>
- <p class="awc-vfx-note">แอนิเมชันเล่นในหน้านี้ได้เลย · สีและรูปร่างยังเป็นงานภาพต้นแบบ</p>`);
+ <p class="awc-vfx-note">แอนิเมชันเล่นในหน้านี้ได้เลย · สีและรูปร่างยังเป็นงานภาพต้นแบบ · <a href="./sprite-lab-v07.html?v=09">ดู Sprite Sheet ทุกอาชีพ</a></p>`);
  document.querySelectorAll('[data-vfx]').forEach(btn=>btn.onclick=()=>chooseVisualSkill(Number(btn.dataset.vfx)));
  renderVfxThumbs(true);
  break;}
