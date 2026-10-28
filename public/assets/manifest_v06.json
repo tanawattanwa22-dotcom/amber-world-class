@@ -1,0 +1,64 @@
+{
+  "edition": "v0.6-original-art-update",
+  "released_utc": "2026-10-28",
+  "scope": "art-only; no gameplay, server, Supabase or progression changes",
+  "map_override": {
+    "path": "maps/map-01.png",
+    "size": [
+      1152,
+      1152
+    ],
+    "layout": "top-down open-world original pixel art"
+  },
+  "hero_sheets": {
+    "count": 4,
+    "paths": [
+      "sprites/hero-0.png",
+      "sprites/hero-1.png",
+      "sprites/hero-2.png",
+      "sprites/hero-3.png"
+    ],
+    "frame": [
+      48,
+      48
+    ],
+    "grid": [
+      4,
+      8
+    ],
+    "directions": [
+      "down",
+      "down-left",
+      "left",
+      "up-left",
+      "up",
+      "up-right",
+      "right",
+      "down-right"
+    ]
+  },
+  "skill_effects": {
+    "count": 4,
+    "paths": [
+      "effects/skill-0.png",
+      "effects/skill-1.png",
+      "effects/skill-2.png",
+      "effects/skill-3.png"
+    ],
+    "frame": [
+      96,
+      96
+    ],
+    "grid": [
+      4,
+      4
+    ],
+    "frames_per_effect": 16
+  },
+  "untouched": "maps 02-10, server-side combat logic, accounts, prior player state, old 55 AMBERLANDS repository",
+  "source_generators": [
+    "tools/create_art.py",
+    "tools/create_skill_fx.py"
+  ],
+  "caveat": "This is an intermediate original pixel-art iteration. Full target-reference visual fidelity, 48 monsters, 120 unique skill animations, collision, and complete class equipment layers are NOT yet delivered."
+}
