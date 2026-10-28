@@ -22,3 +22,10 @@ This is a real, incrementally shipped artwork change, without touching the old 5
 - Self-contained SVG files embed transparent WebP source art as data: URI, no remote dependency.
 - The real Sword idle 4-frame sheet is 768x288; cell 192x288, row 0, frames 0..3. A single frontal original is not an eight-direction sprite sheet.
 - Never use reference poster crops as game assets or assert directions/actions are complete unless each has separately inspected real frames.
+## Playable integration V0.8.2 (new)
+- `public/game.js` now displays **actual original four-frame HD Sword idle** on the world canvas when local/peer Sword or Novice stands still facing DOWN; frame advances every 210ms. It does not replace other animation directions with fake rotations.
+- Characters retain original wing layer behind the 4-frame HD image. Walking, attacks, casts, damage, death and seven other directions continue using existing V0.7 atlases so combat and positions remain unchanged.
+- `public/index.html` uses refreshed `?v=082` game and CSS URLs for Android Chrome cache updates.
+- `tools/verify_hd_sword_v08.py` and GitHub Pages workflow now check the original SVG-embedded transparent four-frame atlas (192×288/frame) before release.
+- No Supabase, server-side combat, authentication, old 55 AMBERLANDS resources or existing saves were touched in this art patch.
+- This is not full delivery of the requested reference-quality assets for four classes, 48 monsters, 10 bosses and 120 skills. Those high-quality, individually illustrated animation sets remain unbuilt.
