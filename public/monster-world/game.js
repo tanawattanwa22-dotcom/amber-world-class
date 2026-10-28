@@ -244,7 +244,7 @@ function more(){
 }
 function render(){
  navDraw();
- const views={home,explore,battle,team:teamView,dex,detail,evolve,map,shop,bag,quests,social,profile,pet:petDetails,more};
+ const views={home,explore:encounter,battle,team:teamView,dex,detail,evolve,map,shop,bag,quests,social,profile,pet:petDetails,more};
  $('view').innerHTML=(views[page]||home)();
 }
 async function apiClient(){if(!SUPA||!PUB)throw Error('ยังไม่ได้ตั้งค่า Supabase');if(!client){const m=await import('https://esm.sh/@supabase/supabase-js@2.57.0');client=m.createClient(SUPA,PUB,{auth:{persistSession:true,autoRefreshToken:true}});}return client;}
