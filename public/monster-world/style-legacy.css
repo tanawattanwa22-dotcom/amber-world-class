@@ -1,0 +1,85 @@
+:root{--bg:#081527;--panel:#102642e8;--edge:#426fa5;--ink:#f4faff;--soft:#b3cce8;--gold:#ffd567;--blue:#40bbff}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#071626;color:var(--ink);font-family:system-ui,"Noto Sans Thai",sans-serif}button,input,select{font:inherit}button{cursor:pointer;touch-action:manipulation}button:disabled{opacity:.42;cursor:not-allowed}
+body{background:radial-gradient(ellipse at 15% 5%,#285da0 0%,transparent 42%),radial-gradient(ellipse at 90% 55%,#25457c 0%,transparent 43%),#071425}
+#app{max-width:1440px;margin:0 auto;min-height:100dvh;display:grid;grid-template-columns:190px minmax(0,1fr);gap:12px;padding:12px}
+.side{position:sticky;top:12px;align-self:start;height:calc(100dvh - 24px);border:1px solid #5576a7;border-radius:22px;background:linear-gradient(160deg,#17304fef,#091b32eb);padding:14px 10px;box-shadow:0 12px 35px #0006}
+.brand{padding:9px 7px 18px;line-height:1.06;text-align:center;font-weight:1000;letter-spacing:1px;font-size:19px;color:#ffdd80;text-shadow:0 3px 4px #111,0 0 14px #f68a2480}
+.brand small{display:block;font-size:9px;letter-spacing:3px;color:#cdeeff;margin-top:8px}
+.nav{display:grid;gap:5px}
+.nav button{padding:11px 12px;color:#dceeff;background:transparent;text-align:left;border:1px solid transparent;border-radius:13px;font-weight:750;font-size:13px}
+.nav button.active{background:linear-gradient(110deg,#2670c3,#11467b);border-color:#60c8ff;color:#fff;box-shadow:inset 0 1px 0 #ffffff55}
+.nav button:hover{border-color:#5c93c8}
+.side-footer{color:#a9bfd6;font-size:10px;margin-top:15px;padding:10px;border-top:1px solid #5576a755}
+.main{min-width:0;padding-bottom:100px}
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-bottom:12px}
+.player-pill,.wallet,.online-pill{background:#112743ec;border:1px solid #456b95;border-radius:15px;padding:9px 12px;display:flex;align-items:center;gap:9px;font-weight:750;font-size:13px}
+.player-pill{flex:1;min-width:180px}.avatar{background:#286caf;border:2px solid #96d3ff;padding:8px;border-radius:13px}
+.wallet{color:#ffe59e}.online-pill{color:#75ffa8}
+h1,h2,h3,p{margin-top:0}h1{font-size:clamp(23px,4.6vw,37px);line-height:1.18;color:#fff5c6;text-shadow:0 2px 6px #03132e}h2{font-size:19px;color:#ffe6ac;margin:0 0 8px}h3{font-size:15px;color:#e5f1ff;margin:0 0 8px}
+.subtitle{color:#c3def4;font-size:13px;line-height:1.7}
+.scene{position:relative;overflow:hidden;border-radius:25px;border:2px solid #8ac6f3;background:linear-gradient(#3c9cde,#84d6ef 43%,#59b68c 43%,#27986b 75%,#157e59);min-height:285px;padding:23px;box-shadow:inset 0 -16px 50px #0a392d55,0 10px 35px #0006}
+.scene:before{content:'☁️　　　　　☁️　　　　　☁️';position:absolute;left:5%;top:24px;font-size:33px;opacity:.55;letter-spacing:35px;white-space:nowrap}.scene:after{content:'🌳　　　🌷　🌲　　　　🌼　　🌳';position:absolute;left:0;bottom:8px;font-size:35px;white-space:nowrap;opacity:.9}
+.scene-content{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.scene-copy{align-self:flex-start;max-width:48%}.scene-title{font-size:clamp(22px,4vw,32px);font-weight:950;text-shadow:0 3px 5px #1b487d}.scene-copy p{color:#f5ffff;text-shadow:0 1px 3px #123;line-height:1.7;font-size:13px}
+.pet-stage{width:min(48%,310px);height:230px;display:grid;place-items:center;position:relative;filter:drop-shadow(0 14px 10px #19443188)}
+.pet-stage:before{content:'';position:absolute;width:84%;height:74%;border-radius:50%;background:radial-gradient(circle,#ffffff8d,transparent 75%);animation:pulse 3s ease-in-out infinite}
+.pet-stage .pet-art{font-size:clamp(88px,18vw,165px);filter:drop-shadow(0 5px 0 #0004);animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-9px) rotate(-2deg)}}@keyframes pulse{50%{transform:scale(1.18);opacity:.45}}
+.btn{background:linear-gradient(#ffea83,#ffa72d);border:1px solid #fff1a2;border-radius:13px;padding:11px 16px;color:#392510;font-weight:900;box-shadow:0 4px 0 #a45c17;min-height:43px}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 #a45c17}.btn.blue{background:linear-gradient(#56d9ff,#257dea);box-shadow:0 4px 0 #164b9e;color:white;border-color:#94ddff}
+.btn.red{background:linear-gradient(#ff7979,#e64257);box-shadow:0 4px 0 #98233d;color:white}
+.btn.ghost{background:linear-gradient(#244e78,#17314f);box-shadow:none;color:#e2f3ff;border:1px solid #5e88b4}
+.btn.small{padding:7px 10px;min-height:34px;font-size:12px}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:13px}
+.panel{border:1px solid #4875a5;background:linear-gradient(145deg,#173553ef,#0d213be9);border-radius:19px;box-shadow:0 8px 20px #0003;padding:15px;min-width:0}
+.panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(116px,1fr));gap:10px}
+.pet-card{border:1px solid #446d9b;border-radius:15px;min-width:0;background:linear-gradient(145deg,#23466d,#142942);color:white;padding:9px;text-align:left;position:relative;overflow:hidden}
+.pet-card:hover{border-color:#ffe39c}
+.pet-card .pet-visual{margin:0 auto 7px;width:93px;height:90px}.pet-card .name{font-weight:900;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pet-card .stats{font-size:10px;color:#bcd1e9;margin-top:4px}
+.pet-visual{position:relative;border-radius:23px;display:grid;place-items:center;isolation:isolate;background:radial-gradient(circle at 30% 20%,#ffffff6c,transparent 48%),linear-gradient(155deg,var(--c1,#ffb959),var(--c2,#f05c4b));box-shadow:inset 0 3px 8px #fff4,0 8px 16px #0004;border:2px solid #ffffff7d}
+.pet-visual:before{content:'✦';position:absolute;left:9px;top:5px;color:#fff9;z-index:-1}.pet-visual:after{content:attr(data-mark);position:absolute;right:4px;bottom:0;color:#ffffffaa;font-size:16px}
+.pet-visual .emoji{font-size:58px;line-height:1;filter:drop-shadow(0 5px 3px #10162799);transform:scale(var(--scale,1));animation:bob 3s ease-in-out infinite}
+.pet-visual.big{width:min(100%,210px);height:210px;margin:auto;border-radius:40px}.pet-visual.big .emoji{font-size:132px}
+.pet-visual.tiny{width:50px;height:50px;border-radius:13px;flex:none}.pet-visual.tiny .emoji{font-size:35px}
+.pet-visual.locked{filter:grayscale(1);opacity:.37}
+.info-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0;color:#cfdef0;font-size:12px}
+.badge{display:inline-block;border-radius:20px;padding:3px 8px;font-size:10px;background:#294771;border:1px solid #81b4e5;color:#e9f8ff;white-space:nowrap}
+.badge.gold{background:#7a5421;color:#fff4ba;border-color:#d6a653}
+.meter{height:10px;border-radius:20px;background:#101d33;overflow:hidden;border:1px solid #4e6993;margin:6px 0}
+.meter>i{display:block;height:100%;background:linear-gradient(90deg,#55e889,#14c590);border-radius:12px;transition:width .25s}
+.grid100{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:7px}
+.filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.filters button{padding:6px 12px;border-radius:20px;border:1px solid #4372a8;background:#183655;color:#c5dfff;font-size:11px;font-weight:750}
+.filters button.active{background:#2f80d4;border-color:#8ddaff;color:#fff}
+.menu-heading{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-bottom:12px}
+.list-row{display:flex;align-items:center;gap:10px;justify-content:space-between;border:1px solid #365981;background:#172f50;border-radius:13px;padding:8px;margin:7px 0;min-width:0}
+.list-row .grow{flex:1;min-width:0}.list-row strong{font-size:13px}.list-row small{display:block;font-size:11px;color:#a9c3e3;line-height:1.6}
+.evo-chain{display:flex;align-items:center;justify-content:space-around;gap:4px;overflow-x:auto;padding:12px 0}
+.evo-chain .stage{text-align:center;min-width:105px}.evo-chain .stage .pet-visual{width:86px;height:86px;margin:auto}
+.arrow{font-weight:1000;font-size:22px;color:#ffcb62}
+.battle{border:2px solid #73d7f3;border-radius:20px;overflow:hidden;padding:19px;background:linear-gradient(#2d8ca7,#81d0ae 53%,#348c75 54%,#115b4e);min-height:265px}
+.battle .foe{display:grid;place-items:center;min-height:170px}.battle .foe .pet-visual{transform:scale(1.08)}.battle .foe-name{font-weight:900;text-align:center;background:#143758b5;border-radius:14px;padding:6px}.battle-buttons{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+.auth-input{display:block;width:100%;border-radius:11px;background:#07182f;color:#fff;border:1px solid #6697bb;padding:12px;margin:8px 0;font-size:15px}
+.toast{position:fixed;z-index:20;top:14px;left:50%;transform:translateX(-50%);width:min(460px,92vw);padding:13px;background:#103b65;border:2px solid #8ad3ff;border-radius:14px;box-shadow:0 10px 30px #0009;color:#fff1cd;font-size:13px;text-align:center;pointer-events:none}
+.bottom{display:none}
+@media(max-width:750px){#app{display:block;padding:8px}.side{display:none}.main{padding-bottom:90px}.top{gap:5px}.top .player-pill{min-width:135px;font-size:11px}.wallet{font-size:11px;padding:8px}.online-pill{font-size:10px;padding:8px}.panels{grid-template-columns:1fr}.scene{min-height:275px;padding:14px}.scene-copy{max-width:56%}.scene .pet-stage{width:46%;height:200px}.scene .pet-stage .pet-art{font-size:86px}.bottom{display:flex;position:fixed;z-index:15;bottom:0;left:0;right:0;height:76px;background:#0e2441f4;border-top:2px solid #4d8bc1;overflow-x:auto;justify-content:space-around;padding:6px 3px max(8px,env(safe-area-inset-bottom))}.bottom button{background:none;border:0;color:#cce5ff;font-size:10px;font-weight:800;min-width:65px;display:grid;gap:1px;justify-items:center}.bottom button span{font-size:24px}.bottom button.active{color:#ffe17e}.pet-visual.big{width:160px;height:160px}.pet-visual.big .emoji{font-size:96px}}
+@media(max-width:390px){.scene-copy{max-width:52%}.cards{grid-template-columns:repeat(3,minmax(0,1fr))}.pet-card .pet-visual{width:70px;height:70px}.pet-card .pet-visual .emoji{font-size:46px}.grid100{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* Original, self-contained 100-cell illustration atlas. No old AMBER assets loaded. */
+.pet-visual .creature-sprite{
+ display:block;width:100%;height:100%;position:relative;z-index:1;flex:none;
+ background-image:url('./creatures-100.svg?v=1');background-repeat:no-repeat;
+ background-size:1000% 1000%;image-rendering:auto;filter:drop-shadow(0 7px 3px #13204466);
+ animation:bob 2.8s ease-in-out infinite;
+}
+.pet-stage>.pet-visual.big{position:relative;z-index:2;box-shadow:0 14px 26px #16485399;}
+.pet-visual.locked .creature-sprite{filter:grayscale(1) brightness(.8)}
+@media(max-width:750px){.scene .pet-stage>.pet-visual.big{width:130px;height:130px;border-radius:22px}}
+
+/* Scene art is a completely new ten-panel fantasy world atlas, not copied from AWC. */
+.scene.has-area-art{background-repeat:no-repeat;border-color:#d7d4ff;box-shadow:inset 0 -25px 85px #0736634f,0 10px 35px #0006}
+.scene.has-area-art:before,.scene.has-area-art:after{display:none}
+.scene.has-area-art .scene-copy{background:#132f4a99;padding:10px;border-radius:14px;backdrop-filter:blur(1px);text-shadow:0 2px 5px #132d47}
+.area-thumb{width:100%;height:104px;border-radius:10px;background-image:url('./areas-10.svg?v=1');
+background-size:500% 200%;background-repeat:no-repeat;border:1px solid #a0dff9;box-shadow:inset 0 -15px 35px #0715222e;margin-bottom:8px}
