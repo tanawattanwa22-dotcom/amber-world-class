@@ -127,7 +127,16 @@ $('open-menu').onclick=()=>openPanel('menu');
 $('quest-collapse').onclick=()=>{collapsed=!collapsed;$('quest-content').style.display=collapsed?'none':'block';$('quest-collapse').textContent=collapsed?'+':'−';};
 function openPanel(id){if(id==='maps')return showMaps();const s=(v)=>`<div class="stat-line"><b>${v[0]}</b><span>${v[1]}</span></div>`;switch(id){
  case 'character': showModal('ตัวละครและค่าสเตตัส',`<h3>🧑 ${player.name} · Lv.${player.level} ${CLASSES[player.classId]||'Novice'}</h3>${[['HP',`${player.hp}/${player.maxHp}`],['MP',`${player.mp}/${player.maxMp}`],['ATK',player.atk],['DEF',player.def],['แต้มสถานะ',player.statPoints],['มอนสเตอร์ที่กำจัด',player.mobKills]].map(s).join('')}<h3>เพิ่มค่าสเตตัส (มี ${player.statPoints} แต้ม)</h3>${['STR','DEX','INT','POW','VIT'].map(code=>`<div class="stat-line"><b>${code} · ${Number(player[code]||0)}</b><button class="secondary" data-stat="${code}" ${player.statPoints<=0?'disabled':''}>+ 1</button></div>`).join('')}<p>เลเวล 10 สามารถเลือกอาชีพได้ เมื่อถึงเลเวล 100 จะเป็นเลเวลสูงสุด</p>${player.level>=10&&player.classId<0?'<button class="primary" id="choose-job">เลือกอาชีพ</button>':''}<hr><p>เฉพาะเดโมออฟไลน์: ใช้ปุ่มด้านล่างทดสอบระบบเลเวล 10</p><button class="secondary" id="demo-lv10" ${online?'disabled':''}>ทดสอบ Level 10</button>`);document.querySelectorAll('[data-stat]').forEach(b=>b.onclick=()=>allocateStat(b.dataset.stat));$('choose-job')?.addEventListener('click',showClasses);$('demo-lv10').onclick=()=>{if(online)return;player.level=10;player.exp=0;player.maxHp=380;player.maxMp=160;player.hp=380;player.mp=160;player.statPoints+=45;player.atk+=25;saveOffline();showClasses();};break;
- case 'skills':showModal('ทักษะ · Skills',`<h3>✨ ${CLASSES[player.classId]||'Novice'}</h3><div class="item-card"><div><b>โจมตีปกติ</b><br><small>ดาเมจคำนวณจาก ATK / เลเวล</small></div><span>⚔️</span></div><div class="item-card"><div><b>Arc Burst</b><br><small>สร้างดาเมจ 235% · ใช้ MP 15 · CD 3.5 วินาที</small></div><span>✦</span></div><p>โครงสร้างสกิล 120 ท่าจะเพิ่มเป็น Sprite Sheet แบบเฟรมจริงใน Phase 4</p>`);break;
+ case 'skills':{
+ const job=Math.max(0,Math.min(3,player.classId|0));
+ showModal('ทักษะ · Skills',`<h3>✨ ${CLASSES[player.classId]||'Novice'} · V0.7</h3>
+ <p>เอฟเฟกต์ภาพ 30 ชุดต่ออาชีพ รวม 120 ชุด × 20 เฟรม — เลือกภาพได้โดยไม่เปลี่ยนค่าสกิลหรือดาเมจฝั่งเซิร์ฟเวอร์</p>
+ <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px">
+ ${Array.from({length:30},(_,i)=>`<button class="secondary" data-vfx="${i}" style="min-height:51px;border-color:${selectedVisualSkill===i?'#f6d187':''}">
+ <b>${String(i+1).padStart(2,'0')}</b><small style="display:block;font-size:10px">${selectedVisualSkill===i?'เลือกแล้ว':'VFX'}</small></button>`).join('')}</div>
+ <p>ดูตัวอย่างทุกเฟรมใน Sprite Lab V0.7</p>`);
+ document.querySelectorAll('[data-vfx]').forEach(btn=>btn.onclick=()=>chooseVisualSkill(Number(btn.dataset.vfx)));
+ break;}
  case 'inventory':showModal('กระเป๋า · Inventory',`<div class="item-card"><div><b>🧪 ยาฟื้นฟู HP</b><br><small>ใช้ฟื้นฟู HP ระหว่างต่อสู้</small></div><b>x ${player.potions}</b></div><div class="item-card"><div><b>🪙 Gold</b><br><small>ได้จากการกำจัดมอนสเตอร์</small></div><b>${player.gold}</b></div><div class="item-card"><div><b>💎 Gems</b><br><small>สกุลเงินทดสอบ</small></div><b>${player.gems}</b></div><p>ช่องอุปกรณ์ การ์ด หินตีบวก และของบอสจะเพิ่มในเฟสถัดไป</p>`);break;
  case 'party':showModal('ปาร์ตี้ · Party',`<h3>🛡️ ระบบปาร์ตี้</h3><p>พัฒนาต่อใน Phase 5: เชิญเพื่อน สถานะออนไลน์ และแชร์ EXP โดยเซิร์ฟเวอร์</p><p>โหมดเดโมเป็นการเล่นคนเดียว จึงยังไม่สามารถสร้างปาร์ตี้ออนไลน์ได้</p>`);break;
  case 'ranking':showModal('อันดับผู้เล่น · Ranking',`<h3>🏆 AMBER WORLD TOP 3</h3><p>อันดับตามจำนวนมอนสเตอร์ที่กำจัด บันทึกจากเซิร์ฟเวอร์เท่านั้น</p>${topThreeHtml()}`);break;
@@ -189,11 +198,18 @@ function draw(){ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,screenW,screen
    }
  }
  for(const e of combatAnimations){
-  const sheet=skillImgs[e.job];if(!sheet)continue;
-  const frame=Math.min(15,Math.max(0,Math.floor((animTick-e.started)/45)));
+  const atlas=v07Image('skills/skill-'+e.job+'-'+String(e.visual||0).padStart(2,'0')+'.png');
   const size=e.small?77:124;
-  ctx.drawImage(sheet,(frame%4)*96,Math.floor(frame/4)*96,96,96,
-   Math.round(e.x-camX-size/2),Math.round(e.y-camY-size*.82),size,size);
+  if(atlas){
+    const frame=Math.min(19,Math.max(0,Math.floor((animTick-e.started)/36)));
+    ctx.drawImage(atlas,(frame%5)*80,Math.floor(frame/5)*80,80,80,
+      Math.round(e.x-camX-size/2),Math.round(e.y-camY-size*.82),size,size);
+  }else{
+    const old=skillImgs[e.job];if(!old)continue;
+    const frame=Math.min(15,Math.max(0,Math.floor((animTick-e.started)/45)));
+    ctx.drawImage(old,(frame%4)*96,Math.floor(frame/4)*96,96,96,
+      Math.round(e.x-camX-size/2),Math.round(e.y-camY-size*.82),size,size);
+  }
  }
  ctx.font='bold 17px system-ui';ctx.textAlign='center';for(const e of effects){ctx.globalAlpha=clamp(e.t/500,0,1);ctx.strokeStyle='#1b1525';ctx.lineWidth=3;ctx.strokeText(e.label,e.x-camX,e.y-camY-(1000-e.t)*.05);ctx.fillStyle=e.color;ctx.fillText(e.label,e.x-camX,e.y-camY-(1000-e.t)*.05);}ctx.globalAlpha=1;
  ctx.restore();}
