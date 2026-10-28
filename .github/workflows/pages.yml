@@ -7,6 +7,7 @@ on:
       - 'public/**'
       - 'tools/upgrade_assets_v05.py'
       - 'tools/verify_asset_frames_v05.py'
+      - 'tools/verify_hd_sword_v08.py'
       - 'tools/build_sprite_full_v07.py'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
@@ -53,6 +54,7 @@ jobs:
           print('Validated',len(expected),'unchanged asset PNG files')
           PY
           python tools/verify_asset_frames_v05.py
+          python tools/verify_hd_sword_v08.py
 
       - name: Build and validate 202 original V0.7 sprite sheets
         shell: bash
