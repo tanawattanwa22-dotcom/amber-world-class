@@ -2208,14 +2208,13 @@ async function authGate(){
     card.remove();
     if(c==='guest'){Auth.set({mode:'guest',id:'guest',name:'ผู้เยี่ยมชม'});return}
     if(c==='g'){
-      // Genuine Supabase OAuth redirect only. Never simulate a Google account locally.
+      // The browser is redirected to the genuine Google/Supabase authorization page.
+      // No fake Google IDs, shared device tokens or client-approved account records.
       try{await AmberOnline.google();return;}
-      catch(err){await talk(['เข้าสู่ระบบ Google ไม่สำเร็จ: '+String(err?.message||err)]);continue;}
-      try{let a;
-        if(Auth.adapter){a=await Auth.adapter.signIn();if(!a||!a.id)throw 0;a={mode:'google',id:String(a.id).replace(/[^\w-]/g,'').slice(0,40),name:String(a.name||'ผู้เล่น').slice(0,16),email:a.email}}
-        else{const nm=await nameEntry('ผู้เล่น');if(nm==null)continue;let id='';try{id=localStorage.getItem('amberlings_demoid_'+nm)||''}catch(e){}if(!id){id='demo'+Math.random().toString(36).slice(2,10);try{localStorage.setItem('amberlings_demoid_'+nm,id)}catch(e){}}a={mode:'google-demo',id,name:nm}}
-        Auth.set(a);await talk(['เข้าสู่ระบบสำเร็จ! ยินดีต้อนรับ '+a.name+(a.mode==='google-demo'?' (บัญชีทดลอง)':'')]);return}
-      catch(e){await talk(['เข้าสู่ระบบไม่สำเร็จ ลองใหม่อีกครั้ง'])}}}}
+      catch(err){await talk(['เข้าสู่ระบบ Google ไม่สำเร็จ: '+String(err?.message||err)]);}
+    }
+  }
+}
 function heroPick(){return new Promise(res=>{
   const box=el('div','win hp');box.style.cssText='left:8px;right:8px;bottom:76px;padding:8px';
   el('div','mt','เลือกตัวละครของเธอ',box);const row=el('div',null,null,box);row.style.cssText='display:flex;gap:6px';
