@@ -72,6 +72,7 @@ jobs:
         run: |
           node --check public/game.js
           node --check public/monster-world/game.js
+          node tools/smoke_amberlings.cjs
           node tools/smoke_monster_world.cjs
           node --check public/config.js
           python - <<'PY'
