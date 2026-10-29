@@ -27,7 +27,11 @@ BEGIN
    INSERT INTO public.amberlings_events(actor_id,type) VALUES(p_uid,'account_created');
   END IF;
  END IF;
- SELECT * INTO me FROM public.amberlings_players WHERE user_id=p_uid FOR UPDATE;
+ IF p_action = 'market_buy' THEN
+   SELECT * INTO me FROM public.amberlings_players WHERE user_id=p_uid;
+ ELSE
+   SELECT * INTO me FROM public.amberlings_players WHERE user_id=p_uid FOR UPDATE;
+ END IF;
  IF NOT FOUND THEN RETURN jsonb_build_object('ok',false,'error','Sign in first');END IF;
 
  IF p_action='profile' THEN
@@ -317,7 +321,7 @@ BEGIN
  END IF;
  SELECT * INTO me FROM public.amberlings_players WHERE user_id=p_uid;
  SELECT coalesce(jsonb_agg(jsonb_build_object('id',m.id,'speciesId',m.species_id,'name',s.name_th,
-    'level',m.level,'xp',m.xp,'hp',m.hp,'maxHp',m.max_hp,'shiny',m.shiny,'slot',m.slot,
+    'level',m.level,'xp',m.xp,'hp',m.hp,'maxHp',m.max_hp,'shiny',m.shiny,'slot',m.slot,'skinIndex',m.skin_index,
     'element',s.element,'evolveTo',s.evolve_to,'evolveLevel',s.evolve_level)
     ORDER BY m.slot NULLS LAST,m.created_at),'[]'::jsonb)
  INTO monsters FROM public.amberlings_monsters m JOIN public.amberlings_species s ON s.id=m.species_id
@@ -345,11 +349,16 @@ BEGIN
         ORDER BY rating DESC,wins DESC LIMIT 15) r;
  RETURN jsonb_build_object('ok',true,'message',action_message,
    'player',jsonb_build_object('name',me.name,'gender',me.gender,'uniform',me.uniform_index,
-      'hair',me.hair_index,'skin',me.skin_index,'mapId',me.map_id,
+      'hair',me.hair_index,'skin',me.skin_index,'equipped',me.equipped,'mapId',me.map_id,
       'coins',me.coins,'gems',me.gems,'starter',me.starter_species,'captures',me.captures,
       'wins',me.wins,'rating',me.rating,'dailyClaim',me.daily_claim),
    'monsters',monsters,'inventory',inventory,'encounter',encounter_json,
-   'listings',listings,'leaderboard',ranking,'captureSuccess',success);
+   'listings',listings,'leaderboard',ranking,
+    'cosmetics',(SELECT coalesce(jsonb_agg(jsonb_build_object(
+     'id',ci.id,'name',ci.name_th,'kind',ci.kind,'price',ci.price_gems,'slot',ci.slot)
+     ORDER BY ci.kind,ci.id),'[]'::jsonb) FROM public.amberlings_item_catalog ci
+     WHERE ci.kind IN('cosmetic','skin') AND ci.price_gems>0),
+    'captureSuccess',success);
 END;
 $function$;
 REVOKE ALL ON FUNCTION public.amberlings_action(uuid,text,jsonb) FROM PUBLIC,anon,authenticated;

@@ -13,7 +13,7 @@ const MAP_NAMES=['เมืองอัมเบอร์ตัน','ทาง�
 const STARTERS=['embit','aquip','sproutle'];
 const VIEWS=[['home','หน้าแรก'],['dex','สมุดมอน'],['team','ทีม / วิวัฒนาการ'],
  ['explore','สำรวจ'],['battle','ต่อสู้ / จับ'],['shop','ร้านค้า'],
- ['market','ตลาดผู้เล่น'],['account','บัญชี']];
+ ['market','ตลาดผู้เล่น'],['fashion','แฟชั่น / สกิน'],['account','บัญชี']];
 const e=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const nf=v=>Number(v||0).toLocaleString('en-US');
 let hub=null,view='home',busy=false,notice='',client=null,model=null;
@@ -117,6 +117,9 @@ function mount(){
     travel:()=>({mapId:btn.dataset.map}),
     market_buy:()=>({listingId:btn.dataset.listing}),
     market_cancel:()=>({listingId:btn.dataset.listing}),
+    cosmetic_buy:()=>({item:btn.dataset.item}),
+    cosmetic_equip:()=>({item:btn.dataset.item}),
+    cosmetic_skin:()=>({item:btn.dataset.item,monsterId:btn.dataset.monster}),
     profile:()=>payload,market_list:()=>payload,party:()=>payload
    };
    if(actions[a])Object.assign(payload,actions[a]());
@@ -217,6 +220,40 @@ function market(){
  button('ซื้อ','market_buy',{listing:l.id},'primary'))+'</div>').join('');
  return h+'</div>';
 }
+function fashion(){
+ const p=model?.player||{},catalog=model?.cosmetics||[],inventory=model?.inventory||[];
+ const owned=new Set(inventory.filter(i=>Number(i.qty)>0).map(i=>i.item));
+ const equipped=p.equipped||{};
+ const mons=(model?.monsters||[]).filter(m=>m.id).sort((a,b)=>(a.slot||99)-(b.slot||99));
+ let out='<div class="ab-section"><h3>ชุดแฟชั่น / สกินมอนสเตอร์</h3>'+
+   '<p>ราคาและจำนวนเจมตรวจโดย Supabase เท่านั้น · เจมที่มี: <b>'+nf(p.gems)+'</b></p>'+
+   '<p class="ab-note">ใช้สกินมอน 1 ชิ้นต่อครั้ง สกินจะติดอยู่กับมอนที่เลือก ส่วนชุดแฟชั่นบันทึกการสวมลงเซิร์ฟเวอร์ (ภาพตัวละคร 3D ยังไม่เปลี่ยนตามชุดใน CBT นี้)</p>';
+ function render(category,label){
+   const items=catalog.filter(c=>c.kind===category);
+   out+='<h3>'+label+' ('+items.length+')</h3>';
+   if(!items.length){out+='<p>ยังไม่มีข้อมูลสินค้า รีเฟรชอีกครั้ง</p>';return;}
+   for(const it of items){
+     const has=owned.has(it.id);
+     out+='<div class="ab-row"><div><b>'+e(it.name)+'</b><small>'+nf(it.price)+' เจม · '+e(it.slot||'monster')+'</small>'+
+       (category==='cosmetic'&&equipped[it.slot]===it.id?'<small>สวมอยู่</small>':'')+'</div><div class="ab-actions">';
+     if(!has) out+=button('ซื้อ '+nf(it.price)+' เจม','cosmetic_buy',{item:it.id},'primary');
+     else if(category==='cosmetic') out+=button(equipped[it.slot]===it.id?'สวมแล้ว':'สวมใส่','cosmetic_equip',{item:it.id},'primary');
+     else if(!mons.length) out+='<small>ต้องมีมอนก่อน</small>';
+     else {
+       out+='<small>ใช้กับ:</small>';
+       for(const m of mons.slice(0,6)){
+         out+=button(e(m.name||m.speciesId)+' Lv.'+nf(m.level),'cosmetic_skin',
+           {item:it.id,monster:m.id},'primary');
+       }
+     }
+     out+='</div></div>';
+   }
+ }
+ render('cosmetic','แฟชั่น / หมวก / ปีก / เอฟเฟกต์');
+ render('skin','สกินมอนสเตอร์');
+ return out+'</div>';
+}
+
 function account(){
  const p=model?.player||{};
  return '<div class="ab-section"><h3>บัญชี Google / โปรไฟล์</h3>'+
@@ -229,7 +266,7 @@ function account(){
  nf(x.wins)+' ชนะ · '+(x.online?'ออนไลน์':'ออฟไลน์')+'</span></div>').join('')+
  '<div class="ab-note">ระบบเพื่อน กิลด์ ดวล PvP และเนื้อเรื่อง 3D ยังไม่ใช่เซิร์ฟเวอร์-authoritative ในเวอร์ชันทดสอบนี้</div></div>';
 }
-const V={home,dex,team,explore,battle,shop,market,account};
+const V={home,dex,team,explore,battle,shop,market,fashion,account};
 function draw(){
  if(!hub)return;
  const name=e(model?.player?.name||'เทรนเนอร์');

@@ -14,7 +14,7 @@ function headers(origin:string){return {
 function json(body:unknown,status:number,origin:string){return new Response(JSON.stringify(body),{
  status,headers:{...headers(origin),'Content-Type':'application/json; charset=utf-8'}});}
 const actions=new Set(['bootstrap','state','profile','starter','explore','attack','capture','flee',
- 'use_item','shop_buy','party','evolve','daily','travel','market_list','market_buy','market_cancel']);
+ 'use_item','shop_buy','party','evolve','daily','travel','market_list','market_buy','market_cancel','cosmetic_buy','cosmetic_equip','cosmetic_skin']);
 const fields=new Set(['name','gender','uniform','hair','skin','speciesId','move','orb',
  'monsterId','item','qty','slot','mapId','kind','price','currency','listingId']);
 Deno.serve(async req=>{
@@ -39,7 +39,8 @@ Deno.serve(async req=>{
     if(typeof v==='number'&&!Number.isFinite(v))return json({ok:false,error:'Invalid number'},400,origin);
     args[k]=v;
   }
-  const {data:result,error:rpcError}=await admin.rpc('amberlings_action',{
+  const cosmetic=['cosmetic_buy','cosmetic_equip','cosmetic_skin'].includes(payload.action);
+  const {data:result,error:rpcError}=await admin.rpc(cosmetic?'amberlings_cosmetic_action':'amberlings_action',{
     p_uid:user.id,p_action:payload.action,p_args:args
   });
   if(rpcError){console.error('amberlings_action',rpcError.code,rpcError.message);
