@@ -1,4 +1,4 @@
--- Versioned canonical server SQL functions, installed in Supabase amber-world-class.
+-- Canonical tested social/PvP/guild/gym SQL for Supabase amber-world-class.
 CREATE OR REPLACE FUNCTION public.amberlings_social_state(p_uid uuid)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -307,8 +307,8 @@ BEGIN
    ELSE false END)
   THEN RETURN jsonb_build_object('ok',false,'error','Quest not completed');END IF;
   INSERT INTO public.amberlings_quest_claims(owner_id,quest) VALUES(p_uid,quest)
-    ON CONFLICT DO NOTHING RETURNING quest INTO s;
-  IF s IS NULL THEN RETURN jsonb_build_object('ok',false,'error','Quest already claimed'); END IF;
+    ON CONFLICT DO NOTHING RETURNING owner_id INTO target_id;
+  IF target_id IS NULL THEN RETURN jsonb_build_object('ok',false,'error','Quest already claimed'); END IF;
   reward:=CASE quest WHEN 'capture1' THEN 250 WHEN 'wins5' THEN 550
     WHEN 'gym1' THEN 800 WHEN 'guild1' THEN 400 ELSE 600 END;
   gems_reward:=CASE quest WHEN 'gym1' THEN 15 ELSE 5 END;
