@@ -115,3 +115,19 @@
 #auth-feedback{border-radius:9px;border:1px solid #4c819d;background:#102d4a;color:#caeaf7;text-align:left;padding:9px;margin:9px 0;font-size:11px;overflow-wrap:anywhere}
 .ab-auth small{display:block;color:#a1bfd2;font-size:9px}
 @media(max-height:650px){.ab-login-logo{display:none}.ab-auth-card{padding:11px 17px}.ab-auth input{padding:6px}.ab-auth label{margin:5px 0 2px}}
+
+/* Social CBT V4 */
+#amberlings-online-hub .ab-social .ab-row{flex-wrap:wrap;gap:8px}
+#amberlings-online-hub .ab-social .ab-row>div:first-child{flex:1;min-width:120px}
+#amberlings-online-hub .ab-social h3{margin:10px 0 7px}
+#amberlings-online-hub .ab-social p{line-height:1.65}
+#amberlings-online-hub .ab-social textarea{display:block;width:100%;border:1px solid #6f97b2;
+ background:#071b31;color:#f1fbff;resize:vertical;padding:10px;border-radius:9px;font:13px Kanit,sans-serif;margin:8px 0}
+#amberlings-online-hub .ab-chatlog{max-height:45vh;min-height:120px;overflow:auto;display:flex;flex-direction:column;gap:7px;padding:9px;border:1px solid #6384a0;border-radius:11px;background:#07182dcc}
+#amberlings-online-hub .ab-chatline{font-size:12px;overflow-wrap:anywhere;border-bottom:1px solid #607d963b;padding-bottom:5px}
+#amberlings-online-hub .ab-chatline b{color:#f8de9e}
+#amberlings-online-hub .ab-chatline small{color:#99bad0;font-size:9px;margin-left:6px}
+#amberlings-online-hub .ab-chatline .ab-btn{min-height:22px;padding:2px 5px;margin-left:6px;font-size:9px}
+#amberlings-online-hub .ab-social .ab-actions{display:flex;flex-wrap:wrap;gap:5px;max-width:100%}
+#amberlings-online-hub .ab-gym{border:1px solid #6385a5;padding:9px;border-radius:9px}
+#amberlings-online-hub .ab-gym b,#amberlings-online-hub .ab-gym small{display:block;margin-bottom:7px}

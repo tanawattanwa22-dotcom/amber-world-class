@@ -13,10 +13,11 @@ const MAP_NAMES=['เมืองอัมเบอร์ตัน','ทาง�
 const STARTERS=['embit','aquip','sproutle'];
 const VIEWS=[['home','หน้าแรก'],['dex','สมุดมอน'],['team','ทีม / วิวัฒนาการ'],
  ['explore','สำรวจ'],['battle','ต่อสู้ / จับ'],['shop','ร้านค้า'],
- ['market','ตลาดผู้เล่น'],['fashion','แฟชั่น / สกิน'],['account','บัญชี']];
+ ['market','ตลาดผู้เล่น'],['fashion','แฟชั่น / สกิน'],['guild','กิลด์'],['friends','เพื่อน'],
+ ['chat','แชท'],['pvp','PvP'],['gym','ยิม / เควสต์'],['account','บัญชี']];
 const e=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const nf=v=>Number(v||0).toLocaleString('en-US');
-let hub=null,view='home',busy=false,notice='',client=null,model=null;
+let hub=null,view='home',busy=false,notice='',client=null,model=null,syncTimer=null;
 function button(label,action,params,kind){
  const args=params||{},attrs=Object.keys(args).map(k=>' data-'+k+'="'+e(args[k])+'"').join('');
  return '<button class="ab-btn '+(kind||'')+'" data-action="'+action+'"'+attrs+(busy?' disabled':'')+'>'+label+'</button>';
@@ -85,6 +86,12 @@ function mount(){
    const a=btn.dataset.action;
    if(a==='view'){view=btn.dataset.view;draw();return;}
    if(a==='google_logout'){await logout();return;}
+   if(window.AmberSocial?.handles(a)){
+    const payload=window.AmberSocial.prepare(a,btn);
+    if(!payload)return;
+    if(payload.__local){draw();return;}
+    await doAction(a,payload);return;
+   }
    const payload={};
    if(a==='profile'){
     const name=prompt('ชื่อตัวละคร (2–20 ตัว)',model?.player?.name||'');
@@ -123,6 +130,12 @@ function mount(){
    await doAction(a,payload);
   });
  }
+ if(!syncTimer)syncTimer=setInterval(async()=>{
+   if(document.hidden||!hub||busy)return;
+   const socialViews=new Set(['chat','pvp','guild','friends','gym']);
+   if(!socialViews.has(view)&&Date.now()%3!==0)return;
+   try{await api('state');draw();}catch(err){console.warn('Online refresh failed',String(err));}
+ },12000);
  draw();
 }
 async function doAction(action,payload){
@@ -153,7 +166,7 @@ function home(){
  else h+='<div class="ab-gridactions">'+button('ออกสำรวจ','view',{view:'explore'},'primary')+
  button('ดูทีมมอน','view',{view:'team'})+button('ตลาดซื้อขาย','view',{view:'market'})+
  button('🎁 รับรายวัน','daily',{},'primary')+'</div>';
- h+='</div><div class="ab-note">เงิน ไอเทม จับมอน ต่อสู้ ทีมและตลาดใช้ Supabase จริง ระบบยิม PvP กิลด์และแชทที่ยังไม่มีเซิร์ฟเวอร์ถูกปิด ไม่จำลองผู้เล่น</div>';
+ h+='</div><div class="ab-note">กิลด์ เพื่อน แชทโลก/กิลด์ PvP ยิม และเควสต์เปิดใช้เซิร์ฟเวอร์ Supabase แล้ว · ต้องใช้บัญชีผู้เล่นจริง ไม่มีบอทผู้เล่น</div>';
  return h;
 }
 function dex(){
@@ -259,9 +272,12 @@ function account(){
  '<h3>ผู้เล่นออนไลน์ / อันดับ</h3>'+
  (model?.leaderboard||[]).map((x,i)=>'<div class="ab-row"><b>#'+(i+1)+' '+e(x.name)+'</b><span>'+
  nf(x.wins)+' ชนะ · '+(x.online?'ออนไลน์':'ออฟไลน์')+'</span></div>').join('')+
- '<div class="ab-note">เพื่อน กิลด์ PvP และแชทยังไม่เปิดจนกว่าเซิร์ฟเวอร์จริงพร้อม ไม่มีผู้เล่นจำลอง</div></div>';
+ '<div class="ab-note">เมนูออนไลน์กิลด์ เพื่อน แชท PvP ยิม และเควสต์ ใช้ข้อมูล Supabase · PvP เป็นเทิร์น ไม่ใช่ต่อสู้แบบเรียลไทม์ 60 FPS</div></div>';
 }
-const V={home,dex,team,explore,battle,shop,market,fashion,account};
+const socialView=v=>()=>window.AmberSocial.render(v,model,button,e,nf);
+const V={home,dex,team,explore,battle,shop,market,fashion,
+ guild:socialView('guild'),friends:socialView('friends'),chat:socialView('chat'),
+ pvp:socialView('pvp'),gym:socialView('gym'),account};
 function draw(){
  if(!hub)return;
  const name=e(model?.player?.name||'เทรนเนอร์');
@@ -274,5 +290,5 @@ function draw(){
  '</div><footer class="ab-footer">'+button('รีเฟรชจากเซิร์ฟเวอร์','state')+'</footer>';
 }
 window.AmberOnline={sdk,google,api,restore,mount,draw,
- get data(){return model},get authenticated(){return !!model},close(){if(hub){hub.remove();hub=null;}}};
+ get data(){return model},get authenticated(){return !!model},close(){if(hub){hub.remove();hub=null;}if(syncTimer){clearInterval(syncTimer);syncTimer=null;}}};
 })();

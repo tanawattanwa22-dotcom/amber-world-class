@@ -14,9 +14,11 @@ function headers(origin:string){return {
 function json(body:unknown,status:number,origin:string){return new Response(JSON.stringify(body),{
  status,headers:{...headers(origin),'Content-Type':'application/json; charset=utf-8'}});}
 const actions=new Set(['bootstrap','state','profile','starter','explore','attack','capture','flee',
- 'use_item','shop_buy','party','evolve','daily','travel','market_list','market_buy','market_cancel','cosmetic_buy','cosmetic_equip','cosmetic_skin']);
+ 'use_item','shop_buy','party','evolve','daily','travel','market_list','market_buy','market_cancel','cosmetic_buy','cosmetic_equip','cosmetic_skin',
+ 'social_state','guild_create','guild_join','guild_leave','guild_transfer','guild_kick','friend_request','friend_accept','friend_remove','chat_post','chat_report','pvp_challenge','pvp_accept','pvp_cancel','pvp_attack','pvp_forfeit','gym_start','gym_attack','gym_cancel','quest_claim']);
 const fields=new Set(['name','gender','uniform','hair','skin','speciesId','move','orb',
- 'monsterId','item','qty','slot','mapId','kind','price','currency','listingId']);
+ 'monsterId','item','qty','slot','mapId','kind','price','currency','listingId',
+ 'targetId','guildId','duelId','stage','body','channel','messageId']);
 Deno.serve(async req=>{
  const origin=req.headers.get('origin')??'';
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers:headers(origin)});
@@ -40,7 +42,10 @@ Deno.serve(async req=>{
     args[k]=v;
   }
   const cosmetic=['cosmetic_buy','cosmetic_equip','cosmetic_skin'].includes(payload.action);
-  const {data:result,error:rpcError}=await admin.rpc(cosmetic?'amberlings_cosmetic_action':'amberlings_action',{
+  const social=new Set(["social_state","guild_create","guild_join","guild_leave","guild_transfer","guild_kick","friend_request","friend_accept","friend_remove","chat_post","chat_report","pvp_challenge","pvp_accept","pvp_cancel","pvp_attack","pvp_forfeit","gym_start","gym_attack","gym_cancel","quest_claim"]);
+  const rpc=cosmetic?'amberlings_cosmetic_action':
+    social.has(payload.action)?'amberlings_social_action':'amberlings_action';
+  const {data:result,error:rpcError}=await admin.rpc(rpc,{
     p_uid:user.id,p_action:payload.action,p_args:args
   });
   if(rpcError){console.error('amberlings_action',rpcError.code,rpcError.message);

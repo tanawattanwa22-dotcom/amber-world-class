@@ -11,5 +11,9 @@ assert.ok(auth.includes('signInWithPassword')&&auth.includes('signUp')&&auth.inc
 assert.ok(!ui.includes('?demo=1')&&!ui.includes("mode:'guest'")&&!ui.includes('ทดลองเกม 3D ออฟไลน์'));
 assert.ok(ui.includes('await api(\'bootstrap\')')&&ui.includes('window.AmberScene?.sync(d)'));
 assert.ok(ui.includes('model?.shop')&&ui.includes('model?.species'));
+const social=fs.readFileSync(dir+'social.js','utf8');new vm.Script(social,{filename:'social.js'});
+assert.ok(html.includes('src="./social.js?v=004"'),'Online social client missing');
+assert.ok(ui.includes('window.AmberSocial.render')&&social.includes('pvp_challenge')&&social.includes('guild_create')&&social.includes('chat_post')&&social.includes('gym_attack'));
+assert.ok(!ui.includes('ระบบยิม PvP กิลด์และแชทที่ยังไม่มีเซิร์ฟเวอร์ถูกปิด'));
 assert.ok(css.includes('#amberlings-online-hub')&&css.includes('.ab-auth'));
 console.log('PASS online-only V3: real Supabase Auth, no Guest/Offline game, server-sourced gameplay, 3D scene');
