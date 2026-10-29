@@ -26,6 +26,7 @@ const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.12,.22,1.15,7),mat(0x6b4b
 const crown=new THREE.Mesh(new THREE.ConeGeometry(.86,1.8,7),mat(place==='cave'?0x8c86aa:0x3f8069));crown.position.set(x,1.7,z);world.add(crown);trees.push(crown);}}
 function sync(d){if(!d?.ok)return;
 window.SP=Object.fromEntries((d.species||[]).map(s=>[s.id,[s.name,s.element,s.evolveTo,s.evolveLevel]]));
+if(!world){const status=document.getElementById('scene-status');if(status)status.textContent='ข้อมูลเกมจากเซิร์ฟเวอร์';return;}
 const place=d.player?.mapId||'amberton';if(place!==map){map=place;makeWorld(place);}
 const lead=(d.monsters||[]).filter(m=>m.slot&&m.hp>0).sort((a,b)=>a.slot-b.slot)[0];
 const wild=d.encounter,now=(lead?.speciesId||'')+'|'+(wild?.speciesId||'');
