@@ -50,7 +50,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
 .brand-logo{width:45px;height:45px;object-fit:contain;border-radius:12px;border:1px solid #284457;flex-shrink:0}
 @media(max-width:600px){.guide-grid{grid-template-columns:1fr}.guide-box{padding:11px}.guide-wide{grid-column:auto}.usage-guide summary{font-size:13px}.quick-links .btn{min-width:0}}
 .historyGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.historyGrid canvas{display:block;width:100%;height:150px;background:#081624;border:1px solid #294153;border-radius:9px}.historyGrid h3{font-size:12px;color:#a4e3de}.historyPanel{border-color:#315d66}.historyPanel input[type=range]{width:100%;accent-color:#43d8cf}.historyPanel audio{width:100%;margin:10px 0}.historyPanel .help{line-height:1.75}@media(max-width:650px){.historyGrid{grid-template-columns:1fr}}
-/* 55 PERFORMANCE NVH HUNTER V0.5 — TECH CONSOLE */
+/* 55 PERFORMANCE NVH HUNTER V0.6 — TECH CONSOLE */
 :root{--bg:#060b12;--panel:#0e1825;--panel2:#112131;--line:#274056;--text:#f0f7ff;--dim:#93abc0;--cyan:#40e9db;--teal:#67f5ce;--amber:#ffb45e;--pink:#caa5ff;--radius:18px}
 body{background:radial-gradient(circle at 95% 0%,#17345290 0%,transparent 33%),radial-gradient(circle at 0% 16%,#153a385a,transparent 29%),#060b12;background-attachment:fixed}
 .wrap{max-width:1160px}
@@ -139,13 +139,27 @@ body{background:radial-gradient(circle at 95% 0%,#17345290 0%,transparent 33%),r
 .audio-recovery small{display:block;font-size:10px;line-height:1.6;color:#a7c3d3;margin-top:8px}
 #downloadStatus{color:#7ae4ce;font-size:11px;min-height:18px;margin-top:6px}
 @media(max-width:450px){.card.float-panel{top:5vh;max-height:90vh}.nvh-float-close{top:calc(5vh + 8px);right:19px}.nvh-float-dock{right:11px}}
+
+/* V0.6 RECORDER FIX – record inside floating window */
+.rec-flow{display:flex;justify-content:space-between;gap:6px;margin:7px 0 12px}
+.rec-flow-stage{flex:1;min-width:0;background:#122739;border:1px solid #35576a;border-radius:10px;padding:9px 5px;text-align:center;font-size:10px;color:#c5e3ec}
+.rec-flow-stage small{display:block;font-size:10px;font-weight:900;color:#63ebd7;margin-bottom:2px}
+.rec-mic-status{border-left:3px solid #35dbcb;background:#0d2432;color:#9ceadf;padding:11px 12px;border-radius:8px;font-size:11.5px;line-height:1.65}
+.rec-main{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.rec-main .rec-primary{min-height:59px;font-size:12px;line-height:1.6}
+#recordBtn.recording{border:1px solid #ff9ca8;background:linear-gradient(125deg,#e34b68,#bc2e49);color:#fff;animation:recPulse 1.4s ease-in-out infinite}
+@keyframes recPulse{50%{box-shadow:0 0 0 4px #d43d4b26}}
+#recMicStatus[data-state="recording"]{color:#ffb4bc;border-color:#ff738c;background:#311d2c}
+#recMicStatus[data-state="ready"]{color:#8df1d6;border-color:#53cfa8}
+#recMicStatus[data-state="error"]{color:#ffb4bc;border-color:#ff738c}
+@media(max-width:380px){.rec-main{grid-template-columns:1fr}.rec-flow-stage{font-size:9px}}
 </style>
 </head>
 <body>
 <main class="wrap">
 <div class="lab-ribbon"><span>55 / PERFORMANCE ENGINEERING</span><span>NVH LAB · V0.4</span></div>
   <header class="topbar">
-    <div class="brand"><img class="brand-logo" src="./icon.svg" alt="55 PERFORMANCE NVH"><div><strong>55 PERFORMANCE</strong><small>NVH HUNTER · AI ASSIST V0.5</small></div></div>
+    <div class="brand"><img class="brand-logo" src="./icon.svg" alt="55 PERFORMANCE NVH"><div><strong>55 PERFORMANCE</strong><small>NVH HUNTER · AI ASSIST V0.6</small></div></div>
     <div class="state" id="stateBadge"><i class="dot"></i><span id="stateText">STANDBY</span></div>
   </header>
 <nav class="nav-rail" aria-label="เมนูโปรแกรม">
@@ -259,9 +273,17 @@ body{background:radial-gradient(circle at 95% 0%,#17345290 0%,transparent 33%),r
         <div class="stepnote">เพื่อให้เปรียบเทียบได้ ควรใช้มือถือ ระยะไมค์ ตำแหน่ง รอบเครื่อง และสภาพแวดล้อมเหมือนกันทั้งสองครั้ง</div>
       </section>
       <section class="card">
-        <div class="card-title"><div><h2>Record & Export</h2><p class="subtitle">เก็บหลักฐานประกอบการวิเคราะห์และรายงาน</p></div></div>
-        <div class="tool-actions"><button id="recordBtn" class="btn secondary" disabled>● เริ่มบันทึกเสียง</button><button id="audioBtn" class="btn muted" disabled>↓ บันทึก/แชร์เสียง</button><button id="csvBtn" class="btn muted" disabled>↓ Export CSV</button><button id="pngBtn" class="btn muted">↓ บันทึกภาพ FFT</button></div>
-        <div class="record" id="recordStatus">ไฟล์เสียงจะบันทึกเฉพาะเมื่อกดเริ่มบันทึกเท่านั้น</div>
+        <div class="card-title"><div><h2>🎙 อัดเสียงและบันทึกไฟล์</h2><p class="subtitle">กดบันทึกได้เลย · ระบบเปิดไมค์จริงให้ในหน้าต่างนี้อัตโนมัติ</p></div></div>
+        <div class="rec-flow" aria-label="ขั้นตอนบันทึกเสียง">
+          <div class="rec-flow-stage"><small>01</small> เริ่มบันทึก</div><div class="rec-flow-stage"><small>02</small> หยุดบันทึก</div><div class="rec-flow-stage"><small>03</small> ดาวน์โหลด</div>
+        </div>
+        <p id="recMicStatus" class="rec-mic-status" role="status">ไมโครโฟนยังไม่เปิด · แตะปุ่มเริ่มบันทึกด้านล่างได้เลย</p>
+        <div class="rec-main">
+          <button id="recordBtn" class="btn primary rec-primary" type="button">🎙 เปิดไมค์ + เริ่มบันทึกเสียง</button>
+          <button id="audioBtn" class="btn secondary rec-primary" type="button" disabled>↓ บันทึก/แชร์เสียง</button>
+        </div>
+        <div class="record" id="recordStatus" role="status">เริ่มบันทึกได้จากหน้าต่างนี้โดยตรง ไม่ต้องกลับไปหน้าแรก</div>
+        <div class="tool-actions" style="margin-top:10px"><button id="recStopMicBtn" class="btn stop" type="button" disabled>■ หยุดไมค์ / จบงาน</button><button id="csvBtn" class="btn muted">↓ Export CSV</button><button id="pngBtn" class="btn muted">↓ บันทึกภาพ FFT</button></div>
 <div id="audioRecovery" class="audio-recovery" hidden>
 <strong>ไฟล์เสียงที่บันทึกแล้ว · ฟังและดาวน์โหลด</strong>
 <audio id="audioRecoveryPlayer" controls preload="metadata"></audio>
@@ -336,11 +358,11 @@ body{background:radial-gradient(circle at 95% 0%,#17345290 0%,transparent 33%),r
 const $=id=>document.getElementById(id);
 const ui={waveDuration:$('waveDuration'),stateBadge:$('stateBadge'),stateText:$('stateText'),notice:$('notice'),start:$('startBtn'),stop:$('stopBtn'),demo:$('demoBtn'),pause:$('pauseBtn'),record:$('recordBtn'),audio:$('audioBtn'),csv:$('csvBtn'),png:$('pngBtn'),range:$('freqRange'),peak:$('peakVal'),rms:$('rmsVal'),second:$('secondVal'),spect:$('spectrum'),wave:$('waveform'),water:$('waterfall'),mark:$('demoMark'),before:$('beforeBtn'),after:$('afterBtn'),beforeStats:$('beforeStats'),afterStats:$('afterStats'),compare:$('compareResult'),jobNote:$('jobNote'),rpm:$('rpm'),cyl:$('cyl'),sr:$('sampleRateText'),recStatus:$('recordStatus')};
 const FFT_SIZE=8192,LOG_MS=250,FRAME_MS=65,WATER_MS=110,MAX_LOG=7200,STORE_KEY='55mbnvhhunter_v01_compare',GRAPH_KEY='55nvh_history_v03';
-const st={mode:'idle',paused:false,stream:null,ctx:null,src:null,analyser:null,recorder:null,recChunks:[],lastAudio:null,lastAudioType:'',url:null,recStart:0,raf:0,lastFrame:0,lastLog:0,lastWater:0,begin:0,sampleRate:48000,floats:new Float32Array(FFT_SIZE/2),times:new Float32Array(FFT_SIZE),specDb:new Float32Array(FFT_SIZE/2),time:new Float32Array(FFT_SIZE),peaks:[],peak:null,second:null,rms:null,history:[],recent:[],before:null,after:null,demotick:0,graph:null,selected:0,recordFrom:0,recorded:false,audioUrl:null,lastFrame:null};
+const st={mode:'idle',startingRecording:false,paused:false,stream:null,ctx:null,src:null,analyser:null,recorder:null,recChunks:[],lastAudio:null,lastAudioType:'',url:null,recStart:0,raf:0,lastFrame:0,lastLog:0,lastWater:0,begin:0,sampleRate:48000,floats:new Float32Array(FFT_SIZE/2),times:new Float32Array(FFT_SIZE),specDb:new Float32Array(FFT_SIZE/2),time:new Float32Array(FFT_SIZE),peaks:[],peak:null,second:null,rms:null,history:[],recent:[],before:null,after:null,demotick:0,graph:null,selected:0,recordFrom:0,recorded:false,audioUrl:null,lastFrame:null};
 function tell(msg,kind=''){ui.notice.className=kind;ui.notice.textContent=msg}
 function badge(name,kind=''){ui.stateBadge.className='state'+(kind?' '+kind:'');ui.stateText.textContent=name}
 function active(){return st.mode==='live'||st.mode==='demo'}
-function uiState(){const a=active();ui.start.disabled=st.mode==='live';ui.demo.disabled=st.mode==='demo';ui.stop.disabled=!a;ui.pause.disabled=!a;ui.pause.textContent=st.paused?'▶ เล่นต่อ':'⏸ หยุดภาพ';ui.before.disabled=!a||st.recent.length<5;ui.after.disabled=!a||st.recent.length<5;ui.csv.disabled=!st.history.length;ui.record.disabled=st.mode!=='live'||!window.MediaRecorder;ui.audio.disabled=!st.lastAudio;ui.mark.hidden=st.mode!=='demo'}
+function uiState(){const a=active(),recording=st.recorder?.state==='recording';ui.start.disabled=st.mode==='live'||st.startingRecording;ui.demo.disabled=st.mode==='demo'||st.startingRecording;ui.stop.disabled=!a;ui.pause.disabled=!a;ui.pause.textContent=st.paused?'▶ เล่นต่อ':'⏸ หยุดภาพ';ui.before.disabled=!a||st.recent.length<5;ui.after.disabled=!a||st.recent.length<5;ui.csv.disabled=!st.history.length;ui.record.disabled=st.startingRecording||!window.MediaRecorder;ui.record.classList.toggle('recording',!!recording);ui.record.textContent=recording?'■ หยุดบันทึกเสียง':st.startingRecording?'กำลังเปิดไมโครโฟน…':st.mode==='live'?'● เริ่มบันทึกเสียง':'🎙 เปิดไมค์ + เริ่มบันทึกเสียง';ui.audio.disabled=!st.lastAudio;ui.mark.hidden=st.mode!=='demo';const mic=$('recMicStatus');if(mic){const error=mic.dataset.state==='error'&&st.mode!=='live';if(recording){mic.dataset.state='recording';mic.textContent='🔴 กำลังอัดเสียงจริง · กดปุ่มสีแดงอีกครั้งเพื่อหยุดและสร้างไฟล์'}else if(st.startingRecording){mic.dataset.state='connecting';mic.textContent='กำลังขอสิทธิ์ไมโครโฟนจาก Chrome… กรุณากดอนุญาต'}else if(st.lastAudio){mic.dataset.state='ready';mic.textContent='✓ มีไฟล์เสียงพร้อมดาวน์โหลดแล้ว · แตะปุ่มบันทึก/แชร์เสียง หรือดาวน์โหลดไฟล์ด้านล่าง'}else if(st.mode==='live'){mic.dataset.state='ready';mic.textContent='✓ ไมโครโฟนพร้อมแล้ว · กดเริ่มบันทึกเสียงได้เลย'}else if(!error){mic.dataset.state='idle';mic.textContent='ยังไม่เปิดไมโครโฟน · แตะปุ่มเริ่มบันทึก ระบบจะขอสิทธิ์ไมค์ให้อัตโนมัติ'}}const finish=$('recStopMicBtn');if(finish)finish.disabled=!a||st.startingRecording}
 function num(x,n=1){return Number.isFinite(x)?x.toFixed(n):'—'}
 function resize(c){const r=c.getBoundingClientRect(),d=Math.min(2,window.devicePixelRatio||1),w=Math.max(50,Math.round(r.width*d)),h=Math.max(50,Math.round(r.height*d));if(c.width!==w||c.height!==h){c.width=w;c.height=h;return true}return false}
 function getC(c){const ct=c.getContext('2d');ct.setTransform(c.width/c.clientWidth,0,0,c.height/c.clientHeight,0,0);return ct}
@@ -438,7 +460,7 @@ async function startDemo(){if(active())await stop();clearReadings();st.history=[
 async function startMic(){if(active())await stop();if(!navigator.mediaDevices?.getUserMedia){tell('Chrome ยังไม่เปิดสิทธิ์ไมโครโฟน: เปิดไฟล์ผ่าน HTTPS (เช่น Netlify) หรือ localhost และใช้ Chrome เวอร์ชันที่รองรับ','error');return}ui.start.disabled=true;badge('กำลังเชื่อมต่อ');tell('กำลังขออนุญาตใช้ไมโครโฟน…');let stream=null,ctx=null;try{stream=await navigator.mediaDevices.getUserMedia({video:false,audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false,channelCount:1}});const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)throw new Error('เบราว์เซอร์ไม่รองรับ Web Audio API');ctx=new Ctx();await ctx.resume();const src=ctx.createMediaStreamSource(stream),an=ctx.createAnalyser();an.fftSize=FFT_SIZE;an.smoothingTimeConstant=.7;an.minDecibels=-110;an.maxDecibels=-10;src.connect(an); // intentionally not connected to speakers to prevent feedback
 clearReadings();st.history=[];st.recorded=false;st.mode='live';st.stream=stream;st.ctx=ctx;st.src=src;st.analyser=an;st.sampleRate=ctx.sampleRate;st.begin=performance.now();st.lastFrame=st.lastWater=st.lastLog=0;ui.waveDuration.textContent='ช่วงเวลาประมาณ '+num(FFT_SIZE/st.sampleRate,2)+' วินาที';badge('MIC LIVE','live');ui.sr.textContent='MIC INPUT: '+st.sampleRate.toLocaleString('en-US')+' Hz';prepareWater();uiState();tell('กำลังอ่านเสียงจากไมโครโฟนจริง · อย่าปิดหน้านี้ระหว่างวัด','ok');st.raf=requestAnimationFrame(loop);
 stream.getAudioTracks().forEach(t=>{t.onended=()=>{if(st.mode==='live'){stop();tell('ไมโครโฟนถูกตัดการเชื่อมต่อ','error')}}})
-}catch(err){if(stream)stream.getTracks().forEach(t=>t.stop());if(ctx)try{await ctx.close()}catch(e){}st.mode='idle';badge('STANDBY');uiState();let msg='เปิดไมโครโฟนไม่ได้: '+(err?.message||String(err));if(err?.name==='NotAllowedError')msg='ไม่ได้รับอนุญาตใช้ไมโครโฟน: แตะไอคอนแม่กุญแจของเว็บไซต์และอนุญาตไมโครโฟน';if(err?.name==='NotFoundError')msg='ไม่พบไมโครโฟนที่ใช้งานได้';tell(msg,'error')}}
+}catch(err){if(stream)stream.getTracks().forEach(t=>t.stop());if(ctx)try{await ctx.close()}catch(e){}st.mode='idle';badge('STANDBY');uiState();let msg='เปิดไมโครโฟนไม่ได้: '+(err?.message||String(err));if(err?.name==='NotAllowedError')msg='ไม่ได้รับอนุญาตใช้ไมโครโฟน: แตะไอคอนแม่กุญแจของเว็บไซต์และอนุญาตไมโครโฟน';if(err?.name==='NotFoundError')msg='ไม่พบไมโครโฟนที่ใช้งานได้';tell(msg,'error');ui.recStatus.textContent=msg;const mic=$('recMicStatus');if(mic){mic.dataset.state='error';mic.textContent=msg}}}
 function togglePause(){if(!active())return;st.paused=!st.paused;uiState();tell(st.paused?'หยุดภาพแล้ว แต่ไมโครโฟนยังเปิดอยู่':'แสดงข้อมูลต่อแล้ว','ok')}
 function avg(arr,key){const ns=arr.map(x=>x[key]).filter(x=>Number.isFinite(x));return ns.length?ns.reduce((a,b)=>a+b,0)/ns.length:null}
 function snapshot(which){if(!active()||st.recent.length<5){tell('ต้องเริ่มวัดและเก็บข้อมูลอย่างน้อยประมาณ 1.5 วินาทีก่อน','warn');return}const snap={savedAt:new Date().toISOString(),mode:st.mode,peak:avg(st.recent,'peakHz'),rms:avg(st.recent,'rmsDbFS'),second:avg(st.recent,'secondHz'),rpm:Number(ui.rpm.value)||0,range:Number(ui.range.value),note:ui.jobNote.value.trim(),seconds:Math.max(0,st.recent[st.recent.length-1].secs-st.recent[0].secs)};st[which]=snap;storeCompare();renderCompare();tell('บันทึก'+(which==='before'?'ก่อน':'หลัง')+'ซ่อมแล้ว ('+st.recent.length+' จุดข้อมูลย้อนหลัง)','ok')}
@@ -448,13 +470,54 @@ function storeCompare(){try{localStorage.setItem(STORE_KEY,JSON.stringify({befor
 function loadCompare(){try{const o=JSON.parse(localStorage.getItem(STORE_KEY)||'{}');if(o&&typeof o==='object'){st.before=o.before||null;st.after=o.after||null}}catch(e){}renderCompare()}
 function resetCompare(){st.before=st.after=null;storeCompare();renderCompare();tell('ล้างข้อมูลเปรียบเทียบที่เก็บบนเครื่องแล้ว','ok')}
 function getType(){for(const t of ['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus'])if(window.MediaRecorder?.isTypeSupported(t))return t;return ''}
-function audioRecord(){if(st.recorder?.state==='recording'){finishRecordGraph();st.recorder.stop();ui.record.textContent='● เริ่มบันทึกเสียง';return}if(st.mode!=='live'||!st.stream)return;try{const type=getType(),rec=new MediaRecorder(st.stream,type?{mimeType:type}:undefined);st.recChunks=[];st.recorder=rec;st.lastAudio=null;st.recordFrom=st.history.length;st.recorded=false;$('historyAudio').hidden=true;ui.audio.disabled=true;st.lastAudioType=rec.mimeType||type||'audio/webm';rec.ondataavailable=e=>{if(e.data.size)st.recChunks.push(e.data)};rec.onerror=e=>{ui.recStatus.textContent='เกิดข้อผิดพลาดขณะบันทึกเสียง';ui.record.textContent='● เริ่มบันทึกเสียง'};rec.onstop=()=>{st.lastAudio=st.recChunks.length?new Blob(st.recChunks,{type:st.lastAudioType}):null;ui.audio.disabled=!st.lastAudio;ui.recStatus.textContent=st.lastAudio?'บันทึกเสร็จแล้ว · กดบันทึก/แชร์เสียง หรือเปิดลิงก์ดาวน์โหลดด้านล่าง':'ไม่มีข้อมูลเสียงที่บันทึก';ui.record.textContent='● เริ่มบันทึกเสียง';st.recChunks=[];bindPlayback();if(!st.recorded)finishRecordGraph()};rec.start(1000);st.recStart=performance.now();ui.record.textContent='■ หยุดบันทึกเสียง';ui.recStatus.innerHTML='<span class="red-dot"></span> กำลังบันทึกเสียง';tell('กำลังบันทึกเสียงและเก็บข้อมูลกราฟย้อนหลัง','ok')}catch(err){tell('อุปกรณ์นี้ไม่รองรับการบันทึกเสียง: '+err.message,'error')}}
+async function audioRecord(){
+ if(st.startingRecording)return;
+ if(st.recorder?.state==='recording'){
+   finishRecordGraph();
+   try{st.recorder.stop()}catch(err){ui.recStatus.textContent='หยุดบันทึกไม่สำเร็จ: '+(err.message||err)}
+   uiState();return
+ }
+ if(!window.MediaRecorder){ui.recStatus.textContent='Chrome เครื่องนี้ไม่รองรับ MediaRecorder · ต้องเปิดผ่าน Chrome ที่รองรับ';return}
+ if(st.mode!=='live'||!st.stream){
+   st.startingRecording=true;uiState();
+   ui.recStatus.textContent='กำลังขอสิทธิ์ไมโครโฟน · เลือก อนุญาต เมื่อ Chrome ถาม';
+   try{await startMic()}finally{st.startingRecording=false;uiState()}
+   if(st.mode!=='live'||!st.stream){
+     $('recMicStatus').dataset.state='error';
+     $('recMicStatus').textContent=ui.notice.textContent||'เปิดไมค์ไม่สำเร็จ กรุณาอนุญาตไมโครโฟนให้เว็บไซต์';
+     ui.recStatus.textContent='เปิดไมค์ไม่สำเร็จ · ตรวจสิทธิ์ Chrome แล้วลองใหม่';
+     return
+   }
+ }
+ try{
+   const type=getType(),rec=new MediaRecorder(st.stream,type?{mimeType:type}:undefined);
+   st.recChunks=[];st.recorder=rec;
+   st.recordFrom=st.history.length;st.recorded=false;
+   st.lastAudioType=rec.mimeType||type||'audio/webm';
+   rec.ondataavailable=e=>{if(e.data&&e.data.size>0)st.recChunks.push(e.data)};
+   rec.onerror=e=>{ui.recStatus.textContent='เกิดข้อผิดพลาดระหว่างอัดเสียง: '+(e.error?.message||'ไม่ทราบสาเหตุ');uiState()};
+   rec.onstop=()=>{
+     // Preserve the previous file on a failed/empty recording.
+     const blob=st.recChunks.length?new Blob(st.recChunks,{type:st.lastAudioType}):null;
+     if(blob?.size>0){st.lastAudio=blob;bindPlayback();
+       ui.recStatus.textContent='✓ บันทึกเสียงสำเร็จ '+(blob.size/1024).toFixed(1)+' KB · กดบันทึก/แชร์เสียงได้แล้ว';
+     }else{
+       ui.recStatus.textContent='ไฟล์เสียงว่างเปล่า กรุณาลองใหม่และอัดนานกว่า 2 วินาที';
+     }
+     st.recChunks=[];if(!st.recorded)finishRecordGraph();uiState();
+   };
+   rec.start(750);
+   st.recStart=performance.now();
+   ui.recStatus.textContent='🔴 กำลังบันทึกเสียงจริง · กด หยุดบันทึกเสียง เมื่อได้ยินอาการ';
+   tell('กำลังบันทึกเสียงจริงและกราฟย้อนหลัง','ok');uiState();
+ }catch(err){ui.recStatus.textContent='เริ่มอัดเสียงไม่ได้: '+(err.message||err);tell(ui.recStatus.textContent,'error');uiState()}
+}
 function dl(blob,name){const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000)}
 function stamp(){return new Date().toISOString().replaceAll(':','-').replaceAll('.','-')}
 async function downloadAudio(){if(!st.lastAudio){tell('ยังไม่มีไฟล์เสียง กรุณากดเริ่มบันทึกเสียงก่อน','warn');return}const ext=st.lastAudioType.includes('ogg')?'ogg':'webm';const filename=$('audioDownloadLink').download||'55_MBNVH_AUDIO_'+stamp()+'.'+ext;const status=$('downloadStatus');if(!st.audioUrl)bindPlayback();try{if(navigator.share&&navigator.canShare&&typeof File!=='undefined'){const file=new File([st.lastAudio],filename,{type:st.lastAudioType||st.lastAudio.type||'audio/webm'});if(navigator.canShare({files:[file]})){await navigator.share({files:[file],title:filename});status.textContent='เมนูแชร์ไฟล์เปิดแล้ว';tell('เลือกบันทึกไฟล์หรือแชร์ไปแอปอื่นจากเมนู Android','ok');return}}}catch(e){if(e?.name==='AbortError'){status.textContent='ยกเลิกเมนูแชร์แล้ว';return}status.textContent='แชร์ไม่สำเร็จ กดลองดาวน์โหลดด้านล่างได้'}const anchor=$('audioDownloadLink');anchor.click();status.textContent='หากยังไม่ถูกบันทึก ให้แตะลิงก์ดาวน์โหลดด้านบนค้างไว้แล้วเลือก ดาวน์โหลดลิงก์';tell('กำลังพยายามดาวน์โหลดไฟล์เสียง ถ้าไม่สำเร็จให้ใช้ลิงก์ด้านล่าง','warn')}
 function csv(){if(!st.history.length){tell('ยังไม่มีข้อมูลให้ส่งออก','warn');return}const head=['timestamp','seconds','mode','peak_hz','second_peak_hz','rms_dbfs','rpm_manual','frequency_range_hz'];const rows=st.history.map(x=>[x.iso,x.secs,x.mode,x.peakHz,x.secondHz,x.rmsDbFS,x.rpm,x.rangeHz].map(v=>v==null?'':String(v)).join(','));const b=new Blob(['\ufeff'+head.join(',')+'\r\n'+rows.join('\r\n')],{type:'text/csv;charset=utf-8'});dl(b,'55_MBNVH_LOG_'+stamp()+'.csv');tell('ส่งออกข้อมูล CSV จำนวน '+st.history.length+' แถวแล้ว','ok')}
 function png(){const c=ui.spect;c.toBlob(b=>{if(b){dl(b,'55_MBNVH_FFT_'+stamp()+'.png');tell('บันทึกภาพ FFT แล้ว','ok')}else tell('บันทึกภาพไม่สำเร็จ','error')},'image/png')}
-ui.start.addEventListener('click',startMic);ui.demo.addEventListener('click',startDemo);ui.stop.addEventListener('click',stop);ui.pause.addEventListener('click',togglePause);ui.range.addEventListener('change',updateAxes);ui.rpm.addEventListener('input',calcOrders);ui.cyl.addEventListener('change',calcOrders);ui.before.addEventListener('click',()=>snapshot('before'));ui.after.addEventListener('click',()=>snapshot('after'));$('resetCompareBtn').addEventListener('click',resetCompare);$('clearWaterBtn').addEventListener('click',prepareWater);ui.record.addEventListener('click',audioRecord);ui.audio.addEventListener('click',downloadAudio);ui.csv.addEventListener('click',csv);ui.png.addEventListener('click',png);window.addEventListener('resize',()=>{if(!active())idleDraw();else prepareWater();if(st.graph)drawSession()});window.addEventListener('pagehide',()=>{if(st.stream){st.stream.getTracks().forEach(t=>t.stop())}});loadCompare();calcOrders();updateAxes();idleDraw();uiState();readSession();nvhSetupFloating();$('aiAnalyzeBtn').addEventListener('click',()=>analyzeSavedSignal(true));$('aiCopyBtn').addEventListener('click',copyAnalysis);$('aiExportBtn').addEventListener('click',exportAnalysis);$('goAiBtn').addEventListener('click',()=>{$('analysisPanel').scrollIntoView({behavior:'smooth',block:'start'})});$('aiSymptom').addEventListener('change',()=>analyzeSavedSignal(false));$('aiCondition').addEventListener('change',()=>analyzeSavedSignal(false));$('aiNotes').addEventListener('input',()=>{if(st.graph)analyzeSavedSignal(false)});$('historySeek').addEventListener('input',e=>{st.selected=+e.target.value;drawSession();const a=$('historyAudio');if(!a.hidden&&Number.isFinite(a.duration)){const pts=st.graph.points;a.currentTime=Math.min(a.duration,pts[st.selected].secs-pts[0].secs)}});$('historyAudio').addEventListener('timeupdate',e=>{if(!st.graph)return;const pts=st.graph.points,t0=pts[0].secs;let i=0;while(i<pts.length-1&&pts[i+1].secs-t0<e.target.currentTime)i++;st.selected=i;drawSession()});$('historyPngBtn').addEventListener('click',saveHistoryPng);$('historyCsvBtn').addEventListener('click',saveHistoryCsv);
+ui.start.addEventListener('click',startMic);ui.demo.addEventListener('click',startDemo);ui.stop.addEventListener('click',stop);ui.pause.addEventListener('click',togglePause);ui.range.addEventListener('change',updateAxes);ui.rpm.addEventListener('input',calcOrders);ui.cyl.addEventListener('change',calcOrders);ui.before.addEventListener('click',()=>snapshot('before'));ui.after.addEventListener('click',()=>snapshot('after'));$('resetCompareBtn').addEventListener('click',resetCompare);$('clearWaterBtn').addEventListener('click',prepareWater);ui.record.addEventListener('click',audioRecord);$('recStopMicBtn').addEventListener('click',stop);ui.audio.addEventListener('click',downloadAudio);ui.csv.addEventListener('click',csv);ui.png.addEventListener('click',png);window.addEventListener('resize',()=>{if(!active())idleDraw();else prepareWater();if(st.graph)drawSession()});window.addEventListener('pagehide',()=>{if(st.stream){st.stream.getTracks().forEach(t=>t.stop())}});loadCompare();calcOrders();updateAxes();idleDraw();uiState();readSession();nvhSetupFloating();$('aiAnalyzeBtn').addEventListener('click',()=>analyzeSavedSignal(true));$('aiCopyBtn').addEventListener('click',copyAnalysis);$('aiExportBtn').addEventListener('click',exportAnalysis);$('goAiBtn').addEventListener('click',()=>{$('analysisPanel').scrollIntoView({behavior:'smooth',block:'start'})});$('aiSymptom').addEventListener('change',()=>analyzeSavedSignal(false));$('aiCondition').addEventListener('change',()=>analyzeSavedSignal(false));$('aiNotes').addEventListener('input',()=>{if(st.graph)analyzeSavedSignal(false)});$('historySeek').addEventListener('input',e=>{st.selected=+e.target.value;drawSession();const a=$('historyAudio');if(!a.hidden&&Number.isFinite(a.duration)){const pts=st.graph.points;a.currentTime=Math.min(a.duration,pts[st.selected].secs-pts[0].secs)}});$('historyAudio').addEventListener('timeupdate',e=>{if(!st.graph)return;const pts=st.graph.points,t0=pts[0].secs;let i=0;while(i<pts.length-1&&pts[i+1].secs-t0<e.target.currentTime)i++;st.selected=i;drawSession()});$('historyPngBtn').addEventListener('click',saveHistoryPng);$('historyCsvBtn').addEventListener('click',saveHistoryCsv);
 
 
 function nvhPrepareWindows(){
