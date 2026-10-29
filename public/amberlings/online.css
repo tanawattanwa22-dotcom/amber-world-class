@@ -1,0 +1,83 @@
+/* Independent mobile-first AMBERLINGS authenticated server UI. Original Three.js title stays behind it. */
+#amberlings-online-hub{
+ position:absolute;inset:0;z-index:40;overflow:auto;overscroll-behavior:contain;touch-action:pan-y;
+ color:#fff4da;background:linear-gradient(165deg,#0c1734eb,#111a37ec 48%,#061021f3);
+ font-family:'Kanit',system-ui,sans-serif;font-size:12px;line-height:1.5;
+ -webkit-user-select:text;user-select:text;
+}
+#amberlings-online-hub *{box-sizing:border-box}
+#amberlings-online-hub .ab-top{padding:15px 12px 7px;display:flex;gap:8px;justify-content:space-between;align-items:center;
+ background:linear-gradient(#16345db0,#11213d36);border-bottom:1px solid #e6b86672}
+#amberlings-online-hub .ab-brand{font-size:17px;font-weight:850;letter-spacing:1px;color:#ffda8b;
+ text-shadow:0 2px 2px #57301b,0 0 15px #dfa95366;white-space:nowrap}
+#amberlings-online-hub .ab-brand small{display:block;font-size:8px;color:#a1deff;letter-spacing:2px}
+#amberlings-online-hub .ab-account{font-size:10px;color:#d4e9f5;text-align:right}
+#amberlings-online-hub .ab-online{display:block;font-size:9px;color:#7bf1c1}
+#amberlings-online-hub .ab-nav{display:flex;gap:5px;padding:9px 9px 8px;overflow-x:auto;scrollbar-width:none;
+ border-bottom:1px solid #6b72936b;overscroll-behavior-x:contain}
+#amberlings-online-hub .ab-nav::-webkit-scrollbar{display:none}
+#amberlings-online-hub .ab-btn{border:1px solid #7898be;border-radius:10px;
+ background:linear-gradient(155deg,#35557d,#192b52);color:#edf5ff;font:650 11px 'Kanit',sans-serif;
+ padding:8px 10px;min-height:32px;cursor:pointer;text-align:center}
+#amberlings-online-hub .ab-btn:active{filter:brightness(1.25);transform:translateY(1px)}
+#amberlings-online-hub .ab-btn.primary{background:linear-gradient(#ffebad,#eab050 55%,#b77928);
+ border-color:#fff0bf;color:#302217;box-shadow:0 2px 0 #804c19}
+#amberlings-online-hub .ab-btn.active{background:#215e98;border-color:#87e5fc;color:#faffff}
+#amberlings-online-hub .ab-btn.danger{background:#5a2b47;border-color:#d58b9b}
+#amberlings-online-hub .ab-btn:disabled{opacity:.47;cursor:not-allowed}
+#amberlings-online-hub .ab-nav .ab-btn{white-space:nowrap;flex:none;font-size:10px;padding:7px 9px}
+#amberlings-online-hub .ab-content{padding:12px 10px 28px}
+#amberlings-online-hub .ab-section{margin:7px 0 13px;padding:12px 10px;
+ background:linear-gradient(160deg,#1e365cdb,#101f3ce3);border:1px solid #b49b72a1;
+ border-radius:14px;box-shadow:0 6px 18px #0004,inset 0 1px 0 #fff2}
+#amberlings-online-hub h2{margin:0 0 9px;color:#fff0ba;font-size:18px;line-height:1.15}
+#amberlings-online-hub h3{margin:10px 0 7px;font-size:14px;color:#fbdca4}
+#amberlings-online-hub p{margin:7px 0 11px;color:#b7cee4;font-size:11px;line-height:1.6}
+#amberlings-online-hub small{display:block;color:#abbed8;font-size:10px}
+#amberlings-online-hub .ab-hero{margin:3px 0 14px;padding:19px 13px;border-radius:14px;
+ border:1.5px solid #ffdb91;background:linear-gradient(105deg,#153659e3,#0d2a4bb0),
+ radial-gradient(circle at 70% 30%,#65bce6,#1d4380 65%,#06152b);
+ box-shadow:inset 0 0 0 1px #ffffff1c,0 9px 24px #0005}
+#amberlings-online-hub .ab-statrow{display:flex;flex-wrap:wrap;gap:7px}
+#amberlings-online-hub .ab-statrow span{border:1px solid #e2c7889a;border-radius:99px;
+ background:#121b3da9;padding:6px 9px;color:#ffedbe;font-weight:750;font-size:10px}
+#amberlings-online-hub .ab-gridactions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0}
+#amberlings-online-hub .ab-starters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+#amberlings-online-hub .ab-starters>div{padding:7px 4px;background:#183657a1;border:1px solid #7dabcf;border-radius:11px;
+ text-align:center;min-width:0}
+#amberlings-online-hub .ab-starters b{display:block;font-size:11px;margin:5px 0}
+#amberlings-online-hub .ab-icon{display:block;margin:auto;max-width:100%;
+ width:64px;height:64px;object-fit:contain;background:radial-gradient(circle,#9be9ff33,#19335688);
+ border-radius:12px;image-rendering:auto}
+#amberlings-online-hub .ab-icon-fallback{display:grid;place-items:center;width:64px;height:64px;margin:auto;
+ font-size:28px;background:radial-gradient(circle,#a4e9ff55,#183e6388);border-radius:12px}
+#amberlings-online-hub .ab-mon{display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+ padding:8px 5px;border-bottom:1px solid #567a9c67}
+#amberlings-online-hub .ab-mon .ab-grow{flex:1;min-width:100px}
+#amberlings-online-hub .ab-mon b{display:block;font-size:12px;color:#fff4c9}
+#amberlings-online-hub .ab-actions{display:flex;flex-wrap:wrap;gap:5px}
+#amberlings-online-hub .ab-actions .ab-btn{padding:6px 7px;font-size:10px}
+#amberlings-online-hub .ab-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+#amberlings-online-hub .ab-dexcard{padding:6px;text-align:center;background:linear-gradient(#24436b,#152a4c);
+ border:1px solid #7a98b6;border-radius:10px;overflow:hidden}
+#amberlings-online-hub .ab-dexcard.caught{border-color:#f6cf82}
+#amberlings-online-hub .ab-dexcard b{display:block;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#amberlings-online-hub .ab-row{display:flex;gap:6px;align-items:center;justify-content:space-between;
+ padding:8px 4px;border-bottom:1px solid #5a7a9469;font-size:11px;flex-wrap:wrap}
+#amberlings-online-hub .ab-row>div{flex:1;min-width:125px}
+#amberlings-online-hub .ab-row b{display:block}
+#amberlings-online-hub .ab-enemy{display:grid;justify-items:center;gap:8px;padding:15px;
+ background:radial-gradient(circle at 50% 30%,#5e9ddb,#193a5a 63%,#19234b);
+ border:1px solid #8bd5e9;border-radius:14px;min-height:165px}
+#amberlings-online-hub .ab-enemy .ab-icon{width:115px;height:115px}
+#amberlings-online-hub .ab-hp{height:9px;width:85%;background:#1b203e;border-radius:10px;overflow:hidden}
+#amberlings-online-hub .ab-hp i{height:100%;display:block;background:linear-gradient(90deg,#62d9ac,#b8f2be);
+ transition:width .3s}
+#amberlings-online-hub .ab-notice,#amberlings-online-hub .ab-note{padding:9px 10px;margin:10px 0;
+ font-size:10px;line-height:1.65;background:#193450;border-left:3px solid #ffdc8c;border-radius:6px;color:#c8e3ec}
+#amberlings-online-hub .ab-loading{padding:9px;text-align:center;color:#ffe68a}
+#amberlings-online-hub .ab-footer{display:flex;justify-content:center;gap:8px;padding:10px 8px 28px;
+ background:#0c1d36f2;border-top:1px solid #7388a382;position:sticky;bottom:0}
+@media(min-width:500px){#amberlings-online-hub .ab-content{padding:14px 16px 26px}
+ #amberlings-online-hub .ab-section{padding:16px}
+ #amberlings-online-hub .ab-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
