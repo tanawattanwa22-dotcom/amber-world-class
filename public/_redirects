@@ -1,0 +1,2 @@
+# Cloudflare Pages: show Amberlings when players visit the game-name domain.
+/ /amberlings/ 302
