@@ -1,5 +1,9 @@
-CREATE OR REPLACE FUNCTION public.amberlings_action(p_uid uuid,p_action text,p_args jsonb DEFAULT '{}'::jsonb)
-RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path=public,pg_temp
+-- Synced from active Supabase project amber-world-class. Apply only to this project.
+CREATE OR REPLACE FUNCTION public.amberlings_action(p_uid uuid, p_action text, p_args jsonb DEFAULT '{}'::jsonb)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO 'public', 'pg_temp'
 AS $function$
 DECLARE
  me public.amberlings_players%ROWTYPE; seller public.amberlings_players%ROWTYPE;
@@ -28,10 +32,10 @@ BEGIN
   END IF;
  END IF;
  IF p_action = 'market_buy' THEN
-   SELECT * INTO me FROM public.amberlings_players WHERE user_id=p_uid;
- ELSE
-   SELECT * INTO me FROM public.amberlings_players WHERE user_id=p_uid FOR UPDATE;
- END IF;
+      SELECT * INTO me FROM public.amberlings_players WHERE user_id=p_uid;
+    ELSE
+      SELECT * INTO me FROM public.amberlings_players WHERE user_id=p_uid FOR UPDATE;
+    END IF;
  IF NOT FOUND THEN RETURN jsonb_build_object('ok',false,'error','Sign in first');END IF;
 
  IF p_action='profile' THEN
@@ -352,14 +356,9 @@ BEGIN
       'hair',me.hair_index,'skin',me.skin_index,'equipped',me.equipped,'mapId',me.map_id,
       'coins',me.coins,'gems',me.gems,'starter',me.starter_species,'captures',me.captures,
       'wins',me.wins,'rating',me.rating,'dailyClaim',me.daily_claim),
-   'monsters',monsters,'inventory',inventory,'encounter',encounter_json,
-   'listings',listings,'leaderboard',ranking,
-    'cosmetics',(SELECT coalesce(jsonb_agg(jsonb_build_object(
-     'id',ci.id,'name',ci.name_th,'kind',ci.kind,'price',ci.price_gems,'slot',ci.slot)
-     ORDER BY ci.kind,ci.id),'[]'::jsonb) FROM public.amberlings_item_catalog ci
-     WHERE ci.kind IN('cosmetic','skin') AND ci.price_gems>0),
-    'captureSuccess',success);
+   'shop',(SELECT coalesce(jsonb_agg(jsonb_build_object('id',it.id,'name',it.name_th,'price',it.price_coins,'kind',it.kind) ORDER BY it.price_coins,it.id),'[]'::jsonb) FROM public.amberlings_item_catalog it WHERE it.price_coins>0),'species',(SELECT coalesce(jsonb_agg(jsonb_build_object('id',sp.id,'name',sp.name_th,'element',sp.element,'evolveTo',sp.evolve_to,'evolveLevel',sp.evolve_level) ORDER BY sp.id),'[]'::jsonb) FROM public.amberlings_species sp),'monsters',monsters,'inventory',inventory,'encounter',encounter_json,
+   'listings',listings,'leaderboard',ranking,'cosmetics',(SELECT coalesce(jsonb_agg(jsonb_build_object('id',ci.id,'name',ci.name_th,'kind',ci.kind,'price',ci.price_gems,'slot',ci.slot) ORDER BY ci.kind,ci.id),'[]'::jsonb) FROM public.amberlings_item_catalog ci WHERE ci.kind IN ('cosmetic','skin') AND ci.price_gems>0),'captureSuccess',success);
 END;
-$function$;
+$function$
 REVOKE ALL ON FUNCTION public.amberlings_action(uuid,text,jsonb) FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.amberlings_action(uuid,text,jsonb) TO service_role;

@@ -23,14 +23,14 @@ function button(label,action,params,kind){
 }
 function icon(id){
  try {
-  if(typeof monIcon==='function'&&SP&&SP[id]){
+  if(typeof monIcon==='function'&&window.SP?.[id]){
    return '<img class="ab-icon" src="'+e(monIcon(id,64))+'" alt="'+e(SP[id][0])+'">';
   }
  }catch(_){}
  return '<div class="ab-icon-fallback" role="img" aria-label="มอนสเตอร์">✦</div>';
 }
 function monCard(m,extra){
- const base=SP&&SP[m.speciesId],name=base?base[0]:m.speciesId;
+ const base=window.SP?.[m.speciesId],name=base?base[0]:m.speciesId;
  return '<div class="ab-mon">'+icon(m.speciesId)+'<div class="ab-grow"><b>'+e(name)+'</b>'+
  '<small>Lv.'+m.level+' · HP '+m.hp+'/'+m.maxHp+(m.shiny?' ★ SHINY':'')+'</small>'+
  '<small>ช่องทีม: '+(m.slot||'คลัง')+'</small></div>'+(extra||'')+'</div>';
@@ -54,7 +54,7 @@ async function google(){
 async function api(action,payload){
  const c=await sdk();
  const {data:{session},error:sessionError}=await c.auth.getSession();
- if(sessionError||!session?.access_token)throw Error('กรุณาล็อกอิน Google ใหม่');
+ if(sessionError||!session?.access_token)throw Error('กรุณาเข้าสู่ระบบใหม่');
  const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),12000);
  let response;
  try{
@@ -65,19 +65,17 @@ async function api(action,payload){
  let d;try{d=await response.json()}catch(_){throw Error('อ่านข้อมูลเซิร์ฟเวอร์ไม่ได้')}
  if(!response.ok||!d?.ok)throw Error(d?.error||'เซิร์ฟเวอร์ไม่สามารถทำรายการได้');
  model=d;
+ if(Array.isArray(d.species))window.SP=Object.fromEntries(d.species.map(s=>[s.id,[s.name,s.element,s.evolveTo,s.evolveLevel]]));
+ window.AmberScene?.sync(d);
  return d;
 }
 async function restore(){
- if(new URLSearchParams(location.search).get('demo')==='1')return false;
- try{
-  const c=await sdk(),{data:{session}}=await c.auth.getSession();
-  if(!session||!session.user)return false;
-  const u=session.user;
-  Auth.set({mode:'google',id:u.id,name:String(u.user_metadata?.full_name||u.email||'ผู้เล่น').slice(0,16)});
-  await api('bootstrap');
-  return true;
- }catch(err){console.warn('Amberlings session restore failed',err);return false;}
+ const c=await sdk(),{data:{user},error}=await c.auth.getUser();
+ if(error||!user){model=null;return false;}
+ await api('bootstrap');
+ return true;
 }
+
 function mount(){
  if(!hub){
   hub=document.createElement('div');hub.id='amberlings-online-hub';
@@ -86,7 +84,6 @@ function mount(){
    const btn=ev.target.closest('[data-action]');if(!btn||busy)return;
    const a=btn.dataset.action;
    if(a==='view'){view=btn.dataset.view;draw();return;}
-   if(a==='demo'){location.href=location.pathname+'?demo=1';return;}
    if(a==='google_logout'){await logout();return;}
    const payload={};
    if(a==='profile'){
@@ -156,12 +153,12 @@ function home(){
  else h+='<div class="ab-gridactions">'+button('ออกสำรวจ','view',{view:'explore'},'primary')+
  button('ดูทีมมอน','view',{view:'team'})+button('ตลาดซื้อขาย','view',{view:'market'})+
  button('🎁 รับรายวัน','daily',{},'primary')+'</div>';
- h+='</div><div class="ab-note">ออนไลน์ที่เปิดใช้ตอนนี้คือระบบบัญชี มอนสเตอร์ ต่อสู้ จับ ซื้อขาย และไอเทมซึ่งเซิร์ฟเวอร์ตรวจสอบทั้งหมด ส่วนเนื้อเรื่อง 3D ยิม กาชา และ PvP จากไฟล์ต้นฉบับยังอยู่ในโหมดทดลองออฟไลน์ ไม่ส่งค่าจากเครื่องเข้าเซิร์ฟเวอร์</div>';
+ h+='</div><div class="ab-note">เงิน ไอเทม จับมอน ต่อสู้ ทีมและตลาดใช้ Supabase จริง ระบบยิม PvP กิลด์และแชทที่ยังไม่มีเซิร์ฟเวอร์ถูกปิด ไม่จำลองผู้เล่น</div>';
  return h;
 }
 function dex(){
  const mons=model?.monsters||[],obtained=new Set(mons.map(m=>m.speciesId));
- return '<div class="ab-section"><h3>สมุดมอนสเตอร์ — 25 ชนิด</h3><div class="ab-grid">'+Object.keys(SP||{}).map(id=>
+ return '<div class="ab-section"><h3>สมุดมอนสเตอร์ — '+(model?.species||[]).length+' ชนิด</h3><div class="ab-grid">'+(model?.species||[]).map(s=>s.id).map(id=>
  '<div class="ab-dexcard '+(obtained.has(id)?'caught':'')+'">'+icon(id)+
  '<b>'+e(SP[id][0])+'</b><small>'+e(SP[id][1])+' · '+(obtained.has(id)?'จับแล้ว':'ยังไม่จับ')+'</small></div>').join('')+'</div></div>';
 }
@@ -199,9 +196,7 @@ function battle(){
  button('หนี','flee')+'</div></div>';
 }
 function shop(){
- const items=[['orb','ออร์บอำพัน',100],['silver','ออร์บเงิน',250],['gold','ออร์บทอง',600],
- ['potion','ยาฟื้นฟู',80],['super','ยาพิเศษ',200],['hyper','ยาสูงสุด',500],
- ['revive','ชุบชีวิต',800]];
+ const items=(model?.shop||[]).map(i=>[i.id,i.name,i.price]);
  return '<div class="ab-section"><h3>ร้านค้าเซิร์ฟเวอร์</h3><p>ราคาคงที่ฝั่ง Supabase · ไม่รับราคาและจำนวนไอเทมจาก Chrome</p>'+
  items.map(x=>'<div class="ab-row"><span>'+e(x[1])+' · '+x[2]+' เหรียญ</span>'+
  button('ซื้อ 1','shop_buy',{item:x[0],qty:1},'primary')+
@@ -260,11 +255,11 @@ function account(){
  '<p>'+e(p.name||'')+' · ชนะ '+nf(p.wins)+' · จับ '+nf(p.captures)+
  ' · เรตติ้ง '+nf(p.rating)+'</p>'+button('แก้ชื่อตัวละคร','profile')+
  button('รีเฟรชข้อมูล','state')+
- button('ออกจาก Google','google_logout',{},'danger')+
+ button('ออกจากบัญชี','google_logout',{},'danger')+
  '<h3>ผู้เล่นออนไลน์ / อันดับ</h3>'+
  (model?.leaderboard||[]).map((x,i)=>'<div class="ab-row"><b>#'+(i+1)+' '+e(x.name)+'</b><span>'+
  nf(x.wins)+' ชนะ · '+(x.online?'ออนไลน์':'ออฟไลน์')+'</span></div>').join('')+
- '<div class="ab-note">ระบบเพื่อน กิลด์ ดวล PvP และเนื้อเรื่อง 3D ยังไม่ใช่เซิร์ฟเวอร์-authoritative ในเวอร์ชันทดสอบนี้</div></div>';
+ '<div class="ab-note">เพื่อน กิลด์ PvP และแชทยังไม่เปิดจนกว่าเซิร์ฟเวอร์จริงพร้อม ไม่มีผู้เล่นจำลอง</div></div>';
 }
 const V={home,dex,team,explore,battle,shop,market,fashion,account};
 function draw(){
@@ -276,8 +271,7 @@ function draw(){
  '<div class="ab-content">'+(V[view]||home)()+
  (notice?'<div class="ab-notice">'+e(notice)+'</div>':'')+
  (busy?'<div class="ab-loading">กำลังบันทึกบนเซิร์ฟเวอร์…</div>':'')+
- '</div><footer class="ab-footer">'+button('🔄 รีเฟรช','state')+
- button('ทดลองเกม 3D ออฟไลน์','demo')+'</footer>';
+ '</div><footer class="ab-footer">'+button('รีเฟรชจากเซิร์ฟเวอร์','state')+'</footer>';
 }
 window.AmberOnline={sdk,google,api,restore,mount,draw,
  get data(){return model},get authenticated(){return !!model},close(){if(hub){hub.remove();hub=null;}}};

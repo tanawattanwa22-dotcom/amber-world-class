@@ -81,3 +81,37 @@
 @media(min-width:500px){#amberlings-online-hub .ab-content{padding:14px 16px 26px}
  #amberlings-online-hub .ab-section{padding:16px}
  #amberlings-online-hub .ab-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* V3 online-only: 3D world renders the actual server team and encounter. */
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:#09182d;color:#ffebc5;font-family:'Kanit',sans-serif}
+#wrap{isolation:isolate;position:relative;margin:auto;max-width:740px;height:100dvh;overflow:hidden;background:#122c48}
+#scene{position:absolute;inset:0 0 59%;background:radial-gradient(circle,#386f82,#113351);pointer-events:none}
+#scene canvas{width:100%!important;height:100%!important;display:block}
+#scene-label{position:absolute;top:max(9px,env(safe-area-inset-top));left:12px;right:12px;display:flex;gap:8px;justify-content:space-between;
+ font-size:11px;color:#fff6df;text-shadow:0 2px 3px #172c42}
+#scene-label span{text-align:right;font-size:10px}
+#amberlings-online-hub{inset:auto 0 0!important;top:auto!important;height:66%;z-index:3;
+ border-radius:22px 22px 0 0;border-top:2px solid #d6b77a;
+ background:linear-gradient(155deg,#0c2c4bf8,#09172efa 75%)}
+#amberlings-online-hub .ab-content{padding-bottom:64px}
+#amberlings-online-hub .ab-footer{position:sticky;bottom:0;background:#0b1d34ee;padding:8px}
+.ab-auth{position:absolute;inset:0;z-index:9;background:#081a31ea;display:flex;align-items:center;justify-content:center;padding:12px}
+.ab-auth[hidden]{display:none!important}
+.ab-auth-card{width:min(100%,440px);padding:23px 20px;max-height:97%;overflow:auto;border-radius:21px;
+ border:1px solid #d9b57d;background:linear-gradient(155deg,#1d4264,#101a35);box-shadow:0 15px 70px #0008;text-align:center}
+.ab-login-logo{margin:auto auto 8px;width:60px;height:60px;line-height:60px;border-radius:20px;
+ background:linear-gradient(130deg,#fff3bc,#d39742);color:#4c3217;font-weight:800;font-size:38px}
+.ab-auth h1{margin:0;color:#ffe5a1;font-size:23px}.ab-auth h1 em{font-style:normal;color:#9fe7fc}
+.ab-auth p{font-size:11px;color:#c8e1ea}
+.ab-auth label{text-align:left;display:block;margin:10px 0 4px;font-size:12px}
+.ab-auth input{display:block;width:100%;padding:11px;font:500 14px Kanit;border-radius:10px;background:#081d35;border:1px solid #759bba;color:white}
+.ab-auth button{border:1px solid #7699b7;border-radius:10px;background:#28496b;color:white;padding:10px;
+ cursor:pointer;font:650 12px Kanit;width:100%;margin-top:8px;min-height:41px}
+.ab-auth button:disabled{opacity:.6}
+.ab-auth .ab-auth-primary{margin-top:15px;background:linear-gradient(#ffe6a7,#ca923f);color:#39240e}
+.ab-auth .ab-google{background:#f3f7ff;color:#223449}
+.ab-auth .ab-reset{border:0;background:transparent;color:#a4dffd;min-height:28px;padding:2px}
+.ab-auth-or{margin:9px 0 2px;color:#b0c8db;font-size:11px}
+#auth-feedback{border-radius:9px;border:1px solid #4c819d;background:#102d4a;color:#caeaf7;text-align:left;padding:9px;margin:9px 0;font-size:11px;overflow-wrap:anywhere}
+.ab-auth small{display:block;color:#a1bfd2;font-size:9px}
+@media(max-height:650px){.ab-login-logo{display:none}.ab-auth-card{padding:11px 17px}.ab-auth input{padding:6px}.ab-auth label{margin:5px 0 2px}}
