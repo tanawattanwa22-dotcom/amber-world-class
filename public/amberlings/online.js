@@ -17,7 +17,7 @@ const VIEWS=[['home','หน้าแรก'],['dex','สมุดมอน'],['
  ['chat','แชท'],['pvp','PvP'],['gym','ยิม / เควสต์'],['account','บัญชี']];
 const e=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const nf=v=>Number(v||0).toLocaleString('en-US');
-let hub=null,view='home',busy=false,notice='',client=null,model=null,syncTimer=null;
+let hub=null,view='home',busy=false,notice='',client=null,model=null,syncTimer=null,lastSync=0;
 function button(label,action,params,kind){
  const args=params||{},attrs=Object.keys(args).map(k=>' data-'+k+'="'+e(args[k])+'"').join('');
  return '<button class="ab-btn '+(kind||'')+'" data-action="'+action+'"'+attrs+(busy?' disabled':'')+'>'+label+'</button>';
@@ -133,7 +133,8 @@ function mount(){
  if(!syncTimer)syncTimer=setInterval(async()=>{
    if(document.hidden||!hub||busy)return;
    const socialViews=new Set(['chat','pvp','guild','friends','gym']);
-   if(!socialViews.has(view)&&Date.now()%3!==0)return;
+   if(!socialViews.has(view)&&Date.now()-lastSync<30000)return;
+   lastSync=Date.now();
    try{await api('state');draw();}catch(err){console.warn('Online refresh failed',String(err));}
  },12000);
  draw();
