@@ -50,7 +50,7 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
 .brand-logo{width:45px;height:45px;object-fit:contain;border-radius:12px;border:1px solid #284457;flex-shrink:0}
 @media(max-width:600px){.guide-grid{grid-template-columns:1fr}.guide-box{padding:11px}.guide-wide{grid-column:auto}.usage-guide summary{font-size:13px}.quick-links .btn{min-width:0}}
 .historyGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.historyGrid canvas{display:block;width:100%;height:150px;background:#081624;border:1px solid #294153;border-radius:9px}.historyGrid h3{font-size:12px;color:#a4e3de}.historyPanel{border-color:#315d66}.historyPanel input[type=range]{width:100%;accent-color:#43d8cf}.historyPanel audio{width:100%;margin:10px 0}.historyPanel .help{line-height:1.75}@media(max-width:650px){.historyGrid{grid-template-columns:1fr}}
-/* 55 PERFORMANCE NVH HUNTER V0.6 — TECH CONSOLE */
+/* 55 PERFORMANCE NVH HUNTER V0.6.1 — TECH CONSOLE */
 :root{--bg:#060b12;--panel:#0e1825;--panel2:#112131;--line:#274056;--text:#f0f7ff;--dim:#93abc0;--cyan:#40e9db;--teal:#67f5ce;--amber:#ffb45e;--pink:#caa5ff;--radius:18px}
 body{background:radial-gradient(circle at 95% 0%,#17345290 0%,transparent 33%),radial-gradient(circle at 0% 16%,#153a385a,transparent 29%),#060b12;background-attachment:fixed}
 .wrap{max-width:1160px}
@@ -159,7 +159,7 @@ body{background:radial-gradient(circle at 95% 0%,#17345290 0%,transparent 33%),r
 <main class="wrap">
 <div class="lab-ribbon"><span>55 / PERFORMANCE ENGINEERING</span><span>NVH LAB · V0.4</span></div>
   <header class="topbar">
-    <div class="brand"><img class="brand-logo" src="./icon.svg" alt="55 PERFORMANCE NVH"><div><strong>55 PERFORMANCE</strong><small>NVH HUNTER · AI ASSIST V0.6</small></div></div>
+    <div class="brand"><img class="brand-logo" src="./icon.svg" alt="55 PERFORMANCE NVH"><div><strong>55 PERFORMANCE</strong><small>NVH HUNTER · AI ASSIST V0.6.1</small></div></div>
     <div class="state" id="stateBadge"><i class="dot"></i><span id="stateText">STANDBY</span></div>
   </header>
 <nav class="nav-rail" aria-label="เมนูโปรแกรม">
@@ -240,29 +240,29 @@ body{background:radial-gradient(circle at 95% 0%,#17345290 0%,transparent 33%),r
   </section>
   <div class="grid2">
     <div>
-      <section class="card">
+      <section class="card" id="scopeFFT">
         <div class="card-title"><div><h2>Frequency Spectrum <span class="pill-demo" id="demoMark" hidden>SIMULATED</span></h2><p class="subtitle">FFT แบบสด · ใช้วิเคราะห์เสียงหอนและความถี่ที่สัมพันธ์กับรอบ</p></div><div class="bar"><label class="mini" for="freqRange">ช่วง</label><select id="freqRange" class="ctrl"><option value="500">0–500 Hz</option><option value="2000" selected>0–2,000 Hz</option><option value="5000">0–5,000 Hz</option><option value="10000">0–10,000 Hz</option></select></div></div>
         <canvas class="plot" id="spectrum" aria-label="กราฟความถี่เสียง"></canvas><div class="axis"><span>0 Hz</span><span id="sAxisMid">1,000 Hz</span><span id="sAxisMax">2,000 Hz</span></div>
         <div class="legend"><span><i class="swatch"></i>ความดังสัมพัทธ์ของความถี่</span><span><i class="swatch gold"></i>Peak ที่ตรวจพบ</span></div>
       </section>
-      <section class="card">
+      <section class="card" id="scopeWave">
         <div class="card-title"><div><h2>Waveform</h2><p class="subtitle">รูปคลื่นเสียงที่ได้รับจากไมโครโฟน</p></div><button class="btn small muted" id="pauseBtn" disabled>⏸ หยุดภาพ</button></div>
         <canvas id="waveform" class="plot wave" aria-label="รูปคลื่นเสียง"></canvas><div class="axis"><span id="waveDuration">ช่วงเวลาประมาณ 0.17 วินาที</span><span>Amplitude ±1</span></div>
       </section>
-      <section class="card">
+      <section class="card" id="scopeSpec">
         <div class="card-title"><div><h2>Spectrogram</h2><p class="subtitle">แผนภาพความถี่ต่อเนื่องตามเวลา · ด้านซ้ายคืออดีต ด้านขวาคือปัจจุบัน</p></div><button class="btn small muted" id="clearWaterBtn">ล้างภาพ</button></div>
         <canvas id="waterfall" class="plot water" aria-label="กราฟสเปกโตรแกรม"></canvas><div class="axis"><span>อดีต ← เวลา</span><span>ความถี่ต่ำด้านล่าง · สูงด้านบน</span></div>
       </section>
     </div>
     <div>
-      <section class="card">
+      <section class="card" id="scopeRPM">
         <div class="card-title"><div><h2>RPM / Order Assist</h2><p class="subtitle">เทียบความถี่เสียงกับความถี่รอบเครื่องยนต์</p></div><span class="tag">คำนวณ</span></div>
         <div class="rpm-layout"><div class="field"><label for="rpm">รอบเครื่องยนต์ (RPM)</label><input class="ctrl number wide" type="number" inputmode="numeric" min="0" max="20000" step="50" value="800" id="rpm"></div><div class="field"><label for="cyl">จำนวนกระบอกสูบ</label><select class="ctrl wide" id="cyl"><option value="3">3 สูบ</option><option value="4" selected>4 สูบ</option><option value="6">6 สูบ</option><option value="8">8 สูบ</option></select></div></div>
         <div class="orders"><div class="order"><small>1× ENGINE ORDER</small><strong><span id="order1">13.3</span> <small>Hz</small></strong></div><div class="order"><small>2× ENGINE ORDER</small><strong><span id="order2">26.7</span> <small>Hz</small></strong></div><div class="order"><small>4× ENGINE ORDER</small><strong><span id="order4">53.3</span> <small>Hz</small></strong></div><div class="order"><small>FIRING 4-STROKE*</small><strong><span id="orderFire">26.7</span> <small>Hz</small></strong></div></div>
         <p class="help">*ความถี่จุดระเบิดเชิงทฤษฎีของเครื่อง 4 จังหวะ จุดระเบิดสม่ำเสมอ สูตร: (RPM ÷ 60) × จำนวนสูบ ÷ 2 ค่าอาจไม่ตรงกับเสียงจริงทุกกรณี</p>
         <div class="hint">⚠️ การที่ Peak ตรงกับ Engine Order <b>ไม่ใช่ข้อสรุปว่าชิ้นส่วนเสีย</b> ต้องตรวจเทียบเงื่อนไขการทำงานและการทดสอบทางกลเพิ่มเติม</div>
       </section>
-      <section class="card">
+      <section class="card" id="scopeCompare">
         <div class="card-title"><div><h2>ก่อน / หลังซ่อม</h2><p class="subtitle">เก็บค่ากลางย้อนหลังประมาณ 5 วินาทีต่อหนึ่งการวัด</p></div></div>
         <div class="field" style="margin-bottom:10px"><label for="jobNote">หมายเหตุงานซ่อม</label><input class="ctrl wide" type="text" maxlength="100" id="jobNote" placeholder="เช่น เสียงหอนบริเวณล้อหน้าซ้าย"></div>
         <div class="compare">
@@ -272,7 +272,7 @@ body{background:radial-gradient(circle at 95% 0%,#17345290 0%,transparent 33%),r
         <div class="compare-result" id="compareResult">เมื่อบันทึกทั้งสองครั้ง โปรแกรมจะแสดงความต่างของระดับสัญญาณและความถี่เด่น โดยไม่ตัดสินว่าอะไหล่เสียหรือหายแล้ว</div>
         <div class="stepnote">เพื่อให้เปรียบเทียบได้ ควรใช้มือถือ ระยะไมค์ ตำแหน่ง รอบเครื่อง และสภาพแวดล้อมเหมือนกันทั้งสองครั้ง</div>
       </section>
-      <section class="card">
+      <section class="card" id="scopeRecord">
         <div class="card-title"><div><h2>🎙 อัดเสียงและบันทึกไฟล์</h2><p class="subtitle">กดบันทึกได้เลย · ระบบเปิดไมค์จริงให้ในหน้าต่างนี้อัตโนมัติ</p></div></div>
         <div class="rec-flow" aria-label="ขั้นตอนบันทึกเสียง">
           <div class="rec-flow-stage"><small>01</small> เริ่มบันทึก</div><div class="rec-flow-stage"><small>02</small> หยุดบันทึก</div><div class="rec-flow-stage"><small>03</small> ดาวน์โหลด</div>
@@ -521,8 +521,7 @@ ui.start.addEventListener('click',startMic);ui.demo.addEventListener('click',sta
 
 
 function nvhPrepareWindows(){
-const map=[['Frequency Spectrum','scopeFFT'],['Waveform','scopeWave'],['Spectrogram','scopeSpec'],['RPM / Order Assist','scopeRPM'],['ก่อน / หลังซ่อม','scopeCompare'],['Record & Export','scopeRecord']];
-for(const card of document.querySelectorAll('section.card')){const h=card.querySelector('h2');if(h){const entry=map.find(x=>h.textContent.startsWith(x[0]));if(entry&&!card.id)card.id=entry[1]}}
+// Each floating window uses a permanent HTML ID, independent of visible heading text.
 for(const card of document.querySelectorAll('section.card')){if(card.id==='usageGuide')continue;if(card.querySelector('.float-toolline'))continue;const strip=document.createElement('div');strip.className='float-toolline';const button=document.createElement('button');button.type='button';button.className='float-collapse-btn';button.textContent='− ย่อ';button.setAttribute('aria-expanded','true');button.addEventListener('click',()=>{const collapsed=card.classList.toggle('float-collapsed');button.textContent=collapsed?'＋ ขยาย':'− ย่อ';button.setAttribute('aria-expanded',String(!collapsed));if(!collapsed&&card.id==='historyPanel'&&st.graph)requestAnimationFrame(()=>drawSession())});strip.append(button);card.prepend(strip)}
 }
 let activeFloat=null;
