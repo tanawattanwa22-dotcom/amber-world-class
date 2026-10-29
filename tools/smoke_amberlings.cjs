@@ -1,0 +1,33 @@
+/* AMBERLINGS deployment smoke checks: no silent blue-screen syntax regressions.
+   Uses Node built-ins only; does NOT try to fake actual Google OAuth or WebGL. */
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const base='public/amberlings/';
+const html=fs.readFileSync(base+'index.html','utf8');
+const hub=fs.readFileSync(base+'online.js','utf8');
+const css=fs.readFileSync(base+'online.css','utf8');
+const chunks=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(x=>x[1]).filter(s=>s.trim());
+assert.ok(chunks.length>=15,'Original AMBERLINGS gameplay scripts missing');
+chunks.forEach((src,i)=>new vm.Script(src,{filename:'Amberlings inline #'+i}));
+new vm.Script(hub,{filename:'online.js'});
+assert.equal((html.match(/<script\b/gi)||[]).length,(html.match(/<\/script>/gi)||[]).length);
+assert.ok(html.includes('async function battle(o)'),'3D combat system missing');
+assert.ok(html.includes('function mkMon(id,lv)'),'Creature generation lost');
+assert.ok(html.includes('const SP={'),'Original monster catalog missing');
+assert.ok(html.includes('const ITEMS={'),'Original item catalog missing');
+assert.ok(html.includes('const connected=await AmberOnline.restore()'),'Google session bootstrap missing');
+assert.ok(html.includes('await AmberOnline.google();return;'),'Fake Google login not replaced');
+assert.ok(html.includes('src="./online.js?v=001"'),'Online hub missing');
+assert.ok(html.includes('src="../config.js"'),'Publishable Supabase config missing');
+assert.ok(!html.includes('supabase_service_role')&&!html.includes('SUPABASE_SERVICE_ROLE_KEY'),'Server secret leaked');
+assert.ok(hub.includes("provider:'google'"),'Google OAuth redirect missing');
+assert.ok(hub.includes("'/functions/v1/amberlings-action'"),'Secure RPC endpoint missing');
+assert.ok(hub.includes('market_buy')&&hub.includes('market_cancel')&&hub.includes('market_list'),'Market actions incomplete');
+assert.ok(css.includes('#amberlings-online-hub'),'Mobile UI CSS missing');
+assert.ok(fs.statSync(base+'index.html').size>210000,'Uploaded game truncated');
+const obj={};
+const context=vm.createContext({window:obj,console,setTimeout,clearTimeout,URLSearchParams,location:{search:''}});
+vm.runInContext(hub,context,{timeout:2000});
+assert.equal(typeof obj.AmberOnline?.restore,'function');
+assert.equal(typeof obj.AmberOnline?.google,'function');
+assert.equal(typeof obj.AmberOnline?.api,'function');
+console.log('PASS: original 3D game intact,',chunks.length,'inline scripts compile, true Google OAuth, server marketplace and mobile UI.');
