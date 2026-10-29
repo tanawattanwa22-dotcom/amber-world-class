@@ -352,7 +352,7 @@ BEGIN
  INTO ranking FROM (SELECT name,wins,captures,rating,last_seen FROM public.amberlings_players
         ORDER BY rating DESC,wins DESC LIMIT 15) r;
  RETURN jsonb_build_object('ok',true,'message',action_message,
-   'player',jsonb_build_object('name',me.name,'gender',me.gender,'uniform',me.uniform_index,
+   'player',jsonb_build_object('id',me.user_id,'name',me.name,'gender',me.gender,'uniform',me.uniform_index,
       'hair',me.hair_index,'skin',me.skin_index,'equipped',me.equipped,'mapId',me.map_id,
       'coins',me.coins,'gems',me.gems,'starter',me.starter_species,'captures',me.captures,
       'wins',me.wins,'rating',me.rating,'dailyClaim',me.daily_claim),
